@@ -1,4 +1,4 @@
-# Projeto E-Comerve
+# Projeto e-comerce
 
 Este projeto é um sistema de e-comerce que é desenvolvido utilizando .NET 8, CQRS, Mediator, EF Core, SQL Server e MongoDB, DDD e seguindo a arquitetura limpa (Clean Architecture). O sistema é distribuído em microsserviços, adotando uma arquitetura orientada a eventos e utiliza o RabbitMQ como sistema de mensageria.
 
