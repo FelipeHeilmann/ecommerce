@@ -1,0 +1,9 @@
+﻿using Domain.Shared;
+
+namespace Domain.Products;
+
+public static class ProductErrors
+{
+    public static Error SkuNull => Error.Validation("Sku.Null.Empty", "The sku value should not be empty or null");
+    public static Error SkuLength => Error.Validation("Sku.Length", "The sku length should be less than 15");
+}
