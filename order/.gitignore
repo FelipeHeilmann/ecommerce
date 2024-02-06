@@ -1,10 +1,10 @@
-src/.vs
+.vs
 
 src/Domain/bin
 src/Domain/obj
 
-src/Test/bin
-src/Test/obj
+test/UnitTest/bin
+test/UnitTest/obj
 
 src/Application/bin
 src/Application/obj

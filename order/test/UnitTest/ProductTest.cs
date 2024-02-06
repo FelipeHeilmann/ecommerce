@@ -1,7 +1,7 @@
-﻿using Domain.Products;
+﻿﻿using Domain.Products;
 using Xunit;
 
-namespace Test.Unit;
+namespace UnitTest;
 
 public class ProductUnitTest
 {
@@ -67,4 +67,3 @@ public class ProductUnitTest
         Assert.False(product.IsSuccess);
     }
 }
-

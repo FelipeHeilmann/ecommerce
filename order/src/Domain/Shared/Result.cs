@@ -35,4 +35,3 @@ public class Result
     public static implicit operator Result(Error error) =>
         Result.Failure(error);
 }
-

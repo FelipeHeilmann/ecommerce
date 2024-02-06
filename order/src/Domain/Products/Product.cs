@@ -23,10 +23,11 @@ public class Product
 
     public static Result<Product> Create(string name, string description, string imageUrl, string currency, double price, string skuString)
     {
-        var money = new Money(currency,price);
+        var money = new Money(currency, price);
         var sku = Sku.Create(skuString);
 
-        if(sku.IsFailure) {
+        if (sku.IsFailure)
+        {
             return Result.Failure<Product>(sku.Error);
         }
 
