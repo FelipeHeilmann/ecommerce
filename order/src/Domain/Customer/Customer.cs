@@ -4,7 +4,7 @@ namespace Domain.Customer;
 
 public class Customer
 {
-    public Guid Guid { get; set; }
+    public Guid Id { get; set; }
     public Name Name { get; set; }
     public Email Email { get; set; }
     public DateTime DateBirth { get; set; }
@@ -12,7 +12,7 @@ public class Customer
 
     public Customer(Guid guid, Name name, Email email, DateTime dateBirth, DateTime createdAt)
     {
-        Guid = guid;
+        Id = guid;
         Name = name;
         Email = email;
         DateBirth = dateBirth;

@@ -2,22 +2,20 @@
 
 public class Result<T> : Result
 {
-    private T? data { get; }
+    public T? Data { get; }
 
-    public Result(T Data) : base(null)
+    public Result(T data) : base(null)
     {
-        data = Data;
+        Data = data;
     }
 
     public Result(Error error) : base(error: error)
     {
     }
 
-    public T GetValue() => data!;
-
     public static implicit operator T(Result<T> result) =>
         result.IsFailure
-        ? throw new InvalidOperationException() : result.data!;
+        ? throw new InvalidOperationException() : result.Data!;
 
     public static implicit operator Result<T>(T result) =>
         Result.Success(result);
