@@ -1,7 +1,7 @@
 ﻿using Domain.Customer;
 using Xunit;
 
-namespace UnitTest;
+namespace Unit;
 
 public class CustomerTest
 {

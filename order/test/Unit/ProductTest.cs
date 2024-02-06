@@ -1,13 +1,13 @@
-﻿﻿using Domain.Products;
+﻿using Domain.Products;
 using Xunit;
 
-namespace UnitTest;
+namespace Unit;
 
-public class ProductUnitTest
+public class ProductTest
 {
     [Fact]
     public void Should_Create_Product()
-    {        
+    {
         var name = "name";
         var description = "description";
         var currency = "BRL";
@@ -15,7 +15,8 @@ public class ProductUnitTest
         var imageUrl = "image";
         var sku = "sku";
 
-        var product = Product.Create(name, description, imageUrl, currency, price,sku, "categoria nome", "categoria descricao");
+        var category = new Category(Guid.NewGuid(), "categoria nome", "categoria descricao");
+        var product = Product.Create(name, description, imageUrl, currency, price, sku, category);
 
         Assert.False(product.IsFailure);
         Assert.True(product.IsSuccess);
@@ -31,7 +32,8 @@ public class ProductUnitTest
         var imageUrl = "image";
         var sku = "sfdbjsdfgvbsdfghsdhfsohfsohjflshfodshfosf";
 
-        var product = Product.Create(name, description, imageUrl, currency, price, sku,"categoria nome", "categoria descricao");
+        var category = new Category(Guid.NewGuid(), "categoria nome", "categoria descricao");
+        var product = Product.Create(name, description, imageUrl, currency, price, sku, category);
 
         Assert.True(product.IsFailure);
         Assert.False(product.IsSuccess);
@@ -46,7 +48,8 @@ public class ProductUnitTest
         var price = 200.0;
         var imageUrl = "image";
 
-        var product = Product.Create(name, description, imageUrl, currency, price, null, "categoria nome", "categoria descricao");
+        var category = new Category(Guid.NewGuid(), "categoria nome", "categoria descricao");
+        var product = Product.Create(name, description, imageUrl, currency, price, null, category);
 
         Assert.True(product.IsFailure);
         Assert.False(product.IsSuccess);
@@ -61,7 +64,8 @@ public class ProductUnitTest
         var price = 200.0;
         var imageUrl = "image";
 
-        var product = Product.Create(name, description, imageUrl, currency, price, "", "categoria nome", "categoria descricao");
+        var category = new Category(Guid.NewGuid(), "categoria nome", "categoria descricao");
+        var product = Product.Create(name, description, imageUrl, currency, price, "", category);
 
         Assert.True(product.IsFailure);
         Assert.False(product.IsSuccess);
