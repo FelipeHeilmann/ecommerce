@@ -13,7 +13,7 @@ public class Product
     public Guid CategoryId { get; private set; }
     public Category Category { get; private set; } 
 
-    public Product(Guid id, string name, string description, string imageUrl, Money money, Sku sku, Category category)
+    public Product(Guid id, string name, string description, string imageUrl, Money money, Sku sku, Guid categoryId ,Category category)
     {
         Id = id;
         Name = name;
@@ -21,7 +21,7 @@ public class Product
         ImageUrl = imageUrl;
         Price = money;
         Sku = sku;
-        CategoryId = Category!.Id;
+        CategoryId = categoryId;
         Category = category;
     }
 
@@ -37,6 +37,6 @@ public class Product
 
         var productId = Guid.NewGuid();
 
-        return new Product(Guid.NewGuid(), name, description, imageUrl, money, sku, category);
+        return new Product(Guid.NewGuid(), name, description, imageUrl, money, sku, category.Id ,category);
     }
 }

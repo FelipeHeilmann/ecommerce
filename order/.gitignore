@@ -3,8 +3,11 @@
 src/Domain/bin
 src/Domain/obj
 
-test/UnitTest/bin
-test/UnitTest/obj
+test/Unit/bin
+test/Unit/obj
+
+test/Integration/bin
+test/Integration/obj
 
 src/Application/bin
 src/Application/obj
