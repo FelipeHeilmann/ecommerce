@@ -8,5 +8,6 @@ public enum OrderStatus
     InvoiceEmmited = 4,
     SeparateForShipping = 5,
     Shipped = 6,
-    Canceled = 7,
+    Delivered = 7,
+    Canceled = 8,
 }

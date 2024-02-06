@@ -7,7 +7,7 @@ public class ProductUnitTest
 {
     [Fact]
     public void Should_Create_Product()
-    {
+    {        
         var name = "name";
         var description = "description";
         var currency = "BRL";
@@ -15,7 +15,7 @@ public class ProductUnitTest
         var imageUrl = "image";
         var sku = "sku";
 
-        var product = Product.Create(name, description, imageUrl, currency, price,sku);
+        var product = Product.Create(name, description, imageUrl, currency, price,sku, "categoria nome", "categoria descricao");
 
         Assert.False(product.IsFailure);
         Assert.True(product.IsSuccess);
@@ -31,7 +31,7 @@ public class ProductUnitTest
         var imageUrl = "image";
         var sku = "sfdbjsdfgvbsdfghsdhfsohfsohjflshfodshfosf";
 
-        var product = Product.Create(name, description, imageUrl, currency, price, sku);
+        var product = Product.Create(name, description, imageUrl, currency, price, sku,"categoria nome", "categoria descricao");
 
         Assert.True(product.IsFailure);
         Assert.False(product.IsSuccess);
@@ -46,7 +46,7 @@ public class ProductUnitTest
         var price = 200.0;
         var imageUrl = "image";
 
-        var product = Product.Create(name, description, imageUrl, currency, price, null);
+        var product = Product.Create(name, description, imageUrl, currency, price, null, "categoria nome", "categoria descricao");
 
         Assert.True(product.IsFailure);
         Assert.False(product.IsSuccess);
@@ -61,7 +61,7 @@ public class ProductUnitTest
         var price = 200.0;
         var imageUrl = "image";
 
-        var product = Product.Create(name, description, imageUrl, currency, price, "");
+        var product = Product.Create(name, description, imageUrl, currency, price, "", "categoria nome", "categoria descricao");
 
         Assert.True(product.IsFailure);
         Assert.False(product.IsSuccess);

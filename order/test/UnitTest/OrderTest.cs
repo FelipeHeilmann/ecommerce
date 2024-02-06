@@ -10,9 +10,9 @@ public class OrderTest
     [Fact]
     public void Should_Create_Order_And_Calculate_Total()
     {
-        var product1 = Product.Create("Nome do produto", "Desricao", "Imagem", "BRL", 50.0, "0001");
-        var product2 = Product.Create("Nome do produto", "Desricao", "Imagem", "BRL", 60.0, "0002");
-        var product3 = Product.Create("Nome do produto", "Desricao", "Imagem", "BRL", 70.0, "0003");
+        var product1 = Product.Create("Nome do produto", "Desricao", "Imagem", "BRL", 50.0, "0001", "categoria nome", "categoria descricao");
+        var product2 = Product.Create("Nome do produto", "Desricao", "Imagem", "BRL", 60.0, "0002", "categoria nome", "categoria descricao");
+        var product3 = Product.Create("Nome do produto", "Desricao", "Imagem", "BRL", 70.0, "0003", "categoria nome", "categoria descricao");
 
         var customer = Customer.Create("Felipe Heilmann", "felipeheilmannm@gmail.com", new DateTime(2004, 6, 11));
 
@@ -32,9 +32,9 @@ public class OrderTest
     [Fact]
     public void Should_Create_Order_Remove_One_Item_And_Calculate_Total()
     {
-        var product1 = Product.Create("Nome do produto", "Desricao", "Imagem", "BRL", 50.0, "0001");
-        var product2 = Product.Create("Nome do produto", "Desricao", "Imagem", "BRL", 60.0, "0002");
-        var product3 = Product.Create("Nome do produto", "Desricao", "Imagem", "BRL", 70.0, "0003");
+        var product1 = Product.Create("Nome do produto", "Desricao", "Imagem", "BRL", 50.0, "0001", "categoria nome", "categoria descricao");
+        var product2 = Product.Create("Nome do produto", "Desricao", "Imagem", "BRL", 60.0, "0002", "categoria nome", "categoria descricao");
+        var product3 = Product.Create("Nome do produto", "Desricao", "Imagem", "BRL", 70.0, "0003", "categoria nome", "categoria descricao");
 
         var customer = Customer.Create("Felipe Heilmann", "felipeheilmannm@gmail.com", new DateTime(2004, 6, 11));
 

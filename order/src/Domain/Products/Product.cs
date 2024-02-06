@@ -10,8 +10,9 @@ public class Product
     public string ImageUrl { get; private set; }
     public Money Price { get; private set; }
     public Sku Sku { get; private set; }
+    public Category Category { get; private set; } 
 
-    public Product(Guid id, string name, string description, string imageUrl, Money money, Sku sku)
+    public Product(Guid id, string name, string description, string imageUrl, Money money, Sku sku, Category category)
     {
         Id = id;
         Name = name;
@@ -19,10 +20,11 @@ public class Product
         ImageUrl = imageUrl;
         Price = money;
         Sku = sku;
+        Category = category;
     }
 
-    public static Result<Product> Create(string name, string description, string imageUrl, string currency, double price, string skuString)
-    {
+    public static Result<Product> Create(string name, string description, string imageUrl, string currency, double price, string skuString, string categoryName, string categoryDescription)
+    {   
         var money = new Money(currency, price);
         var sku = Sku.Create(skuString);
 
@@ -31,6 +33,9 @@ public class Product
             return Result.Failure<Product>(sku.Error);
         }
 
-        return new Product(Guid.NewGuid(), name, description, imageUrl, money, sku);
+        var productId = Guid.NewGuid();
+        var category = new Category(Guid.NewGuid(), categoryName, categoryDescription ,productId);
+
+        return new Product(Guid.NewGuid(), name, description, imageUrl, money, sku, category);
     }
 }

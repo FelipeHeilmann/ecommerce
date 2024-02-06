@@ -32,7 +32,10 @@ public class Order
 
         _itens.Add(lineItem);
 
+        UpdatedAt = DateTime.Now;
+        
         return lineItem;
+
     }
 
     public void RemoveItem(Guid lineItemId) 
@@ -44,6 +47,8 @@ public class Order
         if (lineItem == null) return;
 
         if(lineItem.DeleteItem()) _itens.Remove(lineItem);
+
+        UpdatedAt = DateTime.Now;
     }
 
     public double CalculateTotal()
@@ -55,6 +60,12 @@ public class Order
         }
 
         return total;
+    }
+
+    public void Process()
+    {
+        UpdatedAt = DateTime.Now;
+        Status = OrderStatus.WaitingPayment;
     }
 
     public int CountItens()
