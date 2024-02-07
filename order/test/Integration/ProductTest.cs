@@ -1,5 +1,6 @@
 ﻿using Application.Products.Command;
 using Application.Products.Model;
+using Application.Products.Query;
 using Domain.Products;
 using Infra.Repositories.Memory;
 using Xunit;
@@ -32,10 +33,10 @@ public class ProductTest
     public async Task Should_Get_Product_By_Id()
     {
         var productId = Guid.Parse("55b86726-d9fb-4745-b64a-66923b584cf2");
-        var command = new GetProductByIdCommand(productId);
-        var commandHandler = new GetProductByIdCommandHandler(_repository);
+        var query = new GetProductByIdQuery(productId);
+        var queryHandler = new GetProductByIdQueryHandler(_repository);
 
-        var result = await commandHandler.Handle(command, CancellationToken.None);
+        var result = await queryHandler.Handle(query, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
         Assert.False(result.IsFailure);
@@ -46,10 +47,10 @@ public class ProductTest
     public async Task Should_Not_Get_Product_By_Id()
     {
         var productId = Guid.Parse("ee5ad79f-7593-4e23-9968-4380a545ee35");
-        var command = new GetProductByIdCommand(productId);
-        var commandHandler = new GetProductByIdCommandHandler(_repository);
+        var query = new GetProductByIdQuery(productId);
+        var queryHandler = new GetProductByIdQueryHandler(_repository);
 
-        var result = await commandHandler.Handle(command, CancellationToken.None);
+        var result = await queryHandler.Handle(query, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
         Assert.True(result.IsFailure);
