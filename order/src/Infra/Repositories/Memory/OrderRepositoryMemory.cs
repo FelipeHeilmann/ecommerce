@@ -1,5 +1,5 @@
 ﻿using Domain.Orders;
-namespace Infra.Repositories
+namespace Infra.Repositories.Memory
 {
     public class OrderRepositoryMemory : IOrderRepository
     {

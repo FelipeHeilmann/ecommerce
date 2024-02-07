@@ -2,7 +2,7 @@
 using Application.Orders.Model;
 using Domain.Customer;
 using Domain.Products;
-using Infra.Repositories;
+using Infra.Repositories.Memory;
 using Xunit;
 namespace Integration;
 

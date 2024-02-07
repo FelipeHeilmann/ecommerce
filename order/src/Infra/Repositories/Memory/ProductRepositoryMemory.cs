@@ -1,6 +1,6 @@
 ﻿using Domain.Products;
 
-namespace Infra.Repositories
+namespace Infra.Repositories.Memory
 {
     public class ProductRepositoryMemory : IProductRepository
     {

@@ -1,5 +1,5 @@
 ﻿using Domain.Customer;
-namespace Infra.Repositories
+namespace Infra.Repositories.Memory
 {
     public class CustomerRepositoryMemory : ICustomerRepository
     {

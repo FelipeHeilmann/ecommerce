@@ -15,7 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Abstractions\NewFolder\" />
     <Folder Include="Products\Query\" />
   </ItemGroup>
 
