@@ -13,7 +13,12 @@ namespace Infra.Repositories
         }
         public Task<Product?> GetByIdAsync(Guid id)
         {
-            return Task.FromResult(_context.ToList().FirstOrDefault(o => o.Id == id));
+            return Task.FromResult(_context.ToList().FirstOrDefault(p => p.Id == id));
+        }
+        public Task<ICollection<Product>> GetByIdsAsync(List<Guid> Ids)
+        {
+            var products = _context.Where(p => Ids.Contains(p.Id)).ToList();
+            return Task.FromResult<ICollection<Product>>(products);
         }
         public void Add(Product entity)
         {
@@ -22,7 +27,7 @@ namespace Infra.Repositories
 
         public void Update(Product entity)
         {
-            var index = _context.FindIndex(o => o.Id == entity.Id);
+            var index = _context.FindIndex(p => p.Id == entity.Id);
 
             if (index == -1)
             {

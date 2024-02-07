@@ -26,9 +26,9 @@ public class Order
         return new Order(Guid.NewGuid(), customerId, OrderStatus.Created, DateTime.Now, DateTime.Now);
     }
 
-    public LineItem AddItem(Product product, int quantity)
+    public LineItem AddItem(Guid productId, Money price ,int quantity)
     {
-        var lineItem = new LineItem(Guid.NewGuid(), product.Id, product.Price ,quantity, product);
+        var lineItem = new LineItem(Guid.NewGuid(), productId, price ,quantity);
 
         _itens.Add(lineItem);
 

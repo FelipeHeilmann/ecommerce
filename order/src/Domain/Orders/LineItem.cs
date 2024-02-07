@@ -8,15 +8,14 @@ public class LineItem
     public Guid ProductId { get; private set; }
     public Money Price { get; private set; }
     public int Quantity { get; private set; }
-    public Product Product { get; private set; }
+    public Product? Product { get; private set; } = null;
 
-    public LineItem(Guid guid, Guid productId, Money price, int quantity, Product product)
+    public LineItem(Guid guid, Guid productId, Money price, int quantity)
     {
         Id = guid;
         ProductId = productId;
         Price = price;
-        Quantity = quantity;
-        Product = product;
+        Quantity = quantity;    
     }
 
     public bool DeleteItem()

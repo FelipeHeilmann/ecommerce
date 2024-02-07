@@ -25,6 +25,8 @@ public class Product
         Category = category;
     }
 
+    public Product() { }
+
     public static Result<Product> Create(string name, string description, string imageUrl, string currency, double price, string skuString, Category category)
     {   
         var money = new Money(currency, price);
