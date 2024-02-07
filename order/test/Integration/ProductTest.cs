@@ -16,6 +16,7 @@ public class ProductTest
         _repository.Add(new Product(Guid.Parse("55b86726-d9fb-4745-b64a-66923b584cf2"), "Nome do produto", "Desricao", "Imagem", new Money("BRL", 50.00), Sku.Create("0001"), Guid.Parse("a7efe841-8e19-4fe8-afcd-e3742a3dacf4"), new Category(Guid.Parse("a7efe841-8e19-4fe8-afcd-e3742a3dacf4"), "categoria nome", "categoria descricao")));
         _repository.Add(new Product(Guid.Parse("88a98a97-882d-4194-a03f-0e804bea5ff5"), "Nome do produto", "Desricao", "Imagem", new Money("BRL", 50.00), Sku.Create("0001"), Guid.Parse("a7efe841-8e19-4fe8-afcd-e3742a3dacf4"), new Category(Guid.Parse("a7efe841-8e19-4fe8-afcd-e3742a3dacf4"), "categoria nome", "categoria descricao")));
         _repository.Add(new Product(Guid.Parse("d8872746-afce-471b-a0d8-3f2fd05eba87"), "Nome do produto", "Desricao", "Imagem", new Money("BRL", 50.00), Sku.Create("0001"), Guid.Parse("a7efe841-8e19-4fe8-afcd-e3742a3dacf4"), new Category(Guid.Parse("a7efe841-8e19-4fe8-afcd-e3742a3dacf4"), "categoria nome", "categoria descricao")));
+        _repository.Add(new Product(Guid.Parse("c65b5fab-018b-4471-a5a9-cd09af34b48c"), "Nome do produto", "Desricao", "Imagem", new Money("BRL", 50.00), Sku.Create("0001"), Guid.Parse("a7efe841-8e19-4fe8-afcd-e3742a3dacf4"), new Category(Guid.Parse("a7efe841-8e19-4fe8-afcd-e3742a3dacf4"), "categoria nome", "categoria descricao")));
     }
 
     [Fact]
@@ -108,5 +109,27 @@ public class ProductTest
         Assert.False(result.IsSuccess);
         Assert.True(result.IsFailure);
         Assert.Equal(ProductErrors.CategoryNotFound, result.Error);
+    }
+
+    [Fact]
+    public async Task Should_Delete_Product() 
+    {
+        var productId = Guid.Parse("c65b5fab-018b-4471-a5a9-cd09af34b48c");
+        var command = new DeleteProductCommand(productId);
+        var commandHandler = new DeleteProductCommandHandler(_repository);
+
+        var result = await commandHandler.Handle(command, CancellationToken.None);
+
+        var query = new GetProductByIdQuery(productId);
+        var queryHandler = new GetProductByIdQueryHandler(_repository);
+
+        var resultQuery = await queryHandler.Handle(query, CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        Assert.False(result.IsFailure);
+
+        Assert.False(resultQuery.IsSuccess);
+        Assert.True(resultQuery.IsFailure);
+        Assert.Equal(ProductErrors.ProductNotFound, resultQuery.Error);
     }
 }
