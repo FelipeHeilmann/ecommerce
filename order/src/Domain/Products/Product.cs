@@ -41,4 +41,25 @@ public class Product
 
         return new Product(Guid.NewGuid(), name, description, imageUrl, money, sku, category.Id ,category);
     }
+
+    public Result<Product> Update(string name, string description, string imageUrl, string currency, double price, string skuString, Category category)
+    {
+        var money = new Money(currency, price);
+        var sku = Sku.Create(skuString);
+
+        if (sku.IsFailure)
+        {
+            return Result.Failure<Product>(sku.Error);
+        }
+
+        Name = name;
+        Description = description;
+        ImageUrl = imageUrl;
+        CategoryId = Category.Id;
+        Category = category;
+        Sku = sku;
+        Price = money;
+        
+        return Result.Success(this);
+    }
 }
