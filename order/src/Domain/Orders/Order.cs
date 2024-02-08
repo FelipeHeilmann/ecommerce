@@ -1,4 +1,5 @@
 ﻿using Domain.Products;
+using Domain.Shared;
 
 namespace Domain.Orders;
 
@@ -28,7 +29,7 @@ public class Order
 
     public LineItem AddItem(Guid productId, Money price ,int quantity)
     {
-        var lineItem = new LineItem(Guid.NewGuid(), productId, price ,quantity);
+        var lineItem = new LineItem(Guid.NewGuid(), Id ,productId, price ,quantity);
 
         _itens.Add(lineItem);
 
@@ -38,17 +39,22 @@ public class Order
 
     }
 
-    public void RemoveItem(Guid lineItemId) 
+    public Result<LineItem> RemoveItem(Guid lineItemId) 
     {
-        if (HasOneItem()) return;
+        if (HasOneItem()) return Result.Failure<LineItem>(OrderErrors.OrderHasOneLineItem);
 
         var lineItem = _itens.FirstOrDefault(item => item.Id == lineItemId);
 
-        if (lineItem == null) return;
-
-        if(lineItem.DeleteItem()) _itens.Remove(lineItem);
-
+        if (lineItem == null) return Result.Failure<LineItem>(OrderErrors.LineItemNotFound);
+            
         UpdatedAt = DateTime.Now;
+
+        var deleted = lineItem.DeleteItem();
+        if (deleted) { 
+            _itens.Remove(lineItem);
+        }
+
+        return Result.Success(lineItem);
     }
 
     public double CalculateTotal()
@@ -60,6 +66,14 @@ public class Order
         }
 
         return total;
+    }
+
+    public void RestoreLineItens(ICollection<LineItem> lineItens)
+    {
+        foreach (var item in lineItens)
+        {
+            _itens.Add(item);
+        }
     }
 
     public void Process()
@@ -78,6 +92,7 @@ public class Order
 
         return itensTotal;
     }
-
     private bool HasOneItem() => _itens.Count == 1;
+
+    public record RemovedLineItem(bool Removed, LineItem LineItem); 
 }

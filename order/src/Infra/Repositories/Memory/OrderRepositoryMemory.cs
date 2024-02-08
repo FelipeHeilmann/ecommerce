@@ -9,10 +9,12 @@ namespace Infra.Repositories.Memory
         {
             return Task.FromResult<ICollection<Order>>(_context);
         }
+
         public Task<Order?> GetByIdAsync(Guid id)
         {
-            return Task.FromResult(_context.ToList().FirstOrDefault(o => o.Id == id));
+            return Task.FromResult(_context.FirstOrDefault(o => o.Id == id));
         }
+
         public void Add(Order entity)
         {
             _context.Add(entity);
@@ -28,8 +30,8 @@ namespace Infra.Repositories.Memory
             }
 
             _context[index] = entity;
-
         }
+
         public void Delete(Order entity)
         {
             _context.Remove(entity);

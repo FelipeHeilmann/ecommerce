@@ -1,4 +1,5 @@
 ﻿using Application.Orders.Command;
+using Application.Orders.Command.RemoveItem;
 using Application.Orders.Model;
 using Application.Orders.Query.GetById;
 using Domain.Customer;
@@ -24,9 +25,16 @@ public class OrderTest
         
         _productRepository.Add(new Product(Guid.Parse("9d9d284f-6b19-4b34-9e29-45c6d8f45bfa"), "Nome do produto", "Desricao", "Imagem", new Money("BRL", 60.00), Sku.Create("0003"), Guid.Parse("f3b205c3-552d-4fd9-b10e-6414086910b0"), new Category(Guid.Parse("f3b205c3-552d-4fd9-b10e-6414086910b0"), "categoria nome", "categoria descricao")));
         _productRepository.Add(new Product(Guid.Parse("20caccf1-6a2b-40fb-b9da-1efbca3f734f"), "Nome do produto", "Desricao", "Imagem", new Money("BRL", 100.00), Sku.Create("0003"), Guid.Parse("f3b205c3-552d-4fd9-b10e-6414086910b0"), new Category(Guid.Parse("f3b205c3-552d-4fd9-b10e-6414086910b0"), "categoria nome", "categoria descricao")));
-        _orderRepository.Add(new Order(Guid.Parse("c3a9083c-a259-4516-8842-a80b40f8c39f"), Guid.Parse("f3b205c3-552d-4fd9-b10e-6414086910b0"), OrderStatus.Created, DateTime.Now, DateTime.Now));
-        _orderRepository.AddLineItem(new LineItem(Guid.Parse("efd7d188-b573-46ba-aa2f-6fd139d1813a"), Guid.Parse("c3a9083c-a259-4516-8842-a80b40f8c39f"), Guid.Parse("9d9d284f-6b19-4b34-9e29-45c6d8f45bfa"), new Money("BRL", 60.00), 2));
-        _orderRepository.AddLineItem(new LineItem(Guid.Parse("27046ada-aee4-4325-8bc5-2affe5cf9627"), Guid.Parse("c3a9083c-a259-4516-8842-a80b40f8c39f"), Guid.Parse("20caccf1-6a2b-40fb-b9da-1efbca3f734f"), new Money("BRL", 100.00), 1));
+        var order = new Order(Guid.Parse("c3a9083c-a259-4516-8842-a80b40f8c39f"), Guid.Parse("f3b205c3-552d-4fd9-b10e-6414086910b0"), OrderStatus.Created, DateTime.Now, DateTime.Now);
+        var lineItens = new List<LineItem>()
+        {
+            new LineItem(Guid.Parse("efd7d188-b573-46ba-aa2f-6fd139d1813a"), Guid.Parse("c3a9083c-a259-4516-8842-a80b40f8c39f"), Guid.Parse("9d9d284f-6b19-4b34-9e29-45c6d8f45bfa"), new Money("BRL", 60.00), 2),
+            new LineItem(Guid.Parse("27046ada-aee4-4325-8bc5-2affe5cf9627"), Guid.Parse("c3a9083c-a259-4516-8842-a80b40f8c39f"), Guid.Parse("20caccf1-6a2b-40fb-b9da-1efbca3f734f"), new Money("BRL", 100.00), 1)
+        };
+
+        order.RestoreLineItens(lineItens);
+
+        _orderRepository.Add(order);
     }
 
     [Fact]
@@ -61,9 +69,9 @@ public class OrderTest
        
         var query = new GetOrderByIdQuery(orderId);
 
-        var commandHandler = new GetOrderByIdQueryHandler(_orderRepository);
+        var queryHandler = new GetOrderByIdQueryHandler(_orderRepository);
 
-        var result = await commandHandler.Handle(query, CancellationToken.None);
+        var result = await queryHandler.Handle(query, CancellationToken.None);
 
         var order = result.Data;
 
@@ -85,5 +93,24 @@ public class OrderTest
 
         Assert.False(result.IsSuccess);
         Assert.True(result.IsFailure);
+    }
+
+    [Fact]
+    public async Task Should_Remove_Line_Item_From_Order()
+    {
+        var orderId = Guid.Parse("c3a9083c-a259-4516-8842-a80b40f8c39f");
+        var lineItemId = Guid.Parse("efd7d188-b573-46ba-aa2f-6fd139d1813a");
+
+        var command = new RemoveLineItemCommand(orderId,lineItemId);
+
+        var commandHandler = new RemoveLineItemCommandHandler(_orderRepository);
+
+        var result = await commandHandler.Handle(command, CancellationToken.None);
+        
+        var order = result.Data;
+
+        Assert.True(result.IsSuccess);
+        Assert.False(result.IsFailure);
+        Assert.Equal(60 + 100, order.CalculateTotal());
     }
 }
