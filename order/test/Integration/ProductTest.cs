@@ -2,6 +2,7 @@
 using Application.Products.Model;
 using Application.Products.Query;
 using Domain.Products;
+using Domain.Shared;
 using Infra.Repositories.Memory;
 using Xunit;
 
@@ -131,5 +132,19 @@ public class ProductTest
         Assert.False(resultQuery.IsSuccess);
         Assert.True(resultQuery.IsFailure);
         Assert.Equal(ProductErrors.ProductNotFound, resultQuery.Error);
+    }
+
+    [Fact]
+    public async Task Should_Get_Produc_List() 
+    {
+        var query = new GetAllProductsQuery();
+
+        var queryHandler = new GetAllProductsQueryHandler(_repository);
+
+        var result = await queryHandler.Handle(query, CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        Assert.False(result.IsFailure);
+        Assert.True(result.Data.Count > 1);
     }
 }
