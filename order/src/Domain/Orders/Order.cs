@@ -6,7 +6,7 @@ namespace Domain.Orders;
 public class Order
 {
     public Guid Id { get; private set; }
-    public Guid CustomerId { get; private set; }
+    public Guid? CustomerId { get; private set; } = null;
     public OrderStatus Status { get; private set; }
     public IReadOnlyCollection<LineItem> Itens => _itens.ToList();
     private readonly ICollection<LineItem> _itens = new List<LineItem>();
@@ -76,16 +76,24 @@ public class Order
         }
     }
 
-    public void Cancel()
+    public Result Cancel()
     {
+        if (CustomerId == null) return Result.Failure(OrderErrors.OrderDoesnotHaveCustomerId);
         Status = OrderStatus.Canceled;
         UpdatedAt = DateTime.Now;
+
+        return Result.Success();
     }
 
-    public void Process()
+    public Result Process(Guid customerId)
     {
+        if(Status != OrderStatus.Created) return Result.Failure(OrderErrors.OrderStatusCouldNotBeProccessed);
         UpdatedAt = DateTime.Now;
         Status = OrderStatus.WaitingPayment;
+        CustomerId = customerId;
+
+        return Result.Success();
+
     }
 
     public int CountItens()
@@ -99,6 +107,4 @@ public class Order
         return itensTotal;
     }
     private bool HasOneItem() => _itens.Count == 1;
-
-    public record RemovedLineItem(bool Removed, LineItem LineItem); 
 }
