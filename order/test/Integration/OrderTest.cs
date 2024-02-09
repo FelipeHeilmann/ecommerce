@@ -1,6 +1,7 @@
 ﻿using Application.Orders.Command;
 using Application.Orders.Command.RemoveItem;
 using Application.Orders.Model;
+using Application.Orders.Query.GetByCustomerId;
 using Application.Orders.Query.GetById;
 using Domain.Customer;
 using Domain.Orders;
@@ -112,5 +113,21 @@ public class OrderTest
         Assert.True(result.IsSuccess);
         Assert.False(result.IsFailure);
         Assert.Equal(60 + 100, order.CalculateTotal());
+    }
+
+    [Fact]
+    public async Task Should_Get_Orders_By_CustomerId()
+    {
+        var customerId = Guid.Parse("f3b205c3-552d-4fd9-b10e-6414086910b0");
+
+        var query = new GetOrdersByCustomerQuery(customerId);
+
+        var queryHandler = new GetOrdersByCustomerIdQueryHandler(_orderRepository);
+
+        var result = await queryHandler.Handle(query, CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        Assert.False(result.IsFailure);
+        Assert.Equal(1, result.Data.Count);
     }
 }

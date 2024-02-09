@@ -15,6 +15,11 @@ namespace Infra.Repositories.Memory
             return Task.FromResult(_context.FirstOrDefault(o => o.Id == id));
         }
 
+        public Task<ICollection<Order>> GetOrdersByCustomerId(Guid customerId)
+        {
+            return Task.FromResult<ICollection<Order>>(_context.Where(o => o.CustomerId == customerId).ToList());
+        }
+
         public void Add(Order entity)
         {
             _context.Add(entity);
