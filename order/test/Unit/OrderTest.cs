@@ -17,9 +17,7 @@ public class OrderTest
 
         var customer = Customer.Create("Felipe Heilmann", "felipeheilmannm@gmail.com", new DateTime(2004, 6, 11));
 
-        var customerId = customer.Data.Id;
-
-        var order = Order.Create(customerId);
+        var order = Order.Create();
 
         order.AddItem(product1.Id, product1.Price, 2);
         order.AddItem(product2.Id, product2.Price, 1);
@@ -40,9 +38,7 @@ public class OrderTest
 
         var customer = Customer.Create("Felipe Heilmann", "felipeheilmannm@gmail.com", new DateTime(2004, 6, 11));
 
-        var customerId = customer.Data.Id;
-
-        var order = Order.Create(customerId);
+        var order = Order.Create();
 
         var lineItem1 = order.AddItem(product1.Id, product1.Price ,2);
         var lineItem2 = order.AddItem(product2.Id, product2.Price, 1);
