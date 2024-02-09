@@ -4,7 +4,7 @@ namespace Infra.Data;
 
 public class UnitOfWorkMemory : IUnitOfWork
 {
-    public Task SaveChangesAsync()
+    public Task SaveChangesAsync(CancellationToken cancellationToken)
     {
         return Task.CompletedTask;
     }

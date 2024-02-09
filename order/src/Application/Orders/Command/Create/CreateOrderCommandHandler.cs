@@ -27,7 +27,7 @@ public class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, Res
 
         foreach (var item in orderItemList)
         {
-            var product = await _productRepository.GetByIdAsync(item.ProductId);
+            var product = await _productRepository.GetByIdAsync(item.ProductId, cancellationToken);
             if(product == null)
             {
                 return Result.Failure<Order>(ProductErrors.ProductNotFound);
@@ -37,7 +37,7 @@ public class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, Res
 
         _orderRepository.Add(order);
 
-        await _unitOfWork.SaveChangesAsync();
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success(order);
     }

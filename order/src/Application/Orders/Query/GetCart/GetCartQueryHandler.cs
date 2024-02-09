@@ -15,7 +15,7 @@ public class GetCartQueryHandler : IQueryHandler<GetCartQuery, Order>
 
     public async Task<Result<Order>> Handle(GetCartQuery query, CancellationToken cancellationToken)
     {
-        var orders = await _repository.GetAllAsync();
+        var orders = await _repository.GetAllAsync(cancellationToken);
 
         var cart = orders.FirstOrDefault(o => o.Status == OrderStatus.Created);
 

@@ -28,7 +28,7 @@ public class ProductTest
         var catagoryId = Guid.Parse("de1ab44a-ef05-42da-a0e8-6137368018fc");
         var request = new CreateProductModel("Produto1", "Meu produto", "BRL", 70.0, "path", "sku", catagoryId);
         var command = new CreateProductCommand(request);
-        var commandHandler = new CreateProductCommandHandler(_repository);
+        var commandHandler = new CreateProductCommandHandler(_repository, _unitOfWork);
 
         var result = await commandHandler.Handle(command, CancellationToken.None);
 
@@ -119,7 +119,7 @@ public class ProductTest
     {
         var productId = Guid.Parse("c65b5fab-018b-4471-a5a9-cd09af34b48c");
         var command = new DeleteProductCommand(productId);
-        var commandHandler = new DeleteProductCommandHandler(_repository);
+        var commandHandler = new DeleteProductCommandHandler(_repository, _unitOfWork);
 
         var result = await commandHandler.Handle(command, CancellationToken.None);
 

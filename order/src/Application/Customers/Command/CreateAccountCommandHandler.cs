@@ -31,7 +31,7 @@ public class CreateAccountCommandHandler : ICommandHandler<CreateAccountCommand,
 
         _repository.Add(customer);
 
-        await _unitOfWork.SaveChangesAsync();
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success<Customer>(result);
     }

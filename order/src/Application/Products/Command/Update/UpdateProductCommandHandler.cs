@@ -19,11 +19,11 @@ public class UpdateProductCommandHandler : ICommandHandler<UpdateProductCommand,
     public async Task<Result<Product>> Handle(UpdateProductCommand command, CancellationToken cancellationToken)
     {
         var request = command.request;
-        var product = await _repository.GetByIdAsync(request.ProductId);
+        var product = await _repository.GetByIdAsync(request.ProductId, cancellationToken);
 
         if (product == null) return Result.Failure<Product>(ProductErrors.ProductNotFound);
 
-        var category = await _repository.GetCategoryById(request.CategoryId);
+        var category = await _repository.GetCategoryById(request.CategoryId, cancellationToken);
 
         if (category == null) return Result.Failure<Product>(ProductErrors.CategoryNotFound);
 
@@ -33,7 +33,7 @@ public class UpdateProductCommandHandler : ICommandHandler<UpdateProductCommand,
 
         _repository.Update(product);
 
-        await _unitOfWork.SaveChangesAsync();
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success(result.Data);
     }

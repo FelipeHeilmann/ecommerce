@@ -5,11 +5,11 @@ namespace Infra.Repositories.Memory
     {
         private readonly List<Customer> _context = new();
 
-        public Task<ICollection<Customer>> GetAllAsync()
+        public Task<ICollection<Customer>> GetAllAsync(CancellationToken cancellationToken)
         {
             return Task.FromResult<ICollection<Customer>>(_context);
         }
-        public Task<Customer?> GetByIdAsync(Guid id)
+        public Task<Customer?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
             return Task.FromResult(_context.ToList().FirstOrDefault(o => o.Id == id));
         }

@@ -4,7 +4,7 @@ namespace Domain.Orders;
 
 public interface IOrderRepository : IRepositoryBase<Order>
 {
-    public Task<ICollection<Order>> GetOrdersByCustomerId(Guid CustomerId);
+    public Task<ICollection<Order>> GetOrdersByCustomerId(Guid CustomerId, CancellationToken cancellationToken);
 
 }
 

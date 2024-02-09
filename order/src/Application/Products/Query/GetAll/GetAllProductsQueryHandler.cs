@@ -15,7 +15,7 @@ public class GetAllProductsQueryHandler : IQueryHandler<GetAllProductsQuery, ICo
 
     public async Task<Result<ICollection<Product>>> Handle(GetAllProductsQuery query, CancellationToken cancellationToken)
     {
-        var products = await _repository.GetAllAsync();
+        var products = await _repository.GetAllAsync(cancellationToken);
 
         return products.ToList();
     }
