@@ -11,5 +11,6 @@ public static class CustomerErrors
     public static Error NameFormat => Error.Validation("Name.Invalid", "Invalid name format");
     public static Error InvalidAge => Error.Validation("Invalid.Age", "Age should be greatter than 18 years");
     public static Error CustomerInvalidCredencials => Error.NotFound("Customer.Invalid.Credentials", "Invalid or/and email");
+    public static Error EmailAlredyInUse => Error.Validation("Email.In.Use", "This is email is already in use");
 }
 

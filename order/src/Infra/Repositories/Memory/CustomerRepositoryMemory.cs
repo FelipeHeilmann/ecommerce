@@ -17,11 +17,14 @@ namespace Infra.Repositories.Memory
         {
             return Task.FromResult(_context.ToList().FirstOrDefault(c => c.Email.Value == email));
         }
+        public Task<bool> IsEmailUsedAsync(string email)
+        {
+            return Task.FromResult(_context.Any(c => c.Email.Value == email));
+        }
         public void Add(Customer entity)
         {
             _context.Add(entity);
         }
-
         public void Update(Customer entity)
         {
             var index = _context.FindIndex(c => c.Id == entity.Id);
@@ -38,7 +41,6 @@ namespace Infra.Repositories.Memory
         {
             _context.Remove(entity);
         }
-
         public Task<Customer?> GetCategoryById(Guid id)
         {
             return Task.FromResult(_context.FirstOrDefault(c => c.Id == id));
