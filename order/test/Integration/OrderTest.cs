@@ -1,4 +1,5 @@
 ﻿using Application.Orders.Command;
+using Application.Orders.Command.Cancel;
 using Application.Orders.Command.RemoveItem;
 using Application.Orders.Model;
 using Application.Orders.Query.GetByCustomerId;
@@ -129,5 +130,19 @@ public class OrderTest
         Assert.True(result.IsSuccess);
         Assert.False(result.IsFailure);
         Assert.Equal(1, result.Data.Count);
+    }
+
+    [Fact]
+    public async Task Should_Cancel_Order()
+    {
+        var orderId = Guid.Parse("c3a9083c-a259-4516-8842-a80b40f8c39f");
+        var command = new CancelOrderCommand(orderId);
+        var commandHandler = new CancelOrderCommandHandler(_orderRepository);
+
+        var result = await commandHandler.Handle(command, CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        Assert.False(result.IsFailure);
+        Assert.Equal(OrderStatus.Canceled, result.Data.Status);
     }
 }

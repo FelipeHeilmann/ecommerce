@@ -76,6 +76,12 @@ public class Order
         }
     }
 
+    public void Cancel()
+    {
+        Status = OrderStatus.Canceled;
+        UpdatedAt = DateTime.Now;
+    }
+
     public void Process()
     {
         UpdatedAt = DateTime.Now;
