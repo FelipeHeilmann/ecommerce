@@ -15,7 +15,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Integration", "test\Integra
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infra", "src\Infra\Infra.csproj", "{DC110053-FDF5-4DC4-A709-C047539FB7E6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unit", "test\Unit\Unit.csproj", "{A1A73826-FCBC-4E55-A6FF-465E076C2C61}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Unit", "test\Unit\Unit.csproj", "{A1A73826-FCBC-4E55-A6FF-465E076C2C61}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D3937006-6227-4598-8804-85D57C813645}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
