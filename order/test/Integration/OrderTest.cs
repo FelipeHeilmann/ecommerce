@@ -4,6 +4,7 @@ using Application.Orders.Command.RemoveItem;
 using Application.Orders.Model;
 using Application.Orders.Query.GetByCustomerId;
 using Application.Orders.Query.GetById;
+using Application.Orders.Query.GetCart;
 using Domain.Customer;
 using Domain.Orders;
 using Domain.Products;
@@ -130,6 +131,19 @@ public class OrderTest
         Assert.True(result.IsSuccess);
         Assert.False(result.IsFailure);
         Assert.Equal(1, result.Data.Count);
+    }
+
+    [Fact]
+    public async Task Should_Get_Cart()
+    {
+        var query = new GetCartQuery();
+        var querHandler = new GetCartQueryHandler(_orderRepository);
+
+        var result = await querHandler.Handle(query, CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        Assert.False(result.IsFailure);
+        Assert.Equal(OrderStatus.Created, result.Data.Status);
     }
 
     [Fact]
