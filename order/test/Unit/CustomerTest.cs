@@ -11,8 +11,9 @@ public class CustomerTest
         var name = "Felipe Heilmann";
         var email = "felipeheilmannm@gmail.com";
         var birthDate = new DateTime(2004, 6, 2);
+        var password = "senha";
 
-        var custumer = Customer.Create(name, email, birthDate);
+        var custumer = Customer.Create(name, email, password, birthDate);
 
         Assert.True(custumer.IsSuccess);
         Assert.False(custumer.IsFailure);
@@ -24,8 +25,9 @@ public class CustomerTest
         var name = "Felipe Heilmann";
         var email = "felipeheilmannm@gmail.com";
         var birthDate = new DateTime(2004, 6, 2);
+        var password = "senha";
 
-        var custumer = Customer.Create(null, email, birthDate);
+        var custumer = Customer.Create(null, email, password, birthDate);
 
         Assert.False(custumer.IsSuccess);
         Assert.True(custumer.IsFailure);
@@ -38,8 +40,9 @@ public class CustomerTest
         var name = "Felipe Heilmann";
         var email = "felipeheilmannm@gmail.com";
         var birthDate = new DateTime(2004, 6, 2);
+        var password = "senha";
 
-        var custumer = Customer.Create(null, email, birthDate);
+        var custumer = Customer.Create(null, email,password,birthDate);
 
         Assert.False(custumer.IsSuccess);
         Assert.True(custumer.IsFailure);
@@ -52,8 +55,9 @@ public class CustomerTest
         var name = "Felipe";
         var email = "felipeheilmannm@gmail.com";
         var birthDate = new DateTime(2004, 6, 2);
+        var password = "senha";
 
-        var custumer = Customer.Create(name, email, birthDate);
+        var custumer = Customer.Create(name, email, password ,birthDate);
 
         Assert.False(custumer.IsSuccess);
         Assert.True(custumer.IsFailure);
@@ -66,8 +70,9 @@ public class CustomerTest
         var name = "Felipe Heilmann";
         var email = "felipe.com";
         var birthDate = new DateTime(2004, 6, 2);
+        var password = "senha";
 
-        var custumer = Customer.Create(name, email, birthDate);
+        var custumer = Customer.Create(name, email, password ,birthDate);
 
         Assert.False(custumer.IsSuccess);
         Assert.True(custumer.IsFailure);
@@ -80,8 +85,9 @@ public class CustomerTest
         var name = "Felipe Heilmann";
         var email = "felipeheilmannm@gmail.com";
         var birthDate = new DateTime(2020, 6, 2);
+        var password = "senha";
 
-        var custumer = Customer.Create(name, email, birthDate);
+        var custumer = Customer.Create(name, email, password ,birthDate);
 
         Assert.False(custumer.IsSuccess);
         Assert.True(custumer.IsFailure);

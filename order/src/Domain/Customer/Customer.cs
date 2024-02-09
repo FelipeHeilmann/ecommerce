@@ -4,22 +4,23 @@ namespace Domain.Customer;
 
 public class Customer
 {
-    public Guid Id { get; set; }
-    public Name Name { get; set; }
-    public Email Email { get; set; }
-    public DateTime DateBirth { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public Guid Id { get; private set; }
+    public Name Name { get; private set; }
+    public Email Email { get; private set; }
+    public string Password { get; private set; }
+    public DateTime BirhDate { get; private set; }
+    public DateTime CreatedAt { get; private set; }
 
-    public Customer(Guid guid, Name name, Email email, DateTime dateBirth, DateTime createdAt)
+    public Customer(Guid guid, Name name, Email email, string Password ,DateTime birthDate, DateTime createdAt)
     {
         Id = guid;
         Name = name;
         Email = email;
-        DateBirth = dateBirth;
+        BirhDate = birthDate;
         CreatedAt = createdAt;
     }
 
-    public static Result<Customer> Create(string nameString, string emailString, DateTime dateBirth) 
+    public static Result<Customer> Create(string nameString, string emailString, string password ,DateTime birthDate) 
     {
         var name = Name.Create(nameString);
         if (name.IsFailure) return Result.Failure<Customer>(name.Error);
@@ -27,8 +28,8 @@ public class Customer
         var email = Email.Create(emailString);
         if (email.IsFailure) return Result.Failure<Customer>(email.Error);
 
-        if ((DateTime.Now - dateBirth).TotalDays < 18 * 365.25) return Result.Failure<Customer>(CustomerErrors.InvalidAge);
-        return new Customer(Guid.NewGuid(), name, email, dateBirth, DateTime.Now);
+        if ((DateTime.Now - birthDate).TotalDays < 18 * 365.25) return Result.Failure<Customer>(CustomerErrors.InvalidAge);
+        return new Customer(Guid.NewGuid(), name, email, password, birthDate, DateTime.Now);
 
     }
 }
