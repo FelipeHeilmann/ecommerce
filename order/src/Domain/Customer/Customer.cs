@@ -11,13 +11,14 @@ public class Customer
     public DateTime BirhDate { get; private set; }
     public DateTime CreatedAt { get; private set; }
 
-    public Customer(Guid guid, Name name, Email email, string Password ,DateTime birthDate, DateTime createdAt)
+    public Customer(Guid guid, Name name, Email email, string password ,DateTime birthDate, DateTime createdAt)
     {
         Id = guid;
         Name = name;
         Email = email;
         BirhDate = birthDate;
         CreatedAt = createdAt;
+        Password = password;
     }
 
     public static Result<Customer> Create(string nameString, string emailString, string password ,DateTime birthDate) 

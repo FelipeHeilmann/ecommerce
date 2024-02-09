@@ -2,4 +2,7 @@
 
 namespace Domain.Customer;
 
-public interface ICustomerRepository :IRepositoryBase<Customer> {}
+public interface ICustomerRepository :IRepositoryBase<Customer> 
+{
+    Task<Customer?> GetByEmailAsync(string email, CancellationToken cancellationToken);
+}

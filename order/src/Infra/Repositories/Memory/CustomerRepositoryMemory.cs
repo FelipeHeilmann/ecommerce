@@ -11,7 +11,11 @@ namespace Infra.Repositories.Memory
         }
         public Task<Customer?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
-            return Task.FromResult(_context.ToList().FirstOrDefault(o => o.Id == id));
+            return Task.FromResult(_context.ToList().FirstOrDefault(c => c.Id == id));
+        }
+        public Task<Customer?> GetByEmailAsync(string email, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(_context.ToList().FirstOrDefault(c => c.Email.Value == email));
         }
         public void Add(Customer entity)
         {
@@ -20,7 +24,7 @@ namespace Infra.Repositories.Memory
 
         public void Update(Customer entity)
         {
-            var index = _context.FindIndex(o => o.Id == entity.Id);
+            var index = _context.FindIndex(c => c.Id == entity.Id);
 
             if (index == -1)
             {
