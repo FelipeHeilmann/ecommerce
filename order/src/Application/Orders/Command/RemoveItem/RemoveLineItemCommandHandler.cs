@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions;
+using Application.Data;
 using Domain.Orders;
 using Domain.Shared;
 
@@ -7,10 +8,12 @@ namespace Application.Orders.Command.RemoveItem;
 public class RemoveLineItemCommandHandler : ICommandHandler<RemoveLineItemCommand, Result<Order>>
 {
     private readonly IOrderRepository _repository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public RemoveLineItemCommandHandler(IOrderRepository repository)
+    public RemoveLineItemCommandHandler(IOrderRepository repository, IUnitOfWork unitOfWork)
     {
         _repository = repository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<Result<Order>> Handle(RemoveLineItemCommand command, CancellationToken cancellationToken)
@@ -22,7 +25,10 @@ public class RemoveLineItemCommandHandler : ICommandHandler<RemoveLineItemComman
         var removed = order.RemoveItem(command.LineItemId);
 
         if(removed.IsFailure) return Result.Failure<Order>(removed.Error);
+
         _repository.Update(order);
+
+        await _unitOfWork.SaveChangesAsync();
 
         return Result.Success(order);
     }

@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions;
+using Application.Data;
 using Domain.Products;
 using Domain.Shared;
 
@@ -7,10 +8,12 @@ namespace Application.Products.Command;
 public class UpdateProductCommandHandler : ICommandHandler<UpdateProductCommand, Result<Product>>
 {
     private readonly IProductRepository _repository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public UpdateProductCommandHandler(IProductRepository repository)
+    public UpdateProductCommandHandler(IProductRepository repository, IUnitOfWork unitOfWork)
     {
         _repository = repository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<Result<Product>> Handle(UpdateProductCommand command, CancellationToken cancellationToken)
@@ -27,6 +30,10 @@ public class UpdateProductCommandHandler : ICommandHandler<UpdateProductCommand,
         var result = product.Update(request.Name, request.Description, request.ImageUrl, request.Currency, request.Price, request.Sku, category);
 
         if(result.IsFailure) return Result.Failure<Product>(result.Error);
+
+        _repository.Update(product);
+
+        await _unitOfWork.SaveChangesAsync();
 
         return Result.Success(result.Data);
     }

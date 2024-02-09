@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions;
 using Application.Customers.Services;
+using Application.Data;
 using Domain.Customer;
 using Domain.Shared;
 
@@ -8,13 +9,15 @@ namespace Application.Customers.Command;
 public class CreateAccountCommandHandler : ICommandHandler<CreateAccountCommand, Result<Customer>>
 {
     private readonly ICustomerRepository _repository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public CreateAccountCommandHandler(ICustomerRepository repository)
+    public CreateAccountCommandHandler(ICustomerRepository repository, IUnitOfWork unitOfWork)
     {
         _repository = repository;
+        _unitOfWork = unitOfWork;
     }
 
-    public Task<Result<Customer>> Handle(CreateAccountCommand command, CancellationToken cancellationToken)
+    public async Task<Result<Customer>> Handle(CreateAccountCommand command, CancellationToken cancellationToken)
     {
         var request = command.request;
 
@@ -22,12 +25,14 @@ public class CreateAccountCommandHandler : ICommandHandler<CreateAccountCommand,
 
         var result = Customer.Create(request.Name, request.Email, hashedPassword, request.birthDate);
 
-        if(result.IsFailure) return Task.FromResult(Result.Failure<Customer>(result));
+        if(result.IsFailure) return Result.Failure<Customer>(result);
 
         var customer = result.Data;
 
         _repository.Add(customer);
 
-        return Task.FromResult(Result.Success<Customer>(result));
+        await _unitOfWork.SaveChangesAsync();
+
+        return Result.Success<Customer>(result);
     }
 }

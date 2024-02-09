@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions;
+using Application.Data;
 using Domain.Orders;
 using Domain.Products;
 using Domain.Shared;
@@ -9,18 +10,18 @@ public class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, Res
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IProductRepository _productRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public CreateOrderCommandHandler(IOrderRepository orderRepository, IProductRepository productRepository)
+    public CreateOrderCommandHandler(IOrderRepository orderRepository, IProductRepository productRepository, IUnitOfWork unitOfWork)
     {
         _orderRepository = orderRepository;
         _productRepository = productRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<Result<Order>> Handle(CreateOrderCommand command, CancellationToken cancellationToken)
     {
         var orderItemList = command.request.OrderItens;
-
-        var customerId = command.request.CustomerId;
 
         var order = Order.Create();
 
@@ -35,6 +36,8 @@ public class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, Res
         }
 
         _orderRepository.Add(order);
+
+        await _unitOfWork.SaveChangesAsync();
 
         return Result.Success(order);
     }

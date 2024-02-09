@@ -3,6 +3,7 @@ using Application.Products.Model;
 using Application.Products.Query;
 using Domain.Products;
 using Domain.Shared;
+using Infra.Data;
 using Infra.Repositories.Memory;
 using Xunit;
 
@@ -11,6 +12,7 @@ namespace Integration;
 public class ProductTest
 {
     private readonly ProductRepositoryMemory _repository = new();
+    private readonly UnitOfWorkMemory _unitOfWork =  new();
 
     public ProductTest() 
     {
@@ -68,7 +70,7 @@ public class ProductTest
         var productId = Guid.Parse("d8872746-afce-471b-a0d8-3f2fd05eba87");
         var request = new UpdateProductModel(productId, "Nome Atualizado", "Descricap atualizando", "BRL", 90.0, "path", "sku", catagoryId);
         var command = new UpdateProductCommand(request);
-        var commandHandler = new UpdateProductCommandHandler(_repository);
+        var commandHandler = new UpdateProductCommandHandler(_repository, _unitOfWork);
 
         var result = await commandHandler.Handle(command, CancellationToken.None);
 
@@ -85,7 +87,7 @@ public class ProductTest
         var productId = Guid.Parse("79f792d3-a213-4acc-8f78-266c1b666a56");
         var request = new UpdateProductModel(productId, "Nome Atualizado", "Descricap atualizando", "BRL", 90.0, "path", "sku", catagoryId);
         var command = new UpdateProductCommand(request);
-        var commandHandler = new UpdateProductCommandHandler(_repository);
+        var commandHandler = new UpdateProductCommandHandler(_repository, _unitOfWork);
 
         var result = await commandHandler.Handle(command, CancellationToken.None);
 
@@ -102,7 +104,7 @@ public class ProductTest
         var productId = Guid.Parse("d8872746-afce-471b-a0d8-3f2fd05eba87");
         var request = new UpdateProductModel(productId, "Nome Atualizado", "Descricap atualizando", "BRL", 90.0, "path", "sku", catagoryId);
         var command = new UpdateProductCommand(request);
-        var commandHandler = new UpdateProductCommandHandler(_repository);
+        var commandHandler = new UpdateProductCommandHandler(_repository, _unitOfWork);
 
         var result = await commandHandler.Handle(command, CancellationToken.None);
 

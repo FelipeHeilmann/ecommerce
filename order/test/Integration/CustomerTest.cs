@@ -1,5 +1,7 @@
 ﻿using Application.Customers.Command;
 using Application.Customers.Model;
+using Application.Data;
+using Infra.Data;
 using Infra.Repositories.Memory;
 using Xunit;
 
@@ -8,6 +10,7 @@ namespace Integration;
 public class CustomerTest
 {
     private readonly CustomerRepositoryMemory _customerRepository = new();
+    private readonly UnitOfWorkMemory _unitOfWork = new UnitOfWorkMemory();
     [Fact]
     public async Task Should_Create_A_Customer()
     {
@@ -20,7 +23,7 @@ public class CustomerTest
 
         var command = new CreateAccountCommand(request);
 
-        var commandHandler = new CreateAccountCommandHandler(_customerRepository);
+        var commandHandler = new CreateAccountCommandHandler(_customerRepository, _unitOfWork);
 
         var result = await commandHandler.Handle(command, CancellationToken.None);
 
