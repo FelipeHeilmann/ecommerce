@@ -23,7 +23,7 @@ public class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, Res
     {
         var orderItemList = command.request.OrderItens;
 
-        var order = Order.Create();
+        var order = Order.Create(command.request.CustomerId);
 
         foreach (var item in orderItemList)
         {

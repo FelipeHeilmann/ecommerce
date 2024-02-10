@@ -6,23 +6,14 @@ namespace Domain.Orders;
 public class Order
 {
     public Guid Id { get; private set; }
-    public Guid? CustomerId { get; private set; }
+    public Guid CustomerId { get; private set; }
     public OrderStatus Status { get; private set; }
     public IReadOnlyCollection<LineItem> Itens => _itens.ToList();
     private readonly ICollection<LineItem> _itens = new List<LineItem>();
     public DateTime CreatedAt { get; private set; }
     public DateTime UpdatedAt { get; private set; }
 
-    public Order(Guid id, OrderStatus status, DateTime createdAt, DateTime updatedAt)
-    {
-        Id = id;
-        CustomerId = null;
-        Status = status;
-        CreatedAt = createdAt;
-        UpdatedAt = updatedAt;
-    }
-
-    public Order(Guid id, Guid customerId, OrderStatus status, DateTime createdAt, DateTime updatedAt)
+    public Order(Guid id, Guid customerId ,OrderStatus status, DateTime createdAt, DateTime updatedAt)
     {
         Id = id;
         CustomerId = customerId;
@@ -31,9 +22,9 @@ public class Order
         UpdatedAt = updatedAt;
     }
 
-    public static Order Create()
+    public static Order Create(Guid customerId)
     {
-        return new Order(Guid.NewGuid(), OrderStatus.Created, DateTime.Now, DateTime.Now);
+        return new Order(Guid.NewGuid(), customerId,OrderStatus.Created, DateTime.Now, DateTime.Now);
     }
 
     public LineItem AddItem(Guid productId, Money price ,int quantity)
