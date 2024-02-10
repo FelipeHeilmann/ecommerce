@@ -21,7 +21,7 @@ public class CreateAccountCommandHandler : ICommandHandler<CreateAccountCommand,
     {
         var request = command.request;
 
-        var emailAreadyUsed = await _repository.IsEmailUsedAsync(request.Email);
+        var emailAreadyUsed = await _repository.IsEmailUsedAsync(request.Email, cancellationToken);
 
         if(emailAreadyUsed) return Result.Failure<Customer>(CustomerErrors.EmailAlredyInUse);
 
