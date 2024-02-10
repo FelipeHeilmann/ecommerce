@@ -5,13 +5,13 @@ namespace Infra.Repositories.Memory
     public class ProductRepositoryMemory : IProductRepository
     {
         private readonly List<Product> _context = new();
-        private readonly List<Category> _categoryContext = new() { new Category(Guid.Parse("de1ab44a-ef05-42da-a0e8-6137368018fc"), "Descricao", "Nome") };
+        private readonly List<Category> _categoryContext = new();
 
-        public Task<ICollection<Product>> GetAllAsync(CancellationToken cancellationToken)
+        public Task<ICollection<Product>> GetAllAsync(CancellationToken cancellationToken, string? include = null)
         {
             return Task.FromResult<ICollection<Product>>(_context);
         }
-        public Task<Product?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+        public Task<Product?> GetByIdAsync(Guid id, CancellationToken cancellationToken, string? include = null)
         {
             return Task.FromResult(_context.ToList().FirstOrDefault(p => p.Id == id));
         }
@@ -42,9 +42,5 @@ namespace Infra.Repositories.Memory
             _context.Remove(entity);
         }
 
-        public Task<Category?> GetCategoryById(Guid id, CancellationToken cancellationToken)
-        {
-            return Task.FromResult(_categoryContext.FirstOrDefault(c => c.Id == id));
-        }
     }
 }

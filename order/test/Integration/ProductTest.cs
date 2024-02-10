@@ -1,8 +1,9 @@
-﻿using Application.Products.Command;
+﻿using Application.Data;
+using Application.Products.Command;
 using Application.Products.Model;
 using Application.Products.Query;
+using Domain.Orders;
 using Domain.Products;
-using Domain.Shared;
 using Infra.Data;
 using Infra.Repositories.Memory;
 using Xunit;
@@ -11,15 +12,14 @@ namespace Integration;
 
 public class ProductTest
 {
-    private readonly ProductRepositoryMemory _repository = new();
-    private readonly UnitOfWorkMemory _unitOfWork =  new();
+    private readonly IProductRepository _repository = new ProductRepositoryMemory();
+    private readonly IUnitOfWork _unitOfWork = new UnitOfWorkMemory();
+    private readonly ICategoryRepository _categoryRepository = new CategoryRepositoryMemory();
 
-    public ProductTest() 
+    public ProductTest()
     {
-        _repository.Add(new Product(Guid.Parse("55b86726-d9fb-4745-b64a-66923b584cf2"), "Nome do produto", "Desricao", "Imagem", new Money("BRL", 50.00), Sku.Create("0001"), Guid.Parse("a7efe841-8e19-4fe8-afcd-e3742a3dacf4"), new Category(Guid.Parse("a7efe841-8e19-4fe8-afcd-e3742a3dacf4"), "categoria nome", "categoria descricao")));
-        _repository.Add(new Product(Guid.Parse("88a98a97-882d-4194-a03f-0e804bea5ff5"), "Nome do produto", "Desricao", "Imagem", new Money("BRL", 50.00), Sku.Create("0001"), Guid.Parse("a7efe841-8e19-4fe8-afcd-e3742a3dacf4"), new Category(Guid.Parse("a7efe841-8e19-4fe8-afcd-e3742a3dacf4"), "categoria nome", "categoria descricao")));
-        _repository.Add(new Product(Guid.Parse("d8872746-afce-471b-a0d8-3f2fd05eba87"), "Nome do produto", "Desricao", "Imagem", new Money("BRL", 50.00), Sku.Create("0001"), Guid.Parse("a7efe841-8e19-4fe8-afcd-e3742a3dacf4"), new Category(Guid.Parse("a7efe841-8e19-4fe8-afcd-e3742a3dacf4"), "categoria nome", "categoria descricao")));
-        _repository.Add(new Product(Guid.Parse("c65b5fab-018b-4471-a5a9-cd09af34b48c"), "Nome do produto", "Desricao", "Imagem", new Money("BRL", 50.00), Sku.Create("0001"), Guid.Parse("a7efe841-8e19-4fe8-afcd-e3742a3dacf4"), new Category(Guid.Parse("a7efe841-8e19-4fe8-afcd-e3742a3dacf4"), "categoria nome", "categoria descricao")));
+        RepositorySetup.PopulateProductRepository(_repository);
+        RepositorySetup.PopulateCategoryRepository(_categoryRepository);
     }
 
     [Fact]
@@ -28,7 +28,7 @@ public class ProductTest
         var catagoryId = Guid.Parse("de1ab44a-ef05-42da-a0e8-6137368018fc");
         var request = new CreateProductModel("Produto1", "Meu produto", "BRL", 70.0, "path", "sku", catagoryId);
         var command = new CreateProductCommand(request);
-        var commandHandler = new CreateProductCommandHandler(_repository, _unitOfWork);
+        var commandHandler = new CreateProductCommandHandler(_repository, _categoryRepository, _unitOfWork);
 
         var result = await commandHandler.Handle(command, CancellationToken.None);
 
@@ -70,7 +70,7 @@ public class ProductTest
         var productId = Guid.Parse("d8872746-afce-471b-a0d8-3f2fd05eba87");
         var request = new UpdateProductModel(productId, "Nome Atualizado", "Descricap atualizando", "BRL", 90.0, "path", "sku", catagoryId);
         var command = new UpdateProductCommand(request);
-        var commandHandler = new UpdateProductCommandHandler(_repository, _unitOfWork);
+        var commandHandler = new UpdateProductCommandHandler(_repository, _categoryRepository ,_unitOfWork);
 
         var result = await commandHandler.Handle(command, CancellationToken.None);
 
@@ -85,9 +85,9 @@ public class ProductTest
     {
         var catagoryId = Guid.Parse("de1ab44a-ef05-42da-a0e8-6137368018fc");
         var productId = Guid.Parse("79f792d3-a213-4acc-8f78-266c1b666a56");
-        var request = new UpdateProductModel(productId, "Nome Atualizado", "Descricap atualizando", "BRL", 90.0, "path", "sku", catagoryId);
+        var request = new UpdateProductModel(productId, "Nome Atualizado", "Descricao atualizando", "BRL", 90.0, "path", "sku", catagoryId);
         var command = new UpdateProductCommand(request);
-        var commandHandler = new UpdateProductCommandHandler(_repository, _unitOfWork);
+        var commandHandler = new UpdateProductCommandHandler(_repository, _categoryRepository ,_unitOfWork);
 
         var result = await commandHandler.Handle(command, CancellationToken.None);
 
@@ -104,7 +104,7 @@ public class ProductTest
         var productId = Guid.Parse("d8872746-afce-471b-a0d8-3f2fd05eba87");
         var request = new UpdateProductModel(productId, "Nome Atualizado", "Descricap atualizando", "BRL", 90.0, "path", "sku", catagoryId);
         var command = new UpdateProductCommand(request);
-        var commandHandler = new UpdateProductCommandHandler(_repository, _unitOfWork);
+        var commandHandler = new UpdateProductCommandHandler(_repository, _categoryRepository ,_unitOfWork);
 
         var result = await commandHandler.Handle(command, CancellationToken.None);
 
