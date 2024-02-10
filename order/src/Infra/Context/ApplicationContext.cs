@@ -21,6 +21,7 @@ public class ApplicationContext : DbContext
         modelBuilder.ApplyConfiguration(new CustomerConfiguration());
         modelBuilder.ApplyConfiguration(new ProductConfiguration());
         modelBuilder.ApplyConfiguration(new CategoryConfiguration());
+        modelBuilder.ApplyConfiguration(new OrderConfiguration());
         base.OnModelCreating(modelBuilder);
     }
 }

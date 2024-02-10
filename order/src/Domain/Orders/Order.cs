@@ -5,11 +5,11 @@ namespace Domain.Orders;
 
 public class Order
 {
+    private readonly ICollection<LineItem> _itens = new List<LineItem>();
     public Guid Id { get; private set; }
     public Guid CustomerId { get; private set; }
     public OrderStatus Status { get; private set; }
     public IReadOnlyCollection<LineItem> Itens => _itens.ToList();
-    private readonly ICollection<LineItem> _itens = new List<LineItem>();
     public DateTime CreatedAt { get; private set; }
     public DateTime UpdatedAt { get; private set; }
 
