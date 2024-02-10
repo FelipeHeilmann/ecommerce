@@ -19,6 +19,7 @@ public class ApplicationContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new CustomerConfiguration());
+        modelBuilder.ApplyConfiguration(new ProductConfiguration());
         base.OnModelCreating(modelBuilder);
     }
 }

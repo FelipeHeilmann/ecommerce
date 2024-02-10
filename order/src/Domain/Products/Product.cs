@@ -8,12 +8,13 @@ public class Product
     public string Name { get; private set; }
     public string Description { get; private set; }
     public string ImageUrl { get; private set; }
+    public DateTime CreatedAt { get; private set; }
     public Money Price { get; private set; }
     public Sku Sku { get; private set; }
     public Guid CategoryId { get; private set; }
     public Category Category { get; private set; } 
 
-    public Product(Guid id, string name, string description, string imageUrl, Money money, Sku sku, Guid categoryId ,Category category)
+    public Product(Guid id, string name, string description, string imageUrl, DateTime createdAt ,Money money, Sku sku, Guid categoryId ,Category category)
     {
         Id = id;
         Name = name;
@@ -23,6 +24,8 @@ public class Product
         Sku = sku;
         CategoryId = categoryId;
         Category = category;
+        CreatedAt = createdAt;
+
     }
 
     public Product() { }
@@ -39,7 +42,7 @@ public class Product
 
         var productId = Guid.NewGuid();
 
-        return new Product(Guid.NewGuid(), name, description, imageUrl, money, sku, category.Id ,category);
+        return new Product(Guid.NewGuid(), name, description, imageUrl, DateTime.Now ,money, sku, category.Id ,category);
     }
 
     public Result<Product> Update(string name, string description, string imageUrl, string currency, double price, string skuString, Category category)
