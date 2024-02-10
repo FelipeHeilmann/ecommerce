@@ -1,5 +1,6 @@
 ﻿using Application.Categories.Create;
 using Application.Categories.Model;
+using Application.Categories.Update;
 using Application.Data;
 using Domain.Categories;
 using Infra.Data;
@@ -31,5 +32,24 @@ public class CategoryTest
 
         Assert.True(result.IsSuccess);
         Assert.False(result.IsFailure);
+    }
+
+    [Fact]
+    public async Task Should_Update_Category()
+    {
+        var categoryId = Guid.Parse("de1ab44a-ef05-42da-a0e8-6137368018fc");
+
+        var request = new UpdateCategoryModel("nome editado", "descricao editada", categoryId);
+
+        var command = new UpdateCategoryCommand(request);
+
+        var commandHandler = new UpdateCategoryCommandHandler(_categoryRepository, _unitOfWork);
+
+        var result = await commandHandler.Handle(command, CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        Assert.False(result.IsFailure);
+        Assert.Equal("nome editado", result.Data.Name);
+        Assert.Equal("descricao editada", result.Data.Description);
     }
 }
