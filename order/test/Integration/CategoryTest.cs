@@ -1,4 +1,5 @@
 ﻿using Application.Categories.Create;
+using Application.Categories.GetAll;
 using Application.Categories.Model;
 using Application.Categories.Update;
 using Application.Data;
@@ -32,6 +33,19 @@ public class CategoryTest
 
         Assert.True(result.IsSuccess);
         Assert.False(result.IsFailure);
+    }
+
+    [Fact]
+    public async Task Should_Get_All_Categories()
+    {
+        var query = new GetAllCategoriesQuery();
+
+        var queryHandler = new GetAllCategoriesQueryHandler(_categoryRepository, _unitOfWork);
+
+        var result = await queryHandler.Handle(query, CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        Assert.True(result.Data is List<Category>);
     }
 
     [Fact]
