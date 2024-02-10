@@ -1,6 +1,7 @@
 ﻿using Domain.Customer;
 using Domain.Orders;
 using Domain.Products;
+using Infra.Configuration;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infra.Context;
@@ -17,6 +18,7 @@ public class ApplicationContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.ApplyConfiguration(new CustomerConfiguration());
         base.OnModelCreating(modelBuilder);
     }
 }
