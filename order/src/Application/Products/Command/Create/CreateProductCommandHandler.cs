@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions;
 using Application.Data;
+using Domain.Orders;
 using Domain.Products;
 using Domain.Shared;
 
@@ -7,18 +8,20 @@ namespace Application.Products.Command;
 
 public class CreateProductCommandHandler : ICommandHandler<CreateProductCommand, Result<Guid>>
 {
-    private readonly IProductRepository _repository;
+    private readonly IProductRepository _productRepository;
+    private readonly ICategoryRepository _categoryRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public CreateProductCommandHandler(IProductRepository repository, IUnitOfWork unitOfWork)
+    public CreateProductCommandHandler(IProductRepository repository, ICategoryRepository categoryRepository, IUnitOfWork unitOfWork)
     {
-        _repository = repository;
+        _productRepository = repository;
         _unitOfWork = unitOfWork;
+        _categoryRepository = categoryRepository;
     }
 
     public async Task<Result<Guid>> Handle(CreateProductCommand command, CancellationToken cancellationToken)
     {
-        var category = await _repository.GetCategoryById(command.request.CategoryId, cancellationToken);
+        var category = await _categoryRepository.GetByIdAsync(command.request.CategoryId, cancellationToken);
 
         if (category == null)
         {
@@ -39,7 +42,7 @@ public class CreateProductCommandHandler : ICommandHandler<CreateProductCommand,
 
         var product = result.Data;
 
-        _repository.Add(product);
+        _productRepository.Add(product);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
