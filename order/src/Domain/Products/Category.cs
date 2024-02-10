@@ -1,3 +1,3 @@
 ﻿namespace Domain.Products;
 
-public record Category(Guid Id, string Name, string Description);
+public class Category(Guid Id, string Name, string Description);
