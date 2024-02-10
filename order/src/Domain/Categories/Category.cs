@@ -1,4 +1,6 @@
-﻿namespace Domain.Categories;
+﻿using Domain.Shared;
+
+namespace Domain.Categories;
 
 public class Category
 {
@@ -13,8 +15,10 @@ public class Category
         Description = description;
     }   
 
-    public static Category Create(string name, string description)
+    public static Result<Category> Create(string name, string description)
     {
+        if(string.IsNullOrEmpty(name)) return Result.Failure<Category>(CategoryErrors.CategoryNameEmpty);
+        if (string.IsNullOrEmpty(description)) return Result.Failure<Category>(CategoryErrors.CategoryDescriptionEmpty);
         return new Category(Guid.NewGuid(), name, description);
     }
     
