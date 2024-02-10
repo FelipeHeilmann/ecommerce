@@ -1,4 +1,5 @@
-﻿using Domain.Customer;
+﻿using Domain.Categories;
+using Domain.Customer;
 using Domain.Orders;
 using Domain.Products;
 using Infra.Configuration;

@@ -2,7 +2,7 @@
 using Application.Products.Command;
 using Application.Products.Model;
 using Application.Products.Query;
-using Domain.Orders;
+using Domain.Categories;
 using Domain.Products;
 using Infra.Data;
 using Infra.Repositories.Memory;
@@ -111,7 +111,7 @@ public class ProductTest
 
         Assert.False(result.IsSuccess);
         Assert.True(result.IsFailure);
-        Assert.Equal(ProductErrors.CategoryNotFound, result.Error);
+        Assert.Equal(CategoryErrors.CategoryNotFound, result.Error);
     }
 
     [Fact]

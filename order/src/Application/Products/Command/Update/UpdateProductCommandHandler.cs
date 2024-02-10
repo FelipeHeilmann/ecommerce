@@ -1,6 +1,6 @@
 ﻿using Application.Abstractions;
 using Application.Data;
-using Domain.Orders;
+using Domain.Categories;
 using Domain.Products;
 using Domain.Shared;
 
@@ -28,7 +28,7 @@ public class UpdateProductCommandHandler : ICommandHandler<UpdateProductCommand,
 
         var category = await _categoryRepository.GetByIdAsync(request.CategoryId, cancellationToken);
 
-        if (category == null) return Result.Failure<Product>(ProductErrors.CategoryNotFound);
+        if (category == null) return Result.Failure<Product>(CategoryErrors.CategoryNotFound);
 
         var result = product.Update(request.Name, request.Description, request.ImageUrl, request.Currency, request.Price, request.Sku, category);
 

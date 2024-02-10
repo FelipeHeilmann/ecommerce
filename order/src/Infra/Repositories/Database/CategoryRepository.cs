@@ -1,4 +1,4 @@
-﻿using Domain.Products;
+﻿using Domain.Categories;
 using Infra.Context;
 
 namespace Infra.Repositories.Database;

@@ -1,4 +1,5 @@
-﻿using Domain.Shared;
+﻿using Domain.Categories;
+using Domain.Shared;
 
 namespace Domain.Products;
 

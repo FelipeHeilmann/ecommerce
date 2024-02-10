@@ -1,6 +1,4 @@
-﻿using Domain.Orders;
-using Domain.Products;
-using System.Collections;
+﻿using Domain.Categories;
 
 namespace Infra.Repositories.Memory;
 

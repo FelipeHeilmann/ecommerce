@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions;
 using Application.Data;
+using Domain.Categories;
 using Domain.Orders;
 using Domain.Products;
 using Domain.Shared;
@@ -25,7 +26,7 @@ public class CreateProductCommandHandler : ICommandHandler<CreateProductCommand,
 
         if (category == null)
         {
-            return Result.Failure<Guid>(ProductErrors.CategoryNotFound);
+            return Result.Failure<Guid>(CategoryErrors.CategoryNotFound);
         }
 
         var result = Product.Create(
