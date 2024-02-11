@@ -22,7 +22,7 @@ namespace API.Controllers
 
             var result = await _sender.Send(command, cancellationToken);
 
-            return result.IsFailure ? result.ToProblemDetail() : Results.Created<Guid>($"/transactions/{result.Value}", result.Value);
+            return result.IsFailure ? result.ToProblemDetail() : Results.Created<Guid>($"/customers/{result.Value}", result.Value);
         }
 
         [HttpPost("auth")]
