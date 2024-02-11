@@ -1,4 +1,5 @@
 ﻿using Domain.Orders;
+using Domain.Products;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -13,6 +14,10 @@ public class LineItemConfiguration : IEntityTypeConfiguration<LineItem>
         builder.Property(li => li.OrderId).HasColumnName("order_id");
         builder.Property(li => li.ProductId).HasColumnName("product_id");
         builder.Property(li => li.Quantity).HasColumnName("quantity");
+
+        builder.HasOne<Product>()
+            .WithMany()
+            .HasForeignKey(p => p.ProductId);
 
         builder.OwnsOne(li => li.Price, priceBuilder =>
         {

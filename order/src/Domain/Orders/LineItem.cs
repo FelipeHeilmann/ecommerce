@@ -13,10 +13,14 @@ public class LineItem
     public LineItem(Guid id, Guid orderId ,Guid productId, Money price, int quantity)
     {
         Id = id;
+        OrderId = orderId;
         ProductId = productId;
         Price = price;
         Quantity = quantity;  
-        OrderId = orderId;
+    }
+
+    public LineItem()
+    {
     }
 
     public bool DeleteItem()
