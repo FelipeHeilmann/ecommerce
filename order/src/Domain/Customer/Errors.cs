@@ -10,7 +10,7 @@ public static class CustomerErrors
     public static Error NameNull => Error.Validation("Name.Null.Empty", "The name value should not be empty or null");
     public static Error NameFormat => Error.Validation("Name.Invalid", "Invalid name format");
     public static Error InvalidAge => Error.Validation("Invalid.Age", "Age should be greatter than 18 years");
-    public static Error CustomerInvalidCredencials => Error.NotFound("Customer.Invalid.Credentials", "Invalid or/and email");
-    public static Error EmailAlredyInUse => Error.Validation("Email.In.Use", "This is email is already in use");
+    public static Error CustomerInvalidCredencials => Error.Validation("Customer.Invalid.Credentials", "Invalid email or/and password");
+    public static Error EmailAlredyInUse => Error.Conflict("Email.In.Use", "This is email is already in use");
 }
 
