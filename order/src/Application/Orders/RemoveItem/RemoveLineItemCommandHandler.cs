@@ -1,4 +1,4 @@
-﻿using Application.Abstractions;
+﻿using Application.Abstractions.Messaging;
 using Application.Data;
 using Domain.Orders;
 using Domain.Shared;

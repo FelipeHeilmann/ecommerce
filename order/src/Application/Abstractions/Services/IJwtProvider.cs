@@ -1,6 +1,6 @@
 ﻿using Domain.Customer;
 
-namespace Application.Abstractions;
+namespace Application.Abstractions.Services;
 
 public interface IJwtProvider
 {

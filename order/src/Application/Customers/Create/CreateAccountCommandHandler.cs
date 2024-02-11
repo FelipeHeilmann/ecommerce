@@ -1,5 +1,5 @@
-﻿using Application.Abstractions;
-using Application.Customers.Services;
+﻿using Application.Abstractions.Messaging;
+using Application.Abstractions.Services;
 using Application.Data;
 using Domain.Customer;
 using Domain.Shared;
@@ -9,12 +9,14 @@ namespace Application.Customers.Create;
 public class CreateAccountCommandHandler : ICommandHandler<CreateAccountCommand, Guid>
 {
     private readonly ICustomerRepository _repository;
+    private readonly IPasswordHasher _passwordHasher;
     private readonly IUnitOfWork _unitOfWork;
 
-    public CreateAccountCommandHandler(ICustomerRepository repository, IUnitOfWork unitOfWork)
+    public CreateAccountCommandHandler(ICustomerRepository repository, IUnitOfWork unitOfWork, IPasswordHasher passwordHasher)
     {
         _repository = repository;
         _unitOfWork = unitOfWork;
+        _passwordHasher = passwordHasher;
     }
 
     public async Task<Result<Guid>> Handle(CreateAccountCommand command, CancellationToken cancellationToken)
@@ -25,7 +27,7 @@ public class CreateAccountCommandHandler : ICommandHandler<CreateAccountCommand,
 
         if(emailAreadyUsed) return Result.Failure<Guid>(CustomerErrors.EmailAlredyInUse);
 
-        var hashedPassword = HashPasswordService.Generate(request.password);
+        var hashedPassword = _passwordHasher.Generate(request.password);
 
         var result = Customer.Create(request.Name, request.Email, hashedPassword, request.birthDate);
 

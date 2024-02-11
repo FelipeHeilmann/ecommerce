@@ -1,4 +1,4 @@
-﻿using Application.Abstractions;
+﻿using Application.Abstractions.Messaging;
 using Application.Categories.GetById;
 using Application.Data;
 using Domain.Categories;

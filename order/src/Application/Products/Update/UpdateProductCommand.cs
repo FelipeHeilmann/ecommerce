@@ -1,4 +1,4 @@
-﻿using Application.Abstractions;
+﻿using Application.Abstractions.Messaging;
 using Application.Products.Model;
 
 namespace Application.Products.Update;
