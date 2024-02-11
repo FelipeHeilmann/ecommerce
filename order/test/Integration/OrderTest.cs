@@ -1,10 +1,10 @@
-﻿using Application.Orders.Command;
-using Application.Orders.Command.Cancel;
-using Application.Orders.Command.RemoveItem;
+﻿using Application.Orders.Create;
+using Application.Orders.Cancel;
+using Application.Orders.RemoveItem;
 using Application.Orders.Model;
-using Application.Orders.Query.GetByCustomerId;
-using Application.Orders.Query.GetById;
-using Application.Orders.Query.GetCart;
+using Application.Orders.GetByCustomerId;
+using Application.Orders.GetById;
+using Application.Orders.GetCart;
 using Domain.Orders;
 using Infra.Data;
 using Infra.Repositories.Memory;

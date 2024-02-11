@@ -1,7 +1,10 @@
 ﻿using Application.Data;
-using Application.Products.Command;
+using Application.Products.Create;
+using Application.Products.Delete;
+using Application.Products.GetAll;
+using Application.Products.GetById;
 using Application.Products.Model;
-using Application.Products.Query;
+using Application.Products.Update;
 using Domain.Categories;
 using Domain.Products;
 using Infra.Data;
