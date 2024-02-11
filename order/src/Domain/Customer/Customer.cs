@@ -8,15 +8,15 @@ public class Customer
     public Name Name { get; private set; }
     public Email Email { get; private set; }
     public string Password { get; private set; }
-    public DateTime BirhDate { get; private set; }
+    public DateTime BirthDate { get; private set; }
     public DateTime CreatedAt { get; private set; }
 
-    public Customer(Guid guid, Name name, Email email, string password ,DateTime birthDate, DateTime createdAt)
+    public Customer(Guid id, Name name, Email email, string password, DateTime birthDate, DateTime createdAt)
     {
-        Id = guid;
+        Id = id;
         Name = name;
         Email = email;
-        BirhDate = birthDate;
+        BirthDate = birthDate;
         CreatedAt = createdAt;
         Password = password;
     }
