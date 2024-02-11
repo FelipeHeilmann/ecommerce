@@ -20,7 +20,7 @@ public class CustomerConfiguration : IEntityTypeConfiguration<Customer>
             .HasColumnName("email");    
         builder.HasIndex(c => c.Email);
         builder.Property(c => c.Password).HasColumnName("password");
-        builder.Property(c => c.BirthDate).HasColumnName("birth_date");
+        builder.Property(c => c.BirthDate).HasColumnName("birth_date").HasColumnType("date");
         builder.Property(c => c.CreatedAt).HasColumnName("created_at");
 
         builder.ToTable("customers");

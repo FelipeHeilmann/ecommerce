@@ -22,7 +22,7 @@ public class LoginCommandHandler : ICommandHandler<LoginCommand, string>
     {
         var email = Email.Create(command.request.Email).Value;
 
-        var customer = await _customerRepository.GetByEmailAsync(email!.Value, cancellationToken);
+        var customer = await _customerRepository.GetByEmailAsync(email, cancellationToken);
 
         if (customer == null) return Result.Failure<string>(CustomerErrors.CustomerInvalidCredencials);
 

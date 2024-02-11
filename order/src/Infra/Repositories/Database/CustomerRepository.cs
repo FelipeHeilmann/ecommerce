@@ -8,13 +8,13 @@ public class CustomerRepository : Repository<Customer>, ICustomerRepository
 {
     public CustomerRepository(ApplicationContext context)
         : base(context) { }
-    public async Task<Customer?> GetByEmailAsync(string email, CancellationToken cancellationToken)
+    public async Task<Customer?> GetByEmailAsync(Email email, CancellationToken cancellationToken)
     {
-        return await _context.Set<Customer>().FirstOrDefaultAsync(c => c.Email.Value == email, cancellationToken);
+        return await _context.Set<Customer>().FirstOrDefaultAsync(c => c.Email == email, cancellationToken);
     }
 
-    public async Task<bool> IsEmailUsedAsync(string email, CancellationToken cancellationToken)
+    public async Task<bool> IsEmailUsedAsync(Email email, CancellationToken cancellationToken)
     {
-        return await _context.Set<Customer>().AnyAsync(c => c.Email.Value == email, cancellationToken);
+        return await _context.Set<Customer>().AnyAsync(c => c.Email == email, cancellationToken);
     }
 }
