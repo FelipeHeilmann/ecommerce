@@ -16,17 +16,17 @@ namespace API.Controllers
         : base(sender, contextAccessor) { }
 
         [HttpPost]
-        public async Task<IResult> CreateAccount([FromBody] CreateAccountModel request)
+        public async Task<IResult> CreateAccount([FromBody] CreateAccountModel request, CancellationToken cancellationToken)
         {
             var command = new CreateAccountCommand(request);
 
-            var result = await _sender.Send(command);
+            var result = await _sender.Send(command, cancellationToken);
 
             return result.IsFailure ? result.ToProblemDetail() : Results.Created<Guid>($"/transactions/{result.Value}", result.Value);
         }
 
         [HttpPost("auth")]
-        public async Task<IResult> Login([FromBody] LoginModel request)
+        public async Task<IResult> Login([FromBody] LoginModel request, CancellationToken cancellationToken)
         {
             var command = new LoginCommand(request);
 
