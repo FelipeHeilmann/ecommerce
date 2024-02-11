@@ -17,7 +17,6 @@ public class CustomerTest
     private readonly ICustomerRepository _customerRepository = new CustomerRepositoryMemory();
     private readonly IPasswordHasher _passwordHasher = new PasswordHasher();
     private readonly IUnitOfWork _unitOfWork = new UnitOfWorkMemory();
-    private readonly IJwtProvider _jwtProvider = new JwtProvider(new JwtOptions("issuer", "audience", "my-test-key"));
     [Fact]
     public async Task Should_Create_Customer()
     {

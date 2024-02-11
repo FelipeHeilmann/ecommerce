@@ -16,7 +16,7 @@ public class OrderTest
         var product2 = Product.Create("Nome do produto", "Desricao", "Imagem", "BRL", 60.0, "0002", category).Value;
         var product3 = Product.Create("Nome do produto", "Desricao", "Imagem", "BRL", 70.0, "0003", category).Value;
 
-        var customer = Customer.Create("Felipe Heilmann", "felipeheilmannm@gmail.com", "senha" ,new DateTime(2004, 6, 11));
+        var customer = Customer.Create("Felipe Heilmann", "felipeheilmannm@gmail.com", "senha" ,new DateOnly(2004, 6, 11));
 
         var order = Order.Create(customer.Value.Id);
 
@@ -37,7 +37,7 @@ public class OrderTest
         var product2 = Product.Create("Nome do produto", "Desricao", "Imagem", "BRL", 60.0, "0002", category).Value;
         var product3 = Product.Create("Nome do produto", "Desricao", "Imagem", "BRL", 70.0, "0003", category).Value;
 
-        var customer = Customer.Create("Felipe Heilmann", "felipeheilmannm@gmail.com", "senha" ,new DateTime(2004, 6, 11));
+        var customer = Customer.Create("Felipe Heilmann", "felipeheilmannm@gmail.com", "senha" ,new DateOnly(2004, 6, 11));
 
         var order = Order.Create(customer.Value.Id);
 

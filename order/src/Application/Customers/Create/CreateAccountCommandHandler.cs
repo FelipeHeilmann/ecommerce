@@ -23,13 +23,19 @@ public class CreateAccountCommandHandler : ICommandHandler<CreateAccountCommand,
     {
         var request = command.request;
 
-        var emailAreadyUsed = await _repository.IsEmailUsedAsync(request.Email, cancellationToken);
+        var email = Email.Create(request.Email);
+
+        if (email.IsFailure) return Result.Failure<Guid>(email.Error);
+
+        var emailAreadyUsed = await _repository.IsEmailUsedAsync(email.Value, cancellationToken);
 
         if(emailAreadyUsed) return Result.Failure<Guid>(CustomerErrors.EmailAlredyInUse);
 
         var hashedPassword = _passwordHasher.Generate(request.password);
 
-        var result = Customer.Create(request.Name, request.Email, hashedPassword, request.birthDate);
+        var birthDate = new DateOnly(request.birthDate.Year, request.birthDate.Month, request.birthDate.Day);
+
+        var result = Customer.Create(request.Name, request.Email, hashedPassword, birthDate);
 
         if(result.IsFailure) return Result.Failure<Guid>(result.Error);
 

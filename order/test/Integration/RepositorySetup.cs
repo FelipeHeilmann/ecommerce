@@ -146,7 +146,7 @@ public class RepositorySetup
                 Name.Create("Felipe Heilmann").Value,
                 Email.Create("felipeheilmannm@gmail.com").Value, 
                 "senha", 
-                new DateTime(2004, 6, 11), 
+                new DateOnly(2004, 6, 11), 
                 DateTime.Now)
             );
     }

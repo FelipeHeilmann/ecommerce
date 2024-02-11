@@ -10,7 +10,7 @@ public class CustomerTest
     {
         var name = "Felipe Heilmann";
         var email = "felipeheilmannm@gmail.com";
-        var birthDate = new DateTime(2004, 6, 2);
+        var birthDate = new DateOnly(2004, 6, 2);
         var password = "senha";
 
         var custumer = Customer.Create(name, email, password, birthDate);
@@ -24,7 +24,7 @@ public class CustomerTest
     {
         var name = "Felipe Heilmann";
         var email = "felipeheilmannm@gmail.com";
-        var birthDate = new DateTime(2004, 6, 2);
+        var birthDate = new DateOnly(2004, 6, 2);
         var password = "senha";
 
         var custumer = Customer.Create(null, email, password, birthDate);
@@ -39,7 +39,7 @@ public class CustomerTest
     {
         var name = "Felipe Heilmann";
         var email = "felipeheilmannm@gmail.com";
-        var birthDate = new DateTime(2004, 6, 2);
+        var birthDate = new DateOnly(2004, 6, 2);
         var password = "senha";
 
         var custumer = Customer.Create(null, email,password,birthDate);
@@ -54,7 +54,7 @@ public class CustomerTest
     {
         var name = "Felipe";
         var email = "felipeheilmannm@gmail.com";
-        var birthDate = new DateTime(2004, 6, 2);
+        var birthDate = new DateOnly(2004, 6, 2);
         var password = "senha";
 
         var custumer = Customer.Create(name, email, password ,birthDate);
@@ -69,7 +69,7 @@ public class CustomerTest
     {
         var name = "Felipe Heilmann";
         var email = "felipe.com";
-        var birthDate = new DateTime(2004, 6, 2);
+        var birthDate = new DateOnly(2004, 6, 2);
         var password = "senha";
 
         var custumer = Customer.Create(name, email, password ,birthDate);
@@ -84,7 +84,7 @@ public class CustomerTest
     {
         var name = "Felipe Heilmann";
         var email = "felipeheilmannm@gmail.com";
-        var birthDate = new DateTime(2020, 6, 2);
+        var birthDate = new DateOnly(2020, 6, 2);
         var password = "senha";
 
         var custumer = Customer.Create(name, email, password ,birthDate);
