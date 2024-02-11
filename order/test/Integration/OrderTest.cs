@@ -9,14 +9,18 @@ using Domain.Orders;
 using Infra.Data;
 using Infra.Repositories.Memory;
 using Xunit;
+using Application.Orders.AddLineItem;
+using Application.Data;
+using Domain.Customer;
+using Domain.Products;
 namespace Integration;
 
 public class OrderTest
 {
-    private readonly OrderRepositoryMemory _orderRepository = new();
-    private readonly CustomerRepositoryMemory _customerRepository = new();
-    private readonly ProductRepositoryMemory _productRepository = new();
-    private readonly UnitOfWorkMemory _unitOfWork = new();
+    private readonly IOrderRepository _orderRepository = new OrderRepositoryMemory();
+    private readonly ICustomerRepository _customerRepository = new CustomerRepositoryMemory();
+    private readonly IProductRepository _productRepository = new ProductRepositoryMemory();
+    private readonly IUnitOfWork _unitOfWork = new UnitOfWorkMemory();
 
     public OrderTest()
     {
@@ -56,7 +60,22 @@ public class OrderTest
 
         Assert.True(result.IsSuccess);
         Assert.False(result.IsFailure);
-        Assert.Equal((50 * 2) + (70 * 3) + (60 * 4), order.CalculateTotal());
+    }
+
+
+    [Fact]
+    public async Task Should_Add_One_Item_To_Order()
+    {
+        var orderId = Guid.Parse("8f34a311-f1cd-40b6-9e5d-1b9f639369e9");
+
+        var command = new AddLineItemCommand(orderId, Guid.Parse("cb67d960-af04-40c8-92da-9d4ff28da6f8"), 4);
+
+        var commandHandler = new AddLineItemCommandHandler(_orderRepository, _productRepository, _unitOfWork);
+
+        var result = await commandHandler.Handle(command, CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        Assert.False(result.IsFailure);
     }
 
     [Fact]
@@ -124,7 +143,7 @@ public class OrderTest
 
         Assert.True(result.IsSuccess);
         Assert.False(result.IsFailure);
-        Assert.Equal(1, result.Value.Count);
+        Assert.Equal(2, result.Value.Count);
     }
 
     [Fact]

@@ -26,8 +26,6 @@ public class RemoveLineItemCommandHandler : ICommandHandler<RemoveLineItemComman
 
         if (removed.IsFailure) return Result.Failure<Order>(removed.Error);
 
-        _repository.Update(order);
-
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success(order);

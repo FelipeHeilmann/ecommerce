@@ -161,6 +161,14 @@ public class RepositorySetup
             DateTime.Now
         );
 
+        var order2 = new Order(
+            Guid.Parse("8f34a311-f1cd-40b6-9e5d-1b9f639369e9"),
+            Guid.Parse("f3b205c3-552d-4fd9-b10e-6414086910b0"),
+            OrderStatus.Created,
+            DateTime.Now,
+            DateTime.Now
+        );
+
         var lineItens = new List<LineItem>()
         {
             new LineItem(
@@ -180,7 +188,9 @@ public class RepositorySetup
         };
 
         order.RestoreLineItens(lineItens);
+        order2.RestoreLineItens(lineItens);
 
         _repository.Add(order);
+        _repository.Add(order2);
     }
 }
