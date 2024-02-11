@@ -15,7 +15,7 @@ namespace Application.Products.GetById
 
         public async Task<Result<Product>> Handle(GetProductByIdQuery query, CancellationToken cancellationToken)
         {
-            var product = await _repository.GetByIdAsync(query.ProductId, cancellationToken);
+            var product = await _repository.GetByIdAsync(query.ProductId, cancellationToken, "Category");
 
             if (product == null) return Result.Failure<Product>(ProductErrors.ProductNotFound);
 

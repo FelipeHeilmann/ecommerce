@@ -40,9 +40,7 @@ public class Product
             return Result.Failure<Product>(sku.Error);
         }
 
-        var productId = Guid.NewGuid();
-
-        return new Product(Guid.NewGuid(), name, description, imageUrl, DateTime.Now ,money, sku.Value, category.Id ,category);
+        return new Product(Guid.NewGuid(), name, description, imageUrl, DateTime.UtcNow ,money, sku.Value, category.Id ,category);
     }
 
     public Result<Product> Update(string name, string description, string imageUrl, string currency, double price, string skuString, Category category)
