@@ -6,7 +6,7 @@ using Domain.Shared;
 
 namespace Application.Orders.Create;
 
-public class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, Result<Order>>
+public class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, Order>
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IProductRepository _productRepository;

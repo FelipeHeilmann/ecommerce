@@ -5,7 +5,7 @@ using Domain.Shared;
 
 namespace Application.Orders.RemoveItem;
 
-public class RemoveLineItemCommandHandler : ICommandHandler<RemoveLineItemCommand, Result<Order>>
+public class RemoveLineItemCommandHandler : ICommandHandler<RemoveLineItemCommand, Order>
 {
     private readonly IOrderRepository _repository;
     private readonly IUnitOfWork _unitOfWork;

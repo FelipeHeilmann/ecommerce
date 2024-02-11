@@ -6,7 +6,7 @@ using Domain.Shared;
 
 namespace Application.Customers.Create;
 
-public class CreateAccountCommandHandler : ICommandHandler<CreateAccountCommand, Result<Customer>>
+public class CreateAccountCommandHandler : ICommandHandler<CreateAccountCommand, Guid>
 {
     private readonly ICustomerRepository _repository;
     private readonly IUnitOfWork _unitOfWork;
@@ -17,19 +17,19 @@ public class CreateAccountCommandHandler : ICommandHandler<CreateAccountCommand,
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<Result<Customer>> Handle(CreateAccountCommand command, CancellationToken cancellationToken)
+    public async Task<Result<Guid>> Handle(CreateAccountCommand command, CancellationToken cancellationToken)
     {
         var request = command.request;
 
         var emailAreadyUsed = await _repository.IsEmailUsedAsync(request.Email, cancellationToken);
 
-        if(emailAreadyUsed) return Result.Failure<Customer>(CustomerErrors.EmailAlredyInUse);
+        if(emailAreadyUsed) return Result.Failure<Guid>(CustomerErrors.EmailAlredyInUse);
 
         var hashedPassword = HashPasswordService.Generate(request.password);
 
         var result = Customer.Create(request.Name, request.Email, hashedPassword, request.birthDate);
 
-        if(result.IsFailure) return Result.Failure<Customer>(result.Error);
+        if(result.IsFailure) return Result.Failure<Guid>(result.Error);
 
         var customer = result.Data;
 
@@ -37,6 +37,6 @@ public class CreateAccountCommandHandler : ICommandHandler<CreateAccountCommand,
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return Result.Success<Customer>(result);
+        return Result.Success(customer.Id);
     }
 }

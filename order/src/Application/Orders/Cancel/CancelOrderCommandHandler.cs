@@ -5,7 +5,7 @@ using Domain.Shared;
 
 namespace Application.Orders.Cancel;
 
-public class CancelOrderCommandHandler : ICommandHandler<CancelOrderCommand, Result<Order>>
+public class CancelOrderCommandHandler : ICommandHandler<CancelOrderCommand, Order>
 {
     private readonly IOrderRepository _repository;
     private readonly IUnitOfWork _unitOfWork;

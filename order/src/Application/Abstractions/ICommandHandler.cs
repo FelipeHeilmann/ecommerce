@@ -1,14 +1,15 @@
-﻿using Domain.Shared;
+﻿using Application.Abstractions;
+using Domain.Shared;
 using MediatR;
 
 namespace Application.Abstractions;
 
-public interface ICommandHandler<TCommand> : IRequest<Result> where TCommand : ICommand
+public interface ICommandHandler<in TCommand>: IRequestHandler<TCommand, Result> where TCommand : ICommand
 {
-    Task Handle(TCommand command, CancellationToken cancellationToken);
+    Task<Result> Handle(TCommand command, CancellationToken cancellationToken);
 }
 
-public interface ICommandHandler<TCommand, TResponse> : IRequestHandler<TCommand, TResponse> where TCommand : ICommand<TResponse>
+public interface ICommandHandler<in TCommand, TResponse> : IRequestHandler<TCommand, Result<TResponse>> where TCommand : ICommand<TResponse>
 {
-    Task<TResponse> Handle(TCommand command, CancellationToken cancellationToken);
+    Task<Result<TResponse>> Handle(TCommand command, CancellationToken cancellationToken);
 }

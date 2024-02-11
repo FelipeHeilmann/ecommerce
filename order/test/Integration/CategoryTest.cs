@@ -80,7 +80,5 @@ public class CategoryTest
 
         Assert.True(result.IsSuccess);
         Assert.False(result.IsFailure);
-        Assert.Equal("nome editado", result.Data.Name);
-        Assert.Equal("descricao editada", result.Data.Description);
     }
 }

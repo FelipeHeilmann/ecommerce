@@ -7,7 +7,7 @@ using Domain.Shared;
 
 namespace Application.Products.Create;
 
-public class CreateProductCommandHandler : ICommandHandler<CreateProductCommand, Result<Guid>>
+public class CreateProductCommandHandler : ICommandHandler<CreateProductCommand, Guid>
 {
     private readonly IProductRepository _productRepository;
     private readonly ICategoryRepository _categoryRepository;

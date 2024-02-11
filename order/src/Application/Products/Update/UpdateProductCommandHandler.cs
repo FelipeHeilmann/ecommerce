@@ -6,7 +6,7 @@ using Domain.Shared;
 
 namespace Application.Products.Update;
 
-public class UpdateProductCommandHandler : ICommandHandler<UpdateProductCommand, Result<Product>>
+public class UpdateProductCommandHandler : ICommandHandler<UpdateProductCommand>
 {
     private readonly IProductRepository _productRepository;
     private readonly ICategoryRepository _categoryRepository;
@@ -19,7 +19,7 @@ public class UpdateProductCommandHandler : ICommandHandler<UpdateProductCommand,
         _categoryRepository = categoryRepository;
     }
 
-    public async Task<Result<Product>> Handle(UpdateProductCommand command, CancellationToken cancellationToken)
+    public async Task<Result> Handle(UpdateProductCommand command, CancellationToken cancellationToken)
     {
         var request = command.request;
         var product = await _productRepository.GetByIdAsync(request.ProductId, cancellationToken);
@@ -38,6 +38,6 @@ public class UpdateProductCommandHandler : ICommandHandler<UpdateProductCommand,
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return Result.Success(result.Data);
+        return Result.Success();
     }
 }

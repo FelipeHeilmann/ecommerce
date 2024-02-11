@@ -5,7 +5,7 @@ using Domain.Shared;
 
 namespace Application.Categories.Update;
 
-public class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategoryCommand, Result<Category>>
+public class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategoryCommand>
 {
     private readonly ICategoryRepository _categoryRepository;
     private readonly IUnitOfWork _unitOfWork;
@@ -16,7 +16,7 @@ public class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategoryComman
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<Result<Category>> Handle(UpdateCategoryCommand command, CancellationToken cancellationToken)
+    public async Task<Result> Handle(UpdateCategoryCommand command, CancellationToken cancellationToken)
     {
         var request = command.request;
         var category = await _categoryRepository.GetByIdAsync(request.CustomerId, cancellationToken);
@@ -29,6 +29,6 @@ public class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategoryComman
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return category;
+        return Result.Success();
     }
 }

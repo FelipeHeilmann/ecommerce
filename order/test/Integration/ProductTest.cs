@@ -77,10 +77,8 @@ public class ProductTest
 
         var result = await commandHandler.Handle(command, CancellationToken.None);
 
-        var product = result.Data;
 
         Assert.True(result.IsSuccess);
-        Assert.Equal(90.0, product.Price.Amount);
     }
 
     [Fact]

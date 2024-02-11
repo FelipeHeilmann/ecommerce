@@ -5,7 +5,7 @@ using Domain.Shared;
 
 namespace Application.Customers.Login;
 
-public class LoginCommandHandler : ICommandHandler<LoginCommand, Result<string>>
+public class LoginCommandHandler : ICommandHandler<LoginCommand, string>
 {
     private readonly ICustomerRepository _customerRepository;
     private readonly IJwtProvider _jwtProvider;

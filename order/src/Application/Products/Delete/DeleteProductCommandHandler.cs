@@ -5,7 +5,7 @@ using Domain.Shared;
 
 namespace Application.Products.Delete;
 
-public class DeleteProductCommandHandler : ICommandHandler<DeleteProductCommand, Result>
+public class DeleteProductCommandHandler : ICommandHandler<DeleteProductCommand>
 {
     private readonly IProductRepository _repository;
     private readonly IUnitOfWork _unitOfWork;
