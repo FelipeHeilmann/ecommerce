@@ -6,7 +6,7 @@ public record Error
     public string Description { get; }
     public ErrorType Type { get; }
 
-    public static readonly Error None = new(string.Empty, string.Empty, ErrorType.Failure);
+    public static readonly Error None = new(string.Empty, string.Empty, ErrorType.Failure); //static propertity is allocate to a heap and has the same value for all of instances
 
     public static readonly Error NullValue = new(
       "General.Null",
@@ -29,5 +29,6 @@ public enum ErrorType
 {
     Failure = 0,
     Validation = 1,
-    NotFound = 2, Conflict = 3,
+    NotFound = 2, 
+    Conflict = 3,
 }

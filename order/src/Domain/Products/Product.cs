@@ -3,7 +3,7 @@ using Domain.Shared;
 
 namespace Domain.Products;
 
-public class Product
+public class Product 
 {
     public Guid Id { get; private set; }
     public string Name { get; private set; }
@@ -26,7 +26,6 @@ public class Product
         CategoryId = categoryId;
         Category = category;
         CreatedAt = createdAt;
-
     }
 
     public Product() { }
