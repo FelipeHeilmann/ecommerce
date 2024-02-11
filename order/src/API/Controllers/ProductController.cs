@@ -1,4 +1,6 @@
-﻿using Application.Products.GetAll;
+﻿using API.Extensions;
+using Application.Products.GetAll;
+using Application.Products.GetById;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,6 +21,16 @@ namespace API.Controllers
             var result = await _sender.Send(query, cancellationToken);
 
             return Results.Ok(result.Value);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IResult> GetById(Guid id, CancellationToken cancellationToken)
+        {
+            var query = new GetProductByIdQuery(id);
+
+            var result = await _sender.Send(query, cancellationToken);
+
+            return result.IsFailure ? result.ToProblemDetail() :  Results.Ok(result.Value);
         }
     }
 }
