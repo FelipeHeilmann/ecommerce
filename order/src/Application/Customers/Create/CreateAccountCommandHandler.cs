@@ -33,7 +33,7 @@ public class CreateAccountCommandHandler : ICommandHandler<CreateAccountCommand,
 
         if(result.IsFailure) return Result.Failure<Guid>(result.Error);
 
-        var customer = result.Data;
+        var customer = result.Value;
 
         _repository.Add(customer);
 

@@ -11,11 +11,11 @@ public class CustomerConfiguration : IEntityTypeConfiguration<Customer>
         builder.HasKey(c => c.Id);
         builder.Property(c => c.Id).HasColumnName("id");
         builder.Property(c => c.Name)
-            .HasConversion(name => name.Value, value => Name.Create(value))
+            .HasConversion(name => name.Value, value => Name.Create(value).Value)
             .HasMaxLength(150)
             .HasColumnName("name");
         builder.Property(c => c.Email)
-            .HasConversion(email => email.Value, value => Email.Create(value))
+            .HasConversion(email => email.Value, value => Email.Create(value).Value)
             .HasMaxLength(250)
             .HasColumnName("email");    
         builder.HasIndex(c => c.Email.Value);

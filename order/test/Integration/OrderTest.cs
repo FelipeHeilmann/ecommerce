@@ -42,9 +42,17 @@ public class OrderTest
 
         var commandHandler = new CreateOrderCommandHandler(_orderRepository, _productRepository, _unitOfWork);
 
-        var result = await commandHandler.Handle(command, CancellationToken.None);
+        await commandHandler.Handle(command, CancellationToken.None);
 
-        var order = result.Data;
+        var orderId = Guid.Parse("c3a9083c-a259-4516-8842-a80b40f8c39f");
+
+        var query = new GetOrderByIdQuery(orderId);
+
+        var queryHandler = new GetOrderByIdQueryHandler(_orderRepository);
+
+        var result = await queryHandler.Handle(query, CancellationToken.None);
+
+        var order = result.Value;
 
         Assert.True(result.IsSuccess);
         Assert.False(result.IsFailure);
@@ -62,7 +70,7 @@ public class OrderTest
 
         var result = await queryHandler.Handle(query, CancellationToken.None);
 
-        var order = result.Data;
+        var order = result.Value;
 
         Assert.True(result.IsSuccess);
         Assert.False(result.IsFailure);
@@ -96,7 +104,7 @@ public class OrderTest
 
         var result = await commandHandler.Handle(command, CancellationToken.None);
         
-        var order = result.Data;
+        var order = result.Value;
 
         Assert.True(result.IsSuccess);
         Assert.False(result.IsFailure);
@@ -116,7 +124,7 @@ public class OrderTest
 
         Assert.True(result.IsSuccess);
         Assert.False(result.IsFailure);
-        Assert.Equal(1, result.Data.Count);
+        Assert.Equal(1, result.Value.Count);
     }
 
     [Fact]
@@ -129,7 +137,7 @@ public class OrderTest
 
         Assert.True(result.IsSuccess);
         Assert.False(result.IsFailure);
-        Assert.Equal(OrderStatus.Created, result.Data.Status);
+        Assert.Equal(OrderStatus.Created, result.Value.Status);
     }
 
     [Fact]
@@ -143,6 +151,6 @@ public class OrderTest
 
         Assert.True(result.IsSuccess);
         Assert.False(result.IsFailure);
-        Assert.Equal(OrderStatus.Canceled, result.Data.Status);
+        Assert.Equal(OrderStatus.Canceled, result.Value.Status);
     }
 }

@@ -1,7 +1,6 @@
 ﻿using Application.Abstractions.Messaging;
 using Application.Data;
 using Domain.Categories;
-using Domain.Orders;
 using Domain.Products;
 using Domain.Shared;
 
@@ -41,7 +40,7 @@ public class CreateProductCommandHandler : ICommandHandler<CreateProductCommand,
 
         if (result.IsFailure) return Result.Failure<Guid>(result.Error);
 
-        var product = result.Data;
+        var product = result.Value;
 
         _productRepository.Add(product);
 

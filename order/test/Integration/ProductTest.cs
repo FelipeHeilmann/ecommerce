@@ -50,7 +50,7 @@ public class ProductTest
 
         Assert.True(result.IsSuccess);
         Assert.False(result.IsFailure);
-        Assert.NotNull(result.Data);
+        Assert.NotNull(result.Value);
     }
 
     [Fact]
@@ -148,6 +148,6 @@ public class ProductTest
 
         Assert.True(result.IsSuccess);
         Assert.False(result.IsFailure);
-        Assert.True(result.Data.Count > 1);
+        Assert.True(result.Value.Count > 1);
     }
 }

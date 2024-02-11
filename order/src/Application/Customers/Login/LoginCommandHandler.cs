@@ -20,7 +20,7 @@ public class LoginCommandHandler : ICommandHandler<LoginCommand, string>
 
     public async Task<Result<string>> Handle(LoginCommand command, CancellationToken cancellationToken)
     {
-        var email = Email.Create(command.request.Email).Data;
+        var email = Email.Create(command.request.Email).Value;
 
         var customer = await _customerRepository.GetByEmailAsync(email!.Value, cancellationToken);
 

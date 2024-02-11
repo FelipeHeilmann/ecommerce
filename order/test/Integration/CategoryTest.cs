@@ -47,7 +47,7 @@ public class CategoryTest
 
         Assert.True(result.IsSuccess);
         Assert.False(result.IsFailure);
-        Assert.True(result.Data is List<Category>);
+        Assert.True(result.Value is List<Category>);
     }
 
     [Fact]

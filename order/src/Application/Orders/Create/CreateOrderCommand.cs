@@ -4,4 +4,4 @@ using Domain.Orders;
 
 namespace Application.Orders.Create;
 
-public record class CreateOrderCommand(OrderRequestModel request) : ICommand<Order>;
+public record class CreateOrderCommand(OrderRequestModel request) : ICommand<Guid>;

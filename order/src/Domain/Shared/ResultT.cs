@@ -1,25 +1,25 @@
-﻿namespace Domain.Shared;
+﻿using System.Diagnostics.CodeAnalysis;
 
-public class Result<T> : Result
+namespace Domain.Shared;
+
+public class Result<TValue> : Result
 {
-    public T? Data { get; }
+    private readonly TValue? _value;
 
-    public Result(T data) : base(null)
+    public Result(TValue? value, bool isSuccess, Error error)
+        : base(isSuccess, error)
     {
-        Data = data;
+        _value = value;
     }
 
-    public Result(Error error) : base(error: error)
-    {
-    }
+    [NotNull]
+    public TValue Value => IsSuccess
+        ? _value!
+        : throw new InvalidOperationException("The value of a failure result can't be accessed.");
 
-    public static implicit operator T(Result<T> result) =>
-        result.IsFailure
-        ? throw new InvalidOperationException() : result.Data!;
+    public static implicit operator Result<TValue>(TValue? value) =>
+        value is not null ? Success(value) : Failure<TValue>(Error.NullValue);
 
-    public static implicit operator Result<T>(T result) =>
-        Result.Success(result);
-
-    public static implicit operator Result<T>(Error error) =>
-        Result.Failure<T>(error);
+    public static Result<TValue> ValidationFailure(Error error) =>
+        new(default, false, error);
 }

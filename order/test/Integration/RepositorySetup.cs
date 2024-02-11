@@ -16,7 +16,7 @@ public class RepositorySetup
                 "Imagem", //Image,
                 DateTime.Now, //CreatedAt
                 new Money("BRL", 50.00), //Price 
-                Sku.Create("0001"), //Sku
+                Sku.Create("0001").Value, //Sku
                 Guid.Parse("a7efe841-8e19-4fe8-afcd-e3742a3dacf4"),//CategoryId
                 new Category(Guid.Parse("a7efe841-8e19-4fe8-afcd-e3742a3dacf4"), //Category 
                 "categoria nome", 
@@ -29,7 +29,7 @@ public class RepositorySetup
                 "Imagem",
                 DateTime.Now,
                 new Money("BRL", 50.00), 
-                Sku.Create("0001"), 
+                Sku.Create("0001").Value, 
                 Guid.Parse("a7efe841-8e19-4fe8-afcd-e3742a3dacf4"),
                 new Category(Guid.Parse("a7efe841-8e19-4fe8-afcd-e3742a3dacf4"), 
                 "categoria nome", "categoria descricao")
@@ -41,7 +41,7 @@ public class RepositorySetup
                 "Imagem",
                 DateTime.Now,
                 new Money("BRL", 50.00),
-                Sku.Create("0001"), 
+                Sku.Create("0001").Value, 
                 Guid.Parse("a7efe841-8e19-4fe8-afcd-e3742a3dacf4"), 
                 new Category(Guid.Parse("a7efe841-8e19-4fe8-afcd-e3742a3dacf4"), 
                 "categoria nome", "categoria descricao")
@@ -53,7 +53,7 @@ public class RepositorySetup
                 "Imagem", 
                 DateTime.Now,
                 new Money("BRL", 50.00),
-                Sku.Create("0001"), 
+                Sku.Create("0001").Value, 
                 Guid.Parse("a7efe841-8e19-4fe8-afcd-e3742a3dacf4"),
                 new Category(Guid.Parse("a7efe841-8e19-4fe8-afcd-e3742a3dacf4"), 
                 "categoria nome", "categoria descricao")
@@ -66,7 +66,7 @@ public class RepositorySetup
                 "Imagem",
                 DateTime.Now,
                 new Money("BRL", 50.00), 
-                Sku.Create("0001"),
+                Sku.Create("0001").Value,
                 Guid.Parse("a7efe841-8e19-4fe8-afcd-e3742a3dacf4"), 
                 new Category(Guid.Parse("a7efe841-8e19-4fe8-afcd-e3742a3dacf4"),
                 "categoria nome", "categoria descricao")
@@ -78,7 +78,7 @@ public class RepositorySetup
                 "Imagem", 
                 DateTime.Now,
                 new Money("BRL", 70.00), 
-                Sku.Create("0002"),
+                Sku.Create("0002").Value,
                 Guid.Parse("538f1d08-9f31-4058-9538-55f388cde724"), 
                 new Category(Guid.Parse("538f1d08-9f31-4058-9538-55f388cde724"), 
                 "categoria nome", "categoria descricao")
@@ -90,7 +90,7 @@ public class RepositorySetup
                 "Imagem",
                 DateTime.Now,
                 new Money("BRL", 60.00), 
-                Sku.Create("0003"), 
+                Sku.Create("0003").Value, 
                 Guid.Parse("f3b205c3-552d-4fd9-b10e-6414086910b0"), 
                 new Category(Guid.Parse("f3b205c3-552d-4fd9-b10e-6414086910b0"), 
                 "categoria nome", 
@@ -104,7 +104,7 @@ public class RepositorySetup
             "Imagem",
             DateTime.Now,
             new Money("BRL", 60.00), 
-            Sku.Create("0003"), 
+            Sku.Create("0003").Value, 
             Guid.Parse("f3b205c3-552d-4fd9-b10e-6414086910b0"), 
             new Category(Guid.Parse("f3b205c3-552d-4fd9-b10e-6414086910b0"), 
             "categoria nome", 
@@ -117,7 +117,7 @@ public class RepositorySetup
                 "Imagem", 
                 DateTime.Now,
                 new Money("BRL", 100.00), 
-                Sku.Create("0003"), 
+                Sku.Create("0003").Value, 
                 Guid.Parse("f3b205c3-552d-4fd9-b10e-6414086910b0"), 
                 new Category(Guid.Parse("f3b205c3-552d-4fd9-b10e-6414086910b0"), 
                 "categoria nome", "categoria descricao")
@@ -143,8 +143,8 @@ public class RepositorySetup
     {
         _repository.Add(new Customer(
                 Guid.Parse("f3b205c3-552d-4fd9-b10e-6414086910b0"), 
-                Name.Create("Felipe Heilmann").Data, 
-                Email.Create("felipeheilmannm@gmail.com").Data, 
+                Name.Create("Felipe Heilmann").Value,
+                Email.Create("felipeheilmannm@gmail.com").Value, 
                 "senha", 
                 new DateTime(2004, 6, 11), 
                 DateTime.Now)

@@ -6,7 +6,7 @@ using Domain.Shared;
 
 namespace Application.Orders.Create;
 
-public class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, Order>
+public class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, Guid>
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IProductRepository _productRepository;
@@ -19,7 +19,7 @@ public class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, Ord
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<Result<Order>> Handle(CreateOrderCommand command, CancellationToken cancellationToken)
+    public async Task<Result<Guid>> Handle(CreateOrderCommand command, CancellationToken cancellationToken)
     {
         var orderItemList = command.request.OrderItens;
 
@@ -30,7 +30,7 @@ public class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, Ord
             var product = await _productRepository.GetByIdAsync(item.ProductId, cancellationToken);
             if (product == null)
             {
-                return Result.Failure<Order>(ProductErrors.ProductNotFound);
+                return Result.Failure<Guid>(ProductErrors.ProductNotFound);
             }
             order.AddItem(item.ProductId, product.Price, item.Quantity);
         }
@@ -39,6 +39,6 @@ public class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, Ord
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return Result.Success(order);
+        return Result.Success(order.Id);
     }
 }

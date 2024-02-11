@@ -30,7 +30,7 @@ public class Customer
         if (email.IsFailure) return Result.Failure<Customer>(email.Error);
 
         if ((DateTime.Now - birthDate).TotalDays < 18 * 365.25) return Result.Failure<Customer>(CustomerErrors.InvalidAge);
-        return new Customer(Guid.NewGuid(), name, email, password, birthDate, DateTime.Now);
+        return new Customer(Guid.NewGuid(), name.Value, email.Value, password, birthDate, DateTime.Now);
 
     }
 }

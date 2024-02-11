@@ -23,11 +23,11 @@ public class CreateCatagoryCommandHandler : ICommandHandler<CreateCategoryComman
 
         if (category.IsFailure) return Result.Failure<Guid>(category.Error);
 
-        _categoryRepository.Add(category);
+        _categoryRepository.Add(category.Value);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return category.Data.Id;
+        return category.Value.Id;
 
     }
 }

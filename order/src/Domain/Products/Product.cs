@@ -43,7 +43,7 @@ public class Product
 
         var productId = Guid.NewGuid();
 
-        return new Product(Guid.NewGuid(), name, description, imageUrl, DateTime.Now ,money, sku, category.Id ,category);
+        return new Product(Guid.NewGuid(), name, description, imageUrl, DateTime.Now ,money, sku.Value, category.Id ,category);
     }
 
     public Result<Product> Update(string name, string description, string imageUrl, string currency, double price, string skuString, Category category)
@@ -61,7 +61,7 @@ public class Product
         ImageUrl = imageUrl;
         CategoryId = Category.Id;
         Category = category;
-        Sku = sku;
+        Sku = sku.Value;
         Price = money;
         
         return Result.Success(this);

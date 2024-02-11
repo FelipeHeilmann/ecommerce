@@ -2,36 +2,31 @@
 
 public class Result
 {
-    public Error? Error { get; private set; }
-
-    protected Result(Error? error)
+    public Result(bool isSuccess, Error error)
     {
+        if (isSuccess && error != Error.None ||
+            !isSuccess && error == Error.None)
+        {
+            throw new ArgumentException("Invalid error", nameof(error));
+        }
+
+        IsSuccess = isSuccess;
         Error = error;
     }
 
-    internal Result()
-    {
-    }
+    public bool IsSuccess { get; }
 
-    public static Result Success() => new();
+    public bool IsFailure => !IsSuccess;
 
-    public static Result Failure(Error error) => new(error);
+    public Error Error { get; }
 
-    public static Result<T> Success<T>(T data) => new(data);
+    public static Result Success() => new(true, Error.None);
 
-    public static Result<T> Failure<T>(Error error) => new(error);
+    public static Result<TValue> Success<TValue>(TValue value) =>
+        new(value, true, Error.None);
 
-    public bool IsSuccess => Error is null;
+    public static Result Failure(Error error) => new(false, error);
 
-    public bool IsFailure => Error is not null;
-
-    public bool HasError<T>() where T : Error => Error is T;
-
-    public static implicit operator Error(Result result) =>
-        !result.IsFailure
-        ? throw new InvalidOperationException() : result.Error!;
-
-
-    public static implicit operator Result(Error error) =>
-        Result.Failure(error);
+    public static Result<TValue> Failure<TValue>(Error error) =>
+        new(default, false, error);
 }

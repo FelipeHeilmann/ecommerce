@@ -12,13 +12,13 @@ public class OrderTest
     public void Should_Create_Order_And_Calculate_Total()
     {
         var category = new Category(Guid.NewGuid(), "categoria nome", "categoria descricao");
-        var product1 = Product.Create("Nome do produto", "Desricao", "Imagem", "BRL", 50.0, "0001", category).Data;
-        var product2 = Product.Create("Nome do produto", "Desricao", "Imagem", "BRL", 60.0, "0002", category).Data;
-        var product3 = Product.Create("Nome do produto", "Desricao", "Imagem", "BRL", 70.0, "0003", category).Data;
+        var product1 = Product.Create("Nome do produto", "Desricao", "Imagem", "BRL", 50.0, "0001", category).Value;
+        var product2 = Product.Create("Nome do produto", "Desricao", "Imagem", "BRL", 60.0, "0002", category).Value;
+        var product3 = Product.Create("Nome do produto", "Desricao", "Imagem", "BRL", 70.0, "0003", category).Value;
 
         var customer = Customer.Create("Felipe Heilmann", "felipeheilmannm@gmail.com", "senha" ,new DateTime(2004, 6, 11));
 
-        var order = Order.Create(customer.Data.Id);
+        var order = Order.Create(customer.Value.Id);
 
         order.AddItem(product1.Id, product1.Price, 2);
         order.AddItem(product2.Id, product2.Price, 1);
@@ -33,13 +33,13 @@ public class OrderTest
     public void Should_Create_Order_Remove_One_Item_And_Calculate_Total()
     {
         var category = new Category(Guid.NewGuid(), "categoria nome", "categoria descricao");
-        var product1 = Product.Create("Nome do produto", "Desricao", "Imagem", "BRL", 50.0, "0001", category).Data;
-        var product2 = Product.Create("Nome do produto", "Desricao", "Imagem", "BRL", 60.0, "0002", category).Data;
-        var product3 = Product.Create("Nome do produto", "Desricao", "Imagem", "BRL", 70.0, "0003", category).Data;
+        var product1 = Product.Create("Nome do produto", "Desricao", "Imagem", "BRL", 50.0, "0001", category).Value;
+        var product2 = Product.Create("Nome do produto", "Desricao", "Imagem", "BRL", 60.0, "0002", category).Value;
+        var product3 = Product.Create("Nome do produto", "Desricao", "Imagem", "BRL", 70.0, "0003", category).Value;
 
         var customer = Customer.Create("Felipe Heilmann", "felipeheilmannm@gmail.com", "senha" ,new DateTime(2004, 6, 11));
 
-        var order = Order.Create(customer.Data.Id);
+        var order = Order.Create(customer.Value.Id);
 
         var lineItem1 = order.AddItem(product1.Id, product1.Price ,2);
         var lineItem2 = order.AddItem(product2.Id, product2.Price, 1);
