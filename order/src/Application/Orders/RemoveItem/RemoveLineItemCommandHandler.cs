@@ -18,7 +18,7 @@ public class RemoveLineItemCommandHandler : ICommandHandler<RemoveLineItemComman
 
     public async Task<Result<Order>> Handle(RemoveLineItemCommand command, CancellationToken cancellationToken)
     {
-        var order = await _repository.GetByIdAsync(command.OrderId, cancellationToken);
+        var order = await _repository.GetByIdAsync(command.OrderId, cancellationToken, "Items");
 
         if (order == null) return Result.Failure<Order>(OrderErrors.OrderNotFound);
 

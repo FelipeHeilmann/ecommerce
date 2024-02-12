@@ -15,7 +15,7 @@ public class GetOrdersByCustomerIdQueryHandler : IQueryHandler<GetOrdersByCustom
 
     public async Task<Result<ICollection<Order>>> Handle(GetOrdersByCustomerQuery query, CancellationToken cancellationToken)
     {
-        var products = await _repository.GetOrdersByCustomerId(query.CustomerId, cancellationToken);
+        var products = await _repository.GetOrdersByCustomerId(query.CustomerId, cancellationToken, "Items");
 
         return Result.Success(products);
     }

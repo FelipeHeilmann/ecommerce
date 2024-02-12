@@ -21,7 +21,7 @@ public class AddLineItemCommandHandler : ICommandHandler<AddLineItemCommand>
 
     public async Task<Result> Handle(AddLineItemCommand command, CancellationToken cancellationToken)
     {
-        var order = await _orderRepository.GetByIdAsync(command.OrderId, cancellationToken);
+        var order = await _orderRepository.GetByIdAsync(command.OrderId, cancellationToken, "Items");
 
         if(order == null) return Result.Failure(OrderErrors.OrderNotFound);
 

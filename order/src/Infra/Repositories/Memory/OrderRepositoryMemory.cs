@@ -15,7 +15,7 @@ namespace Infra.Repositories.Memory
             return Task.FromResult(_context.FirstOrDefault(o => o.Id == id));
         }
 
-        public Task<ICollection<Order>> GetOrdersByCustomerId(Guid customerId, CancellationToken cancellationToken)
+        public Task<ICollection<Order>> GetOrdersByCustomerId(Guid customerId, CancellationToken cancellationToken, string? include = null)
         {
             return Task.FromResult<ICollection<Order>>(_context.Where(o => o.CustomerId == customerId).ToList());
         }
