@@ -13,6 +13,7 @@ using Application.Orders.AddLineItem;
 using Application.Data;
 using Domain.Customer;
 using Domain.Products;
+using Application.Orders.Checkout;
 namespace Integration;
 
 public class OrderTest
@@ -171,5 +172,21 @@ public class OrderTest
         Assert.True(result.IsSuccess);
         Assert.False(result.IsFailure);
         Assert.Equal(OrderStatus.Canceled, result.Value.Status);
+    }
+
+    [Fact]
+    public async Task Should_Create_Checkout_For_Order()
+    {
+        var orderId = Guid.Parse("c3a9083c-a259-4516-8842-a80b40f8c39f");
+
+        var command = new CheckoutOrderCommand(orderId);
+
+        var commandHandler = new CheckoutOrderCommandHandler(_orderRepository, _unitOfWork);
+
+        var result = await commandHandler.Handle(command, CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        Assert.False(result.IsFailure);
+        Assert.Equal(OrderStatus.WaitingPayment, result.Value.Status);
     }
 }

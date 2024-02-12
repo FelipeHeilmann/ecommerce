@@ -95,12 +95,11 @@ public class Order
         return Result.Success();
     }
 
-    public Result Process(Guid customerId)
+    public Result Checkout()
     {
         if(Status != OrderStatus.Created) return Result.Failure(OrderErrors.OrderStatusCouldNotBeProccessed);
         UpdatedAt = DateTime.UtcNow;
         Status = OrderStatus.WaitingPayment;
-        CustomerId = customerId;
 
         return Result.Success();
 
