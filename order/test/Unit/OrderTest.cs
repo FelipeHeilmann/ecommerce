@@ -25,7 +25,7 @@ public class OrderTest
         order.AddItem(product3.Id, product3.Price, 3);
 
         Assert.Equal((50 * 2) + (60 * 1) + (70 * 3), order.CalculateTotal());
-        Assert.Equal(3, order.Itens.Count());
+        Assert.Equal(3, order.Items.Count());
         Assert.Equal(6, order.CountItens());
     }
 
@@ -48,7 +48,7 @@ public class OrderTest
         order.RemoveItem(lineItem3.Id);
 
         Assert.Equal(300, order.CalculateTotal());
-        Assert.Equal(3, order.Itens.Count());
+        Assert.Equal(3, order.Items.Count());
         Assert.Equal(5, order.CountItens());
     }
 }

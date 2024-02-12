@@ -5,11 +5,11 @@ namespace Domain.Orders;
 
 public class Order
 {
-    private readonly ICollection<LineItem> _itens = new List<LineItem>();
+    private readonly ICollection<LineItem> _items = new List<LineItem>();
     public Guid Id { get; private set; }
     public Guid CustomerId { get; private set; }
     public OrderStatus Status { get; private set; }
-    public IReadOnlyCollection<LineItem> Itens => _itens.ToList();
+    public IReadOnlyCollection<LineItem> Items => _items.ToList();
     public DateTime CreatedAt { get; private set; }
     public DateTime UpdatedAt { get; private set; }
 
@@ -24,16 +24,26 @@ public class Order
 
     public static Order Create(Guid customerId)
     {
-        return new Order(Guid.NewGuid(), customerId,OrderStatus.Created, DateTime.Now, DateTime.Now);
+        return new Order(Guid.NewGuid(), customerId,OrderStatus.Created, DateTime.UtcNow, DateTime.UtcNow);
     }
 
     public LineItem AddItem(Guid productId, Money price ,int quantity)
     {
+        UpdatedAt = DateTime.UtcNow;
+        
+        var existLineItemIndex = Items.ToList().FindIndex(li => li.ProductId == productId);
+
+        if (existLineItemIndex != -1)
+        {
+            Items.ToList()[existLineItemIndex].AddQuantity();
+
+            return Items.ToList()[existLineItemIndex];
+        }
+
         var lineItem = new LineItem(Guid.NewGuid(), Id ,productId, price ,quantity);
 
-        _itens.Add(lineItem);
+        _items.Add(lineItem);
 
-        UpdatedAt = DateTime.Now;
         
         return lineItem;
 
@@ -43,15 +53,15 @@ public class Order
     {
         if (HasOneItem()) return Result.Failure<LineItem>(OrderErrors.OrderHasOneLineItem);
 
-        var lineItem = _itens.FirstOrDefault(item => item.Id == lineItemId);
+        var lineItem = _items.FirstOrDefault(item => item.Id == lineItemId);
 
         if (lineItem == null) return Result.Failure<LineItem>(OrderErrors.LineItemNotFound);
             
-        UpdatedAt = DateTime.Now;
+        UpdatedAt = DateTime.UtcNow;
 
         var deleted = lineItem.DeleteItem();
         if (deleted) { 
-            _itens.Remove(lineItem);
+            _items.Remove(lineItem);
         }
 
         return Result.Success(lineItem);
@@ -60,7 +70,7 @@ public class Order
     public double CalculateTotal()
     {
         double total = 0;
-        foreach (var lineItem in _itens)
+        foreach (var lineItem in _items)
         {
             total += lineItem.Price.Amount * lineItem.Quantity;
         }
@@ -72,7 +82,7 @@ public class Order
     {
         foreach (var item in lineItens)
         {
-            _itens.Add(item);
+            _items.Add(item);
         }
     }
 
@@ -80,7 +90,7 @@ public class Order
     {
         if (CustomerId == null) return Result.Failure(OrderErrors.OrderDoesnotHaveCustomerId);
         Status = OrderStatus.Canceled;
-        UpdatedAt = DateTime.Now;
+        UpdatedAt = DateTime.UtcNow;
 
         return Result.Success();
     }
@@ -88,7 +98,7 @@ public class Order
     public Result Process(Guid customerId)
     {
         if(Status != OrderStatus.Created) return Result.Failure(OrderErrors.OrderStatusCouldNotBeProccessed);
-        UpdatedAt = DateTime.Now;
+        UpdatedAt = DateTime.UtcNow;
         Status = OrderStatus.WaitingPayment;
         CustomerId = customerId;
 
@@ -99,12 +109,12 @@ public class Order
     public int CountItens()
     {
         var itensTotal = 0;
-        foreach (var lineItem in _itens)
+        foreach (var lineItem in _items)
         {
             itensTotal += lineItem.Quantity;
         }
 
         return itensTotal;
     }
-    private bool HasOneItem() => _itens.Count == 1;
+    private bool HasOneItem() => _items.Count == 1;
 }

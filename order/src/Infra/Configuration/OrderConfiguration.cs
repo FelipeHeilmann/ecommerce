@@ -16,7 +16,7 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder.Property(o => o.CreatedAt).HasColumnName("created_at");
         builder.Property(o => o.UpdatedAt).HasColumnName("updated_at");
 
-        builder.HasMany(o => o.Itens)
+        builder.HasMany(o => o.Items)
             .WithOne()
             .HasForeignKey(li => li.OrderId);
 

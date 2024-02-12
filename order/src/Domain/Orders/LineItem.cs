@@ -23,6 +23,11 @@ public class LineItem
     {
     }
 
+    public void AddQuantity()
+    {
+        Quantity++;
+    }
+
     public bool DeleteItem()
     {
         if (Quantity == 1) return true;
