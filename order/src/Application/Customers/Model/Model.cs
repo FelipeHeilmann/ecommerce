@@ -1,5 +1,5 @@
 ﻿namespace Application.Customers.Model;
 
-public record CreateAccountModel(string Name, string Email, string password, DateTime birthDate);
+public record CreateAccountRequest(string Name, string Email, string password, DateTime birthDate);
 
-public record LoginModel(string Email, string Password);
+public record LoginRequest(string Email, string Password);

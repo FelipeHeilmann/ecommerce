@@ -3,4 +3,4 @@ using Application.Categories.Model;
 
 namespace Application.Categories.Update;
 
-public record class UpdateCategoryCommand(UpdateCategoryModel request) : ICommand;
+public record class UpdateCategoryCommand(UpdateCategoryRequest request) : ICommand;

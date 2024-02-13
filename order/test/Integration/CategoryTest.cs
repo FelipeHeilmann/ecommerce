@@ -24,7 +24,7 @@ public class CategoryTest
     [Fact]
     public async Task Should_Create_Category() 
     {
-        var request = new CategoryModel("minha categoria", "descricao da minha categoria");
+        var request = new CreateCategoryRequest("minha categoria", "descricao da minha categoria");
 
         var command = new CreateCategoryCommand(request);
 
@@ -70,7 +70,7 @@ public class CategoryTest
     {
         var categoryId = Guid.Parse("de1ab44a-ef05-42da-a0e8-6137368018fc");
 
-        var request = new UpdateCategoryModel("nome editado", "descricao editada", categoryId);
+        var request = new UpdateCategoryRequest("nome editado", "descricao editada", categoryId);
 
         var command = new UpdateCategoryCommand(request);
 

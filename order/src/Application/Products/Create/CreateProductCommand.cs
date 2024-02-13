@@ -3,4 +3,4 @@ using Application.Products.Model;
 
 namespace Application.Products.Create;
 
-public record CreateProductCommand(CreateProductModel request) : ICommand<Guid>;
+public record CreateProductCommand(CreateProductRequest request) : ICommand<Guid>;

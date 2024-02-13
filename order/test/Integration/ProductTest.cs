@@ -29,7 +29,7 @@ public class ProductTest
     public async Task Should_Create_Product() 
     { 
         var catagoryId = Guid.Parse("de1ab44a-ef05-42da-a0e8-6137368018fc");
-        var request = new CreateProductModel("Produto1", "Meu produto", "BRL", 70.0, "path", "sku", catagoryId);
+        var request = new CreateProductRequest("Produto1", "Meu produto", "BRL", 70.0, "path", "sku", catagoryId);
         var command = new CreateProductCommand(request);
         var commandHandler = new CreateProductCommandHandler(_repository, _categoryRepository, _unitOfWork);
 
@@ -71,7 +71,7 @@ public class ProductTest
     {
         var catagoryId = Guid.Parse("de1ab44a-ef05-42da-a0e8-6137368018fc");
         var productId = Guid.Parse("d8872746-afce-471b-a0d8-3f2fd05eba87");
-        var request = new UpdateProductModel(productId, "Nome Atualizado", "Descricap atualizando", "BRL", 90.0, "path", "sku", catagoryId);
+        var request = new UpdateProductRequest(productId, "Nome Atualizado", "Descricap atualizando", "BRL", 90.0, "path", "sku", catagoryId);
         var command = new UpdateProductCommand(request);
         var commandHandler = new UpdateProductCommandHandler(_repository, _categoryRepository ,_unitOfWork);
 
@@ -86,7 +86,7 @@ public class ProductTest
     {
         var catagoryId = Guid.Parse("de1ab44a-ef05-42da-a0e8-6137368018fc");
         var productId = Guid.Parse("79f792d3-a213-4acc-8f78-266c1b666a56");
-        var request = new UpdateProductModel(productId, "Nome Atualizado", "Descricao atualizando", "BRL", 90.0, "path", "sku", catagoryId);
+        var request = new UpdateProductRequest(productId, "Nome Atualizado", "Descricao atualizando", "BRL", 90.0, "path", "sku", catagoryId);
         var command = new UpdateProductCommand(request);
         var commandHandler = new UpdateProductCommandHandler(_repository, _categoryRepository ,_unitOfWork);
 
@@ -103,7 +103,7 @@ public class ProductTest
     {
         var catagoryId = Guid.Parse("79f792d3-a213-4acc-8f78-266c1b666a56");
         var productId = Guid.Parse("d8872746-afce-471b-a0d8-3f2fd05eba87");
-        var request = new UpdateProductModel(productId, "Nome Atualizado", "Descricap atualizando", "BRL", 90.0, "path", "sku", catagoryId);
+        var request = new UpdateProductRequest(productId, "Nome Atualizado", "Descricap atualizando", "BRL", 90.0, "path", "sku", catagoryId);
         var command = new UpdateProductCommand(request);
         var commandHandler = new UpdateProductCommandHandler(_repository, _categoryRepository ,_unitOfWork);
 

@@ -4,4 +4,4 @@ using Domain.Categories;
 
 namespace Application.Categories.Create;
 
-public record CreateCategoryCommand(CategoryModel request) : ICommand<Guid>;
+public record CreateCategoryCommand(CreateCategoryRequest request) : ICommand<Guid>;

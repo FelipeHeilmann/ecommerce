@@ -15,7 +15,7 @@ public class CustomerController : APIBaseController
     : base(sender) { }
 
     [HttpPost]
-    public async Task<IResult> CreateAccount([FromBody] CreateAccountModel request, CancellationToken cancellationToken)
+    public async Task<IResult> CreateAccount([FromBody] CreateAccountRequest request, CancellationToken cancellationToken)
     {
         var command = new CreateAccountCommand(request);
 
@@ -25,7 +25,7 @@ public class CustomerController : APIBaseController
     }
 
     [HttpPost("auth")]
-    public async Task<IResult> Login([FromBody] LoginModel request, CancellationToken cancellationToken)
+    public async Task<IResult> Login([FromBody] LoginRequest request, CancellationToken cancellationToken)
     {
         var command = new LoginCommand(request);
 

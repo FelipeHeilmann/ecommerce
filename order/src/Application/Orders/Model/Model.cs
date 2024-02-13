@@ -1,7 +1,7 @@
 ﻿namespace Application.Orders.Model;
 
-public record OrderRequestModel(List<OrderItemRequestModel> OrderItens, Guid CustomerId);
+public record OrderRequest(List<OrderItemRequest> OrderItens, Guid CustomerId);
 
-public record OrderItemRequestModel(Guid ProductId, int Quantity);
+public record OrderItemRequest(Guid ProductId, int Quantity);
 
-public record AddItemBody(int Quantity);
+public record AddItemRequest(int Quantity);

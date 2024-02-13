@@ -57,13 +57,13 @@ public class OrderController : APIBaseController
 
     [Authorize]
     [HttpPost]
-    public async Task<IResult> Create([FromBody] List<OrderItemRequestModel> request, CancellationToken cancellationToken)
+    public async Task<IResult> Create([FromBody] List<OrderItemRequest> request, CancellationToken cancellationToken)
     {
         var customerId = GetCustomerId();
 
         if (customerId == null) return Results.Unauthorized();
 
-        var command = new CreateOrderCommand(new OrderRequestModel(request, customerId.Value));
+        var command = new CreateOrderCommand(new OrderRequest(request, customerId.Value));
 
         var result = await _sender.Send(command, cancellationToken);
 
@@ -83,7 +83,7 @@ public class OrderController : APIBaseController
 
     [Authorize]
     [HttpPatch("{orderId}/add/{lineItemId}")]
-    public async Task<IResult> AddLineItem(Guid orderId, Guid lineItemId, [FromBody] AddItemBody request, CancellationToken cancellationToken)
+    public async Task<IResult> AddLineItem(Guid orderId, Guid lineItemId, [FromBody] AddItemRequest request, CancellationToken cancellationToken)
     {
         var command = new AddLineItemCommand(orderId, lineItemId, request.Quantity);
 
