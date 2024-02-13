@@ -25,6 +25,11 @@ public class Repository<TEntity> : IRepositoryBase<TEntity> where TEntity : clas
         return await query.ToListAsync(cancellationToken);
     }
 
+    public IQueryable<TEntity> GetQueryable(CancellationToken cancellation)
+    {
+        return _context.Set<TEntity>().AsQueryable(); 
+    }
+
     public async Task<TEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken, string? include = null)
     {
         var query = _context.Set<TEntity>().AsQueryable();

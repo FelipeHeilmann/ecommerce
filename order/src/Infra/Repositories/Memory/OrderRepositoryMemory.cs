@@ -1,4 +1,5 @@
 ﻿using Domain.Orders;
+
 namespace Infra.Repositories.Memory
 {
     public class OrderRepositoryMemory : IOrderRepository
@@ -45,6 +46,11 @@ namespace Infra.Repositories.Memory
         public Task<Order?> GetCategoryById(Guid id)
         {
             return Task.FromResult(_context.FirstOrDefault(c => c.Id == id));
+        }
+
+        public IQueryable<Order> GetQueryable(CancellationToken cancellation)
+        {
+            throw new NotImplementedException();
         }
     }
 }

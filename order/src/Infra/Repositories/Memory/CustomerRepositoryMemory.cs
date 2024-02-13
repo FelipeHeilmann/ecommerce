@@ -1,4 +1,5 @@
 ﻿using Domain.Customer;
+
 namespace Infra.Repositories.Memory
 {
     public class CustomerRepositoryMemory : ICustomerRepository
@@ -46,6 +47,11 @@ namespace Infra.Repositories.Memory
         public void Delete(Customer entity)
         {
             _context.Remove(entity);
+        }
+
+        public IQueryable<Customer> GetQueryable(CancellationToken cancellation)
+        {
+            throw new NotImplementedException();
         }
     }
 }

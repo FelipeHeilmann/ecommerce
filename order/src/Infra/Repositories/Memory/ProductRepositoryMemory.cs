@@ -43,5 +43,9 @@ namespace Infra.Repositories.Memory
             _context.Remove(entity);
         }
 
+        public IQueryable<Product> GetQueryable(CancellationToken cancellation)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

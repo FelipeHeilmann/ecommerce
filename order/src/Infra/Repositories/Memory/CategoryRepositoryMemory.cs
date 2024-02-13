@@ -2,7 +2,7 @@
 
 namespace Infra.Repositories.Memory;
 
-public class CategoryRepositoryMemory : ICategoryRepository 
+public class CategoryRepositoryMemory : ICategoryRepository
 {
     private readonly List<Category> _context = new();
 
@@ -34,5 +34,10 @@ public class CategoryRepositoryMemory : ICategoryRepository
     public void Delete(Category entity)
     {
         _context.Remove(entity);
+    }
+
+    public IQueryable<Category> GetQueryable(CancellationToken cancellation)
+    {
+        throw new NotImplementedException();
     }
 }
