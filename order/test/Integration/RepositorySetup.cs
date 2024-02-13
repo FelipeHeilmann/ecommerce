@@ -1,4 +1,5 @@
-﻿using Domain.Categories;
+﻿using Domain.Address;
+using Domain.Categories;
 using Domain.Customer;
 using Domain.Orders;
 using Domain.Products;
@@ -158,7 +159,9 @@ public class RepositorySetup
             Guid.Parse("f3b205c3-552d-4fd9-b10e-6414086910b0"), 
             OrderStatus.Created, 
             DateTime.Now, 
-            DateTime.Now
+            DateTime.Now,
+            null,
+            null
         );
 
         var order2 = new Order(
@@ -166,7 +169,9 @@ public class RepositorySetup
             Guid.Parse("f3b205c3-552d-4fd9-b10e-6414086910b0"),
             OrderStatus.Created,
             DateTime.Now,
-            DateTime.Now
+            DateTime.Now,
+            null,
+            null
         );
 
         var lineItens = new List<LineItem>()
@@ -192,5 +197,35 @@ public class RepositorySetup
 
         _repository.Add(order);
         _repository.Add(order2);
+    }
+    
+    public static void PopulateAddressRepository(IAddressRepository _repository)
+    {
+        _repository.Add(new Address(
+            Guid.Parse("2b169c76-acee-4ddf-86c4-37af9fbb07ea"),
+            Guid.Parse("f3b205c3-552d-4fd9-b10e-6414086910b0"),
+            ZipCode.Create("04182-135").Value,
+            "rua",
+            "bairro",
+            "numero",
+            null,
+            "cidade",
+            "estado",
+            "pais")
+        );
+
+        _repository.Add(new Address(
+            Guid.Parse("fa2c85e2-3778-43d5-b3c7-89d1e5bc155d"),
+            Guid.Parse("f3b205c3-552d-4fd9-b10e-6414086910b0"),
+            ZipCode.Create("04182-135").Value,
+            "rua 2",
+            "bairro 2",
+            "numero 2",
+            null,
+            "cidade 2",
+            "estado 2",
+            "pais 2")
+        );
+
     }
 }

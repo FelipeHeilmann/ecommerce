@@ -64,11 +64,11 @@ public class OrderTest
 
         var order = Order.Create(customer.Value.Id);
 
-        var lineItem1 = order.AddItem(product1.Id, product1.Price, 2);
-        var lineItem2 = order.AddItem(product2.Id, product2.Price, 1);
-        var lineItem3 = order.AddItem(product3.Id, product3.Price, 3);
+        order.AddItem(product1.Id, product1.Price, 2);
+        order.AddItem(product2.Id, product2.Price, 1);
+        order.AddItem(product3.Id, product3.Price, 3);
 
-        order.Checkout();
+        order.Checkout(Guid.NewGuid(), Guid.NewGuid());
 
         Assert.Equal(OrderStatus.WaitingPayment, order.Status);
     }

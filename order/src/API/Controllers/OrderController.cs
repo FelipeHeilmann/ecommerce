@@ -46,9 +46,9 @@ public class OrderController : APIBaseController
 
     [Authorize]
     [HttpPatch("{id}/checkout")]
-    public async Task<IResult> Checkout(Guid id, CancellationToken cancellationToken)
+    public async Task<IResult> Checkout(Guid id, [FromBody] CheckoutOrderRequest request, CancellationToken cancellationToken)
     {
-        var command = new CheckoutOrderCommand(id);
+        var command = new CheckoutOrderCommand(id, request.ShippingAddressId, request.BillingAddressId);
 
         var result = await _sender.Send(command, cancellationToken);
 

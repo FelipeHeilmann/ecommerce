@@ -12,19 +12,23 @@ public class Order
     public IReadOnlyCollection<LineItem> Items => _items.ToList();
     public DateTime CreatedAt { get; private set; }
     public DateTime UpdatedAt { get; private set; }
+    public Guid? BillingAddressId { get; private set; }
+    public Guid? ShippingAddressId { get; private set; }
 
-    public Order(Guid id, Guid customerId ,OrderStatus status, DateTime createdAt, DateTime updatedAt)
+    public Order(Guid id, Guid customerId ,OrderStatus status, DateTime createdAt, DateTime updatedAt, Guid? billingAddressId, Guid? shippingAddressId)
     {
         Id = id;
         CustomerId = customerId;
         Status = status;
         CreatedAt = createdAt;
         UpdatedAt = updatedAt;
+        BillingAddressId = billingAddressId;
+        ShippingAddressId = shippingAddressId;
     }
 
     public static Order Create(Guid customerId)
     {
-        return new Order(Guid.NewGuid(), customerId,OrderStatus.Created, DateTime.UtcNow, DateTime.UtcNow);
+        return new Order(Guid.NewGuid(), customerId,OrderStatus.Created, DateTime.UtcNow, DateTime.UtcNow, null, null);
     }
 
     public LineItem AddItem(Guid productId, Money price ,int quantity)
@@ -94,9 +98,11 @@ public class Order
         return Result.Success();
     }
 
-    public Result Checkout()
+    public Result Checkout(Guid shippingAddressId, Guid billingAddressId)
     {
         if(Status != OrderStatus.Created) return Result.Failure(OrderErrors.OrderStatusCouldNotBeProccessed);
+        ShippingAddressId = shippingAddressId;
+        BillingAddressId = billingAddressId;
         UpdatedAt = DateTime.UtcNow;
         Status = OrderStatus.WaitingPayment;
 

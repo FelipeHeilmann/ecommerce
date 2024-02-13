@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions.Services;
 using Application.Data;
+using Domain.Address;
 using Domain.Categories;
 using Domain.Customer;
 using Domain.Orders;
@@ -33,6 +34,7 @@ public static class DependecyInjection
         services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<ICategoryRepository, CategoryRepository>();
+        services.AddScoped<IAddressRepository, AddressRepository>();
 
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IJwtProvider, JwtProvider>();
