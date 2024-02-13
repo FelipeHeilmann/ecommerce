@@ -9,6 +9,19 @@ services:
       - POSTGRES_DB=ecommerce-orders
     volumes:
       - ecommerce_pg_data:/bitnami/postgresql
+  rabbitmq:
+    image: rabbitmq:management
+    hostname: order-mq
+    ports:
+      - '5672:5672'
+    volumes:
+      - ecommerce_rabbit_queue_data:/var/lib/rabbitmq
+      - ecommerce_rabbit_queue_log:/var/log/rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
 
 volumes:
   ecommerce_pg_data:
+  ecommerce_rabbit_queue_data:
+  ecommerce_rabbit_queue_log:
