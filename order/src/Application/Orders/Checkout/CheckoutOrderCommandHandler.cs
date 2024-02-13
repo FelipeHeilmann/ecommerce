@@ -22,7 +22,9 @@ public class CheckoutOrderCommandHandler : ICommandHandler<CheckoutOrderCommand,
 
         if (order == null) return Result.Failure<Order>(OrderErrors.OrderNotFound);
 
-        order.Checkout();
+        var checkout = order.Checkout();
+
+        if(checkout.IsFailure) return Result.Failure<Order>(checkout.Error);
 
         _orderRepository.Update(order);
 

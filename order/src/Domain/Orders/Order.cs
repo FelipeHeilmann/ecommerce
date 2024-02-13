@@ -88,7 +88,6 @@ public class Order
 
     public Result Cancel()
     {
-        if (CustomerId == null) return Result.Failure(OrderErrors.OrderDoesnotHaveCustomerId);
         Status = OrderStatus.Canceled;
         UpdatedAt = DateTime.UtcNow;
 
