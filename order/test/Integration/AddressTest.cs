@@ -1,4 +1,5 @@
 ﻿using Application.Addresses.Create;
+using Application.Addresses.GetByCustomerId;
 using Application.Data;
 using Domain.Addresses;
 using Infra.Data;
@@ -17,7 +18,7 @@ public class AddressTest
     }
 
     [Fact]
-    public async Task Sould_Create_Adress()
+    public async Task Sould_Create_Address()
     {
         var customerId = Guid.Parse("f3b205c3-552d-4fd9-b10e-6414086910b0");
         var zipcode = "04182-123";
@@ -40,5 +41,21 @@ public class AddressTest
         Assert.True(result.IsSuccess);
         Assert.False(result.IsFailure);
         Assert.True(result.Value is Guid);
+    }
+
+    [Fact]
+    public async Task Sould_Get_Addresses_By_Customer_Id()
+    {
+        var customerId = Guid.Parse("f3b205c3-552d-4fd9-b10e-6414086910b0");
+
+        var query = new GetAddressesByCustomerIdQuery(customerId);
+
+        var queryHandler = new GetAddressesByCustomerIdQueryHandler(_addressRepository);
+
+        var result = await queryHandler.Handle(query, CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        Assert.False(result.IsFailure);
+        Assert.True(result.Value is ICollection<Address>);
     }
 }

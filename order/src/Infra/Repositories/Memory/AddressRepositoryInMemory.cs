@@ -10,10 +10,19 @@ public class AddressRepositoryInMemory : IAddressRepository
     {
         return Task.FromResult<ICollection<Address>>(_context);
     }
+    public IQueryable<Address> GetQueryable(CancellationToken cancellation)
+    {
+        throw new NotImplementedException();
+    }
 
     public Task<Address?> GetByIdAsync(Guid id, CancellationToken cancellationToken, string? include = null)
     {
         return Task.FromResult(_context.FirstOrDefault(a => a.Id == id));
+    }
+
+    public Task<ICollection<Address>> GetByCustomerIdAsync(Guid customerId, CancellationToken cancellationToken)
+    {
+        return Task.FromResult<ICollection<Address>>(_context.Where(a => a.CustomerId == customerId).ToList());
     }
 
     public void Add(Address entity)

@@ -1,7 +1,7 @@
 ﻿using API.Extensions;
 using Application.Addresses.Create;
+using Application.Addresses.GetByCustomerId;
 using Domain.Addresses;
-using Domain.Customer;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,13 +15,27 @@ public class AddressController : APIBaseController
     public AddressController(ISender sender) : base(sender) { }
 
     [Authorize]
+    [HttpGet]
+    public async Task<IResult> GetByCustomerId(CancellationToken cancellationToken)
+    {
+        var customerId = GetCustomerId();
+
+        var query = new GetAddressesByCustomerIdQuery(customerId!.Value);
+
+        var result = await _sender.Send(query, cancellationToken);
+
+        return Results.Ok(result.Value);
+    }
+
+
+    [Authorize]
     [HttpPost]
     public async Task<IResult> Create([FromBody] CreateAddressHttpRequest request, CancellationToken cancellationToken)
     {
         var customerId = GetCustomerId();
 
         var createAddressRequest = new CreateAddressRequest(
-                customerId.Value,
+                customerId!.Value,
                 request.Zipcode,
                 request.Street,
                 request.Neighborhood,
