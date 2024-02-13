@@ -14,6 +14,8 @@ using Application.Data;
 using Domain.Customer;
 using Domain.Products;
 using Application.Orders.Checkout;
+using MassTransit;
+using Infra.Queue;
 namespace Integration;
 
 public class OrderTest
@@ -21,6 +23,7 @@ public class OrderTest
     private readonly IOrderRepository _orderRepository = new OrderRepositoryMemory();
     private readonly ICustomerRepository _customerRepository = new CustomerRepositoryMemory();
     private readonly IProductRepository _productRepository = new ProductRepositoryMemory();
+    private readonly IPublishEndpoint _publishEndpoint = new PublishEndpointMemory();
     private readonly IUnitOfWork _unitOfWork = new UnitOfWorkMemory();
 
     public OrderTest()
@@ -181,7 +184,7 @@ public class OrderTest
 
         var command = new CheckoutOrderCommand(orderId);
 
-        var commandHandler = new CheckoutOrderCommandHandler(_orderRepository, _unitOfWork);
+        var commandHandler = new CheckoutOrderCommandHandler(_orderRepository, _unitOfWork, _publishEndpoint);
 
         var result = await commandHandler.Handle(command, CancellationToken.None);
 

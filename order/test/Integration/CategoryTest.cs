@@ -51,7 +51,7 @@ public class CategoryTest
     }
 
     [Fact]
-    public async Task Should_Get__Category_By_Id()
+    public async Task Should_Get_Category_By_Id()
     {
         var categoryId = Guid.Parse("de1ab44a-ef05-42da-a0e8-6137368018fc");
 
