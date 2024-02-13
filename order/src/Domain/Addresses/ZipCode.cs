@@ -1,7 +1,7 @@
 ﻿using Domain.Shared;
 using System.Text.RegularExpressions;
 
-namespace Domain.Address;
+namespace Domain.Addresses;
 
 public record ZipCode
 {

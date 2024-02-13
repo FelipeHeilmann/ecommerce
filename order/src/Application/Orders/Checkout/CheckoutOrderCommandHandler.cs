@@ -1,6 +1,6 @@
 ﻿using Application.Abstractions.Messaging;
 using Application.Data;
-using Domain.Address;
+using Domain.Addresses;
 using Domain.Orders;
 using Domain.Orders.DomainEvents;
 using Domain.Shared;

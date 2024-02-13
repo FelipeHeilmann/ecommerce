@@ -1,4 +1,4 @@
-﻿using Domain.Address;
+﻿using Domain.Addresses;
 using Domain.Categories;
 using Domain.Customer;
 using Domain.Orders;

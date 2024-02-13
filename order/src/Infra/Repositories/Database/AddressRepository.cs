@@ -1,4 +1,4 @@
-﻿using Domain.Address;
+﻿using Domain.Addresses;
 using Infra.Context;
 
 namespace Infra.Repositories.Database;

@@ -1,4 +1,4 @@
-﻿using Domain.Address;
+﻿using Domain.Addresses;
 using Domain.Customer;
 using Domain.Orders;
 using Microsoft.EntityFrameworkCore;

@@ -16,7 +16,7 @@ using Domain.Products;
 using Application.Orders.Checkout;
 using MassTransit;
 using Infra.Queue;
-using Domain.Address;
+using Domain.Addresses;
 namespace Integration;
 
 public class OrderTest
