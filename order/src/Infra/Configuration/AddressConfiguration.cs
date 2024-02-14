@@ -25,7 +25,7 @@ public class AddressConfiguration : IEntityTypeConfiguration<Address>
             .WithMany()
             .HasForeignKey(a => a.CustomerId);
 
-        builder.ToTable("address");
+        builder.ToTable("addresses");
             
     }
 }
