@@ -70,4 +70,32 @@ public class Address
         );
     }
 
+    public Result Update(
+        string zipCodeString,
+        string street,
+        string neighborhood,
+        string number,
+        string? apartment,
+        string city,
+        string state,
+        string country
+    )
+    {
+        var zipCode = ZipCode.Create(zipCodeString);
+
+        if (zipCode.IsFailure) return Result.Failure<Address>(zipCode.Error);
+
+        ZipCode = zipCode.Value;
+        Street = street;
+        Neighborhood = neighborhood;
+        Number = number;
+        Apartment = apartment;
+        City = city;
+        State = state;
+        Country = country;
+
+        return Result.Success();
+       
+    }
+
 }

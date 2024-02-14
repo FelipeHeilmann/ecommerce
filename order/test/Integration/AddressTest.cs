@@ -1,6 +1,8 @@
 ﻿using Application.Addresses.Create;
 using Application.Addresses.GetByCustomerId;
 using Application.Addresses.GetById;
+using Application.Addresses.Model;
+using Application.Addresses.Update;
 using Application.Data;
 using Domain.Addresses;
 using Infra.Data;
@@ -89,6 +91,45 @@ public class AddressTest
         Assert.False(result.IsSuccess);
         Assert.True(result.IsFailure);
         Assert.Equal(AddressErrors.NotFound, result.Error);
+    }
+
+    [Fact]
+    public async Task Should_Update_Address()
+    {
+        var addressId = Guid.Parse("2b169c76-acee-4ddf-86c4-37af9fbb07ea");
+
+        var customerId = Guid.Parse("f3b205c3-552d-4fd9-b10e-6414086910b0");
+        var zipcode = "04182-135";
+        var street = "Rua C";
+        var neighborhood = "Jardim Sacoma";
+        var number = "112";
+        var apartment = "43";
+        var city = "São Paulo";
+        var state = "São Paulo";
+        var country = "Brasil";
+
+        var request = new UpdateAddressRequest
+            (
+                addressId,
+                customerId, 
+                zipcode, 
+                street, 
+                neighborhood, 
+                number,
+                apartment, 
+                city, 
+                state, 
+                country
+            );
+
+        var command = new UpdateAddressCommand(request);
+
+        var commandHandler = new UpdateAddressCommandHandler(_addressRepository, _unitOfWork);
+
+        var result = await commandHandler.Handle(command, CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        Assert.False(result.IsFailure);
     }
 
 }

@@ -2,7 +2,8 @@
 using Application.Addresses.Create;
 using Application.Addresses.GetByCustomerId;
 using Application.Addresses.GetById;
-using Domain.Addresses;
+using Application.Addresses.Model;
+using Application.Addresses.Update;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -39,10 +40,9 @@ public class AddressController : APIBaseController
         return Results.Ok(result.Value);
     }
 
-
     [Authorize]
     [HttpPost]
-    public async Task<IResult> Create([FromBody] CreateAddressHttpRequest request, CancellationToken cancellationToken)
+    public async Task<IResult> Create([FromBody] AddressRequest request, CancellationToken cancellationToken)
     {
         var customerId = GetCustomerId();
 
@@ -63,5 +63,31 @@ public class AddressController : APIBaseController
         var result = await _sender.Send(command, cancellationToken);
 
         return result.IsFailure ? result.ToProblemDetail() : Results.Created($"/addresses/{result.Value}", result.Value);
+    }
+
+    [Authorize]
+    [HttpPut("{id}")]
+    public async Task<IResult> Update(Guid id, [FromBody] AddressRequest request, CancellationToken cancellationToken) 
+    {
+        var customerId = GetCustomerId();
+
+        var updateAddressRequest = new UpdateAddressRequest(
+                id,
+                customerId!.Value,
+                request.Zipcode,
+                request.Street,
+                request.Neighborhood,
+                request.Number,
+                request.Apartment,
+                request.City,
+                request.State,
+                request.Country
+            );
+
+        var command = new UpdateAddressCommand(updateAddressRequest);
+
+        var result = await _sender.Send(command, cancellationToken);
+
+        return result.IsFailure ? result.ToProblemDetail() : Results.NoContent();
     }
 }

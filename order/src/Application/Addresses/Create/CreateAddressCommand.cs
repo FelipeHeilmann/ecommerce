@@ -1,5 +1,5 @@
 ﻿using Application.Abstractions.Messaging;
-using Domain.Addresses;
+using Application.Addresses.Model;
 
 namespace Application.Addresses.Create;
 
