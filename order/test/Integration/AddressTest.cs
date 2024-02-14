@@ -1,5 +1,6 @@
 ﻿using Application.Addresses.Create;
 using Application.Addresses.GetByCustomerId;
+using Application.Addresses.GetById;
 using Application.Data;
 using Domain.Addresses;
 using Infra.Data;
@@ -58,4 +59,36 @@ public class AddressTest
         Assert.False(result.IsFailure);
         Assert.True(result.Value is ICollection<Address>);
     }
+
+    [Fact]
+    public async Task Sould_Get_Address_By_Id()
+    {
+        var addressId = Guid.Parse("2b169c76-acee-4ddf-86c4-37af9fbb07ea");
+
+        var query = new GetAddressByIdQuery(addressId);
+
+        var queryHandler = new GetAddressByIdQueryHandler(_addressRepository);
+
+        var result = await queryHandler.Handle(query, CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        Assert.False(result.IsFailure);
+        Assert.True(result.Value is Address);
+    }
+    [Fact]
+    public async Task Sould_Not_Get_Addresses_By_Id()
+    {
+        var addressId = Guid.NewGuid();
+
+        var query = new GetAddressByIdQuery(addressId);
+
+        var queryHandler = new GetAddressByIdQueryHandler(_addressRepository);
+
+        var result = await queryHandler.Handle(query, CancellationToken.None);
+
+        Assert.False(result.IsSuccess);
+        Assert.True(result.IsFailure);
+        Assert.Equal(AddressErrors.NotFound, result.Error);
+    }
+
 }
