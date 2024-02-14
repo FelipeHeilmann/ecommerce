@@ -1,5 +1,6 @@
 using API.OptionSetup;
 using Infra;
+using Infra.Extensions;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
@@ -46,6 +47,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.ApplyMigrations();
 }
 
 app.UseHttpsRedirection();

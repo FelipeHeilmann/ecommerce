@@ -1,5 +1,9 @@
 .vs
 
+bin/
+obj/
+containers/
+
 src/Domain/bin
 src/Domain/obj
 

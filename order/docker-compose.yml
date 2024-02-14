@@ -1,27 +1,33 @@
+version: '3.4'
+
 services:
-  postgres:
+  order-api:
+    image: ${DOCKER_REGISTRY-}order.api
+    build:
+      context: .
+      dockerfile: src/API/Dockerfile
+    ports:
+      - '5000:5000'
+      - '5001:5001'    
+  order-database:
     image: bitnami/postgresql:latest
+    container_name: order_database
     ports:
       - '5432:5432'
     environment:
-      - POSTGRES_USER=docker
-      - POSTGRES_PASSWORD=docker
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=ecommerce-orders
     volumes:
-      - ecommerce_pg_data:/bitnami/postgresql
-  rabbitmq:
+      - ./containers/order-db:/var/lib/postgresql/data
+  ecomerce-queue:
     image: rabbitmq:management
-    hostname: order-mq
+    hostname: ecomerce_queue
     ports:
       - '5672:5672'
     volumes:
-      - ecommerce_rabbit_queue_data:/var/lib/rabbitmq
-      - ecommerce_rabbit_queue_log:/var/log/rabbitmq
+      - ./containers/queue/data/:/var/lib/rabbitmq
+      - ./containers/queue/log/:/var/log/rabbitmq
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
-
-volumes:
-  ecommerce_pg_data:
-  ecommerce_rabbit_queue_data:
-  ecommerce_rabbit_queue_log:
