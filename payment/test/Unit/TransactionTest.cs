@@ -11,9 +11,10 @@ public class TransactionTest
         var orderId = Guid.NewGuid();
         var customerId = Guid.NewGuid();
         var paymentServiceTransactionId = Guid.NewGuid();
+        var amount = 300.00;
         var paymentType = "credit";
 
-        var transaction = Transaction.Create(orderId, customerId, paymentServiceTransactionId, paymentType);
+        var transaction = Transaction.Create(orderId, customerId, paymentServiceTransactionId, amount ,paymentType);
 
         Assert.Equal(PaymentType.CreditCard, transaction.PaymentType);
         Assert.Equal(TransactionStatus.WaitingPayment, transaction.Status);
@@ -25,9 +26,10 @@ public class TransactionTest
         var orderId = Guid.NewGuid();
         var customerId = Guid.NewGuid();
         var paymentServiceTransactionId = Guid.NewGuid();
+        var amount = 300.00;
         var paymentType = "debit";
 
-        var transaction = Transaction.Create(orderId, customerId, paymentServiceTransactionId ,paymentType);
+        var transaction = Transaction.Create(orderId, customerId, paymentServiceTransactionId, amount, paymentType);
 
         Assert.Equal(PaymentType.DebitCard, transaction.PaymentType);
         Assert.Equal(TransactionStatus.WaitingPayment, transaction.Status);
@@ -39,9 +41,10 @@ public class TransactionTest
         var orderId = Guid.NewGuid();
         var customerId = Guid.NewGuid();
         var paymentServiceTransactionId = Guid.NewGuid();
+        var amount = 300.00;
         var paymentType = "pix";
 
-        var transaction = Transaction.Create(orderId, customerId, paymentServiceTransactionId ,paymentType);
+        var transaction = Transaction.Create(orderId, customerId, paymentServiceTransactionId, amount, paymentType);
 
         Assert.Equal(PaymentType.Pix, transaction.PaymentType);
         Assert.Equal(TransactionStatus.WaitingPayment, transaction.Status);
@@ -50,12 +53,13 @@ public class TransactionTest
     [Fact]
     public void Should_Create_Billet_Transaction()
     {
-        var oderId = Guid.NewGuid();
+        var orderId = Guid.NewGuid();
         var customerId = Guid.NewGuid();
         var paymentServiceTransactionId = Guid.NewGuid();
+        var amount = 300.00;
         var paymentType = "billet";
 
-        var transaction = Transaction.Create(oderId, customerId, paymentServiceTransactionId,paymentType);
+        var transaction = Transaction.Create(orderId, customerId, paymentServiceTransactionId, amount, paymentType);
 
         Assert.Equal(PaymentType.Billet, transaction.PaymentType);
         Assert.Equal(TransactionStatus.WaitingPayment, transaction.Status);
@@ -67,9 +71,10 @@ public class TransactionTest
         var orderId = Guid.NewGuid();
         var customerId = Guid.NewGuid();
         var paymentServiceTransactionId = Guid.NewGuid();
+        var amount = 300.00;
         var paymentType = "billet";
 
-        var transaction = Transaction.Create(orderId, customerId, paymentServiceTransactionId ,paymentType);
+        var transaction = Transaction.Create(orderId, customerId, paymentServiceTransactionId, amount, paymentType);
 
         transaction.Approve();
 
@@ -79,12 +84,13 @@ public class TransactionTest
     [Fact]
     public void Should_Refused_Transaction()
     {
-        var oderId = Guid.NewGuid();
+        var orderId = Guid.NewGuid();
         var customerId = Guid.NewGuid();
         var paymentServiceTransactionId = Guid.NewGuid();
+        var amount = 300.00;
         var paymentType = "billet";
 
-        var transaction = Transaction.Create(oderId, customerId, paymentServiceTransactionId,paymentType);
+        var transaction = Transaction.Create(orderId, customerId, paymentServiceTransactionId, amount, paymentType);
 
         transaction.Refuse();
 
@@ -94,12 +100,13 @@ public class TransactionTest
     [Fact]
     public void Should_Refund_Transaction()
     {
-        var oderId = Guid.NewGuid();
+        var orderId = Guid.NewGuid();
         var customerId = Guid.NewGuid();
         var paymentServiceTransactionId = Guid.NewGuid();
+        var amount = 300.00;
         var paymentType = "billet";
 
-        var transaction = Transaction.Create(oderId, customerId, paymentServiceTransactionId, paymentType);
+        var transaction = Transaction.Create(orderId, customerId, paymentServiceTransactionId, amount, paymentType);
 
         transaction.Refund();
 

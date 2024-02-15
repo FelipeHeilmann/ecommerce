@@ -4,6 +4,7 @@ public class Transaction
 {
     public Guid Id { get; private set; }
     public Guid OrderId { get; private set; }
+    public double Amount { get; private set; }
     public Guid PaymentServiceId { get; private set; }
     public PaymentType PaymentType { get; private set; }
     public TransactionStatus Status { get; private set; }   
@@ -12,7 +13,7 @@ public class Transaction
     public DateTime? ApprovedAt { get; private set; }
     public DateTime? RefusedAt { get; private set; } 
 
-    public Transaction(Guid id, Guid orderId, Guid customerId, Guid paymentServiceId, PaymentType paymentType, TransactionStatus status, DateTime createdAt, DateTime? approvedAt, DateTime? refusedAt, DateTime? extornedAt)
+    public Transaction(Guid id, Guid orderId, Guid customerId, Guid paymentServiceId, double amount ,PaymentType paymentType, TransactionStatus status, DateTime createdAt, DateTime? approvedAt, DateTime? refusedAt, DateTime? extornedAt)
     {
         Id = id;
         OrderId = orderId;
@@ -23,13 +24,14 @@ public class Transaction
         ApprovedAt = approvedAt;
         RefusedAt = refusedAt;
         PaymentServiceId = paymentServiceId;
+        Amount = amount;
     }
 
-    public static Transaction Create(Guid orderId, Guid customerId, Guid paymentServiceId, string paymentTypeString)
+    public static Transaction Create(Guid orderId, Guid customerId, Guid paymentServiceId, double amount ,string paymentTypeString)
     {
         var paymentType = ConvertToPaymentType(paymentTypeString);
 
-        return new Transaction(Guid.NewGuid(), orderId, customerId, paymentServiceId ,paymentType, TransactionStatus.WaitingPayment, DateTime.UtcNow, null, null, null);
+        return new Transaction(Guid.NewGuid(), orderId, customerId, paymentServiceId, amount, paymentType, TransactionStatus.WaitingPayment, DateTime.UtcNow, null, null, null);
 
     }
 
