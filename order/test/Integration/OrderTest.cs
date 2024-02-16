@@ -11,10 +11,9 @@ using Infra.Repositories.Memory;
 using Xunit;
 using Application.Orders.AddLineItem;
 using Application.Data;
-using Domain.Customer;
+using Domain.Customers;
 using Domain.Products;
 using Application.Orders.Checkout;
-using MassTransit;
 using Infra.Queue;
 using Domain.Addresses;
 using Application.Abstractions.Queue;
@@ -188,7 +187,7 @@ public class OrderTest
 
         var command = new CheckoutOrderCommand(orderId, Guid.Parse("2b169c76-acee-4ddf-86c4-37af9fbb07ea"), Guid.Parse("2b169c76-acee-4ddf-86c4-37af9fbb07ea"));
 
-        var commandHandler = new CheckoutOrderCommandHandler(_orderRepository, _addressRepository, _unitOfWork, _eventBus);
+        var commandHandler = new CheckoutOrderCommandHandler(_orderRepository, _customerRepository ,_addressRepository, _unitOfWork, _eventBus);
 
         var result = await commandHandler.Handle(command, CancellationToken.None);
 

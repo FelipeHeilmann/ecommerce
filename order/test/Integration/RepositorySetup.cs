@@ -1,6 +1,6 @@
 ﻿using Domain.Addresses;
 using Domain.Categories;
-using Domain.Customer;
+using Domain.Customers;
 using Domain.Orders;
 using Domain.Products;
 

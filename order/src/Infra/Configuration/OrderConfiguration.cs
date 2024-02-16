@@ -1,5 +1,5 @@
 ﻿using Domain.Addresses;
-using Domain.Customer;
+using Domain.Customers;
 using Domain.Orders;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

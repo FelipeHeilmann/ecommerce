@@ -1,5 +1,5 @@
 ﻿using Application.Abstractions.Services;
-using Domain.Customer;
+using Domain.Customers;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;

@@ -1,7 +1,7 @@
 ﻿using Domain.Shared;
 using System.Text.RegularExpressions;
 
-namespace Domain.Customer;
+namespace Domain.Customers;
 
 public record Email
 {

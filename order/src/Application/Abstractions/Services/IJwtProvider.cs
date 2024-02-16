@@ -1,4 +1,4 @@
-﻿using Domain.Customer;
+﻿using Domain.Customers;
 
 namespace Application.Abstractions.Services;
 

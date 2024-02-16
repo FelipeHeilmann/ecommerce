@@ -1,6 +1,6 @@
 ﻿using Domain.Shared;
 
-namespace Domain.Customer;
+namespace Domain.Customers;
 
 public interface ICustomerRepository :IRepositoryBase<Customer> 
 {

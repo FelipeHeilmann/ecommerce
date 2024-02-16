@@ -1,7 +1,7 @@
 ﻿using Application.Abstractions.Messaging;
 using Application.Abstractions.Services;
 using Application.Data;
-using Domain.Customer;
+using Domain.Customers;
 using Domain.Shared;
 
 namespace Application.Customers.Create;

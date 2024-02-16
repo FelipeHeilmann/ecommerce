@@ -1,4 +1,4 @@
-﻿using Domain.Customer;
+﻿using Domain.Customers;
 using Infra.Context;
 using Microsoft.EntityFrameworkCore;
 
