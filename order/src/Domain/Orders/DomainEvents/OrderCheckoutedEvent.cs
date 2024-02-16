@@ -1,3 +1,14 @@
-﻿namespace Domain.Orders.DomainEvents;
+﻿using Domain.Addresses;
+using Domain.Customers;
 
-public record OrderCheckoutedEvent(Guid OrderId, Guid CustomerId ,DateTime CreateAt, Double Total);
+namespace Domain.Orders.DomainEvents;
+
+public record OrderCheckoutedEvent(
+    Order Order, 
+    Customer Customer, 
+    string PaymentType,
+    string? CardToken,
+    int Installment, 
+    Address BillingAddress,
+    Address ShipingAddress
+);

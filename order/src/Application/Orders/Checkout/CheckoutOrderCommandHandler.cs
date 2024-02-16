@@ -2,6 +2,7 @@
 using Application.Abstractions.Queue;
 using Application.Data;
 using Domain.Addresses;
+using Domain.Customers;
 using Domain.Orders;
 using Domain.Orders.DomainEvents;
 using Domain.Shared;
@@ -11,16 +12,25 @@ namespace Application.Orders.Checkout;
 public class CheckoutOrderCommandHandler : ICommandHandler<CheckoutOrderCommand, Order>
 {
     private readonly IOrderRepository _orderRepository;
+    private readonly ICustomerRepository _customerRepository;
     private readonly IAddressRepository _addressRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IEventBus _eventBus;
 
-    public CheckoutOrderCommandHandler(IOrderRepository orderRepository, IAddressRepository addressRepository, IUnitOfWork unitOfWork, IEventBus eventBus)
+    public CheckoutOrderCommandHandler
+    (
+        IOrderRepository orderRepository,
+        ICustomerRepository customerRepository,
+        IAddressRepository addressRepository,
+        IUnitOfWork unitOfWork, 
+        IEventBus eventBus
+    )
     {
         _orderRepository = orderRepository;
+        _customerRepository = customerRepository;   
+        _addressRepository = addressRepository;
         _unitOfWork = unitOfWork;
         _eventBus = eventBus;
-        _addressRepository = addressRepository;
     }
 
     public async Task<Result<Order>> Handle(CheckoutOrderCommand command, CancellationToken cancellationToken)
@@ -41,9 +51,20 @@ public class CheckoutOrderCommandHandler : ICommandHandler<CheckoutOrderCommand,
 
         if(checkout.IsFailure) return Result.Failure<Order>(checkout.Error);
 
+        var customer = await _customerRepository.GetByIdAsync(order.CustomerId, cancellationToken);
+
         _orderRepository.Update(order);
 
-        await _eventBus.PublicAsync(new OrderCheckoutedEvent(order.Id, order.CustomerId, DateTime.UtcNow, order.CalculateTotal()), cancellationToken);
+        await _eventBus.PublicAsync(new OrderCheckoutedEvent(
+            order, 
+            customer!,
+            command.PaymentType,
+            command.CardToken,
+            command.Installments,
+            billingAddress, 
+            shippingAddress), 
+            cancellationToken
+         );
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 

@@ -185,7 +185,18 @@ public class OrderTest
     {
         var orderId = Guid.Parse("c3a9083c-a259-4516-8842-a80b40f8c39f");
 
-        var command = new CheckoutOrderCommand(orderId, Guid.Parse("2b169c76-acee-4ddf-86c4-37af9fbb07ea"), Guid.Parse("2b169c76-acee-4ddf-86c4-37af9fbb07ea"));
+        var paymentType = "credit";
+        var cardToken = "my-token-card";
+        var installments = 5;
+
+        var command = new CheckoutOrderCommand(
+                orderId, 
+                Guid.Parse("2b169c76-acee-4ddf-86c4-37af9fbb07ea"), 
+                Guid.Parse("2b169c76-acee-4ddf-86c4-37af9fbb07ea"), 
+                paymentType, 
+                cardToken, 
+                installments
+            );
 
         var commandHandler = new CheckoutOrderCommandHandler(_orderRepository, _customerRepository ,_addressRepository, _unitOfWork, _eventBus);
 
