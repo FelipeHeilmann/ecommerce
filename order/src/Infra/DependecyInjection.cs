@@ -1,4 +1,5 @@
-﻿using Application.Abstractions.Services;
+﻿using Application.Abstractions.Queue;
+using Application.Abstractions.Services;
 using Application.Data;
 using Domain.Addresses;
 using Domain.Categories;
@@ -9,6 +10,7 @@ using Infra.Authenication;
 using Infra.Context;
 using Infra.Data;
 using Infra.Implementations;
+using Infra.Queue;
 using Infra.Repositories.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -37,6 +39,7 @@ public static class DependecyInjection
         services.AddScoped<IAddressRepository, AddressRepository>();
 
         services.AddScoped<IPasswordHasher, PasswordHasher>();
+        services.AddScoped<IEventBus, EventBus>();
         services.AddScoped<IJwtProvider, JwtProvider>();
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();

@@ -1,10 +1,10 @@
 ﻿using Application.Abstractions.Messaging;
+using Application.Abstractions.Queue;
 using Application.Data;
 using Domain.Addresses;
 using Domain.Orders;
 using Domain.Orders.DomainEvents;
 using Domain.Shared;
-using MassTransit;
 
 namespace Application.Orders.Checkout;
 
@@ -13,13 +13,13 @@ public class CheckoutOrderCommandHandler : ICommandHandler<CheckoutOrderCommand,
     private readonly IOrderRepository _orderRepository;
     private readonly IAddressRepository _addressRepository;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IPublishEndpoint _publisher;
+    private readonly IEventBus _eventBus;
 
-    public CheckoutOrderCommandHandler(IOrderRepository orderRepository, IAddressRepository addressRepository, IUnitOfWork unitOfWork, IPublishEndpoint publisher)
+    public CheckoutOrderCommandHandler(IOrderRepository orderRepository, IAddressRepository addressRepository, IUnitOfWork unitOfWork, IEventBus eventBus)
     {
         _orderRepository = orderRepository;
         _unitOfWork = unitOfWork;
-        _publisher = publisher;
+        _eventBus = eventBus;
         _addressRepository = addressRepository;
     }
 
@@ -43,7 +43,7 @@ public class CheckoutOrderCommandHandler : ICommandHandler<CheckoutOrderCommand,
 
         _orderRepository.Update(order);
 
-        await _publisher.Publish(new OrderCheckoutedEvent(order.Id, order.CustomerId, DateTime.UtcNow, order.CalculateTotal()));
+        await _eventBus.PublicAsync(new OrderCheckoutedEvent(order.Id, order.CustomerId, DateTime.UtcNow, order.CalculateTotal()), cancellationToken);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
