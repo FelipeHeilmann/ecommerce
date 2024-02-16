@@ -2,6 +2,9 @@ version: '3.4'
 
 services:
   order-api:
+    container_name: order-api
+    networks:
+      - ecomerce_network
     image: ${DOCKER_REGISTRY-}order.api
     build:
       context: .
@@ -11,6 +14,8 @@ services:
       - '5001:5001'    
   order-database:
     image: bitnami/postgresql:latest
+    networks:
+      - ecomerce_network
     container_name: order_database
     ports:
       - '5432:5432'
@@ -20,14 +25,9 @@ services:
       - POSTGRES_DB=ecommerce-orders
     volumes:
       - ./containers/order-db:/var/lib/postgresql/data
-  ecomerce-queue:
-    image: rabbitmq:management
-    hostname: ecomerce_queue
-    ports:
-      - '5672:5672'
-    volumes:
-      - ./containers/queue/data/:/var/lib/rabbitmq
-      - ./containers/queue/log/:/var/log/rabbitmq
-    environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
+
+networks:
+  ecomerce_network:
+    external:
+        name: ecomerce_network
+  
