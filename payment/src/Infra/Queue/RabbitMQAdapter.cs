@@ -5,81 +5,77 @@ using RabbitMQ.Client.Events;
 using System.Text;
 using System.Text.Json;
 
-namespace Infra.Queue;
-
-public class RabbitMQAdapter : IQueue
+namespace Infra.Queue
 {
-    private IConnection _connection;
-    private readonly IConfiguration _configuration;
-
-    public RabbitMQAdapter(IConfiguration configuration)
+    public class RabbitMQAdapter : IQueue
     {
-        _configuration = configuration;
-    }
+        private readonly IConfiguration _configuration;
+        private IConnection _connection;
 
-    public void On()
-    {
-        var rabbitSettings = _configuration.GetSection("MessageBroker");
-        var factory = new ConnectionFactory
+        public RabbitMQAdapter(IConfiguration configuration)
         {
-            HostName = rabbitSettings["Host"],
-            UserName = rabbitSettings["Username"],
-            Password = rabbitSettings["Password"]
-        };
-        _connection = factory.CreateConnection();
-    }
+            _configuration = configuration;
+        }
 
-    public void Publish(object message, string queue)
-    {
-        var channel = _connection.CreateModel();
-
-        channel.QueueDeclare(queue: queue,
-                     durable: false,
-                     exclusive: false,
-                     autoDelete: false,
-                     arguments: null);
-
-        string jsonMessage = JsonSerializer.Serialize(message);
-
-        var body = Encoding.UTF8.GetBytes(jsonMessage);
-
-        channel.BasicPublish(exchange: "",
-                             routingKey: queue,
-                             basicProperties: null,
-                             body: body);
-        channel.Close();
-        _connection.Close();
-    }
-    public object Consume(string queue)
-    {
-        var messages = new List<object>();
-
-        using var channel = _connection.CreateModel();
-
-        channel.QueueDeclare(queue: "order-purchased",
-                             durable: false,
-                             exclusive: false,
-                             autoDelete: false,
-                             arguments: null);
-
-        Console.WriteLine(" [*] Waiting for messages.");
-
-        var consumer = new EventingBasicConsumer(channel);
-        consumer.Received += (model, ea) =>
+        public void Connect()
         {
-            var body = ea.Body.ToArray();
-            var message = Encoding.UTF8.GetString(body);
+            var rabbitSettings = _configuration.GetSection("MessageBroker");
+            var factory = new ConnectionFactory
+            {
+                HostName = rabbitSettings["Host"],
+                UserName = rabbitSettings["Username"],
+                Password = rabbitSettings["Password"]
+            };
+            _connection = factory.CreateConnection();
+        }
 
-            Console.WriteLine(message);
+        public async Task SubscribeAsync<T>(string queueName, Func<T, Task> callback)
+        {
+            using (var channel = _connection.CreateModel())
+            {
+                channel.QueueDeclare(queue: queueName,
+                                     durable: false,
+                                     exclusive: false,
+                                     autoDelete: false,
+                                     arguments: null);
 
-            var jsonObject = JsonSerializer.Deserialize<object>(message);
+                var consumer = new EventingBasicConsumer(channel);
+                consumer.Received += async (model, eventArgs) =>
+                {
+                    var body = eventArgs.Body.ToArray();
+                    var message = JsonSerializer.Deserialize<T>(Encoding.UTF8.GetString(body));
 
-            messages.Add(jsonObject);
-        };
-        channel.BasicConsume(queue: "order-purchased",
-                             autoAck: true,
-                             consumer: consumer);
+                    await callback(message);
 
-        return messages;
+                    channel.BasicAck(eventArgs.DeliveryTag, false);
+                };
+
+                channel.BasicConsume(queue: queueName,
+                                     autoAck: false,
+                                     consumer: consumer);
+
+                await Task.Delay(-1);
+            }
+        }
+
+        public async Task PublishAsync<T>(T message, string queueName)
+        {
+            using (var channel = _connection.CreateModel())
+            {
+                channel.QueueDeclare(queue: queueName,
+                                     durable: false,
+                                     exclusive: false,
+                                     autoDelete: false,
+                                     arguments: null);
+
+                var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(message));
+
+                channel.BasicPublish(exchange: "",
+                                     routingKey: queueName,
+                                     basicProperties: null,
+                                     body: body);
+            }
+        }
     }
+
 }

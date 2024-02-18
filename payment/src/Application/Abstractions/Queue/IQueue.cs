@@ -2,7 +2,7 @@
 
 public interface IQueue
 {
-    void On();
-    void Publish(object message, string queue);
-    object Consume(string queue); 
+    void Connect();
+    Task SubscribeAsync<T>(string queueName, Func<T, Task> callback);
+    Task PublishAsync<T>(T message, string queueName);
 }

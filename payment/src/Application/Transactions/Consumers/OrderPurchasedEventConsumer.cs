@@ -1,15 +1,14 @@
-﻿using Application.Abstractions.Queue;
+﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Serilog;
+using Domain.DomainEvents;
+using Application.Abstractions.Queue;
 
 namespace Application.Transactions.Consumers;
 
-public class OrderPurchasedEventConsumer 
+public class OrderPurchasedEventConsumer : BackgroundService
 {
     private readonly ILogger<OrderPurchasedEventConsumer> _logger;
     private readonly IQueue _queue;
-
-    //private readonly ITransactionRepository _transactionRepository;
 
     public OrderPurchasedEventConsumer(ILogger<OrderPurchasedEventConsumer> logger, IQueue queue)
     {
@@ -17,13 +16,20 @@ public class OrderPurchasedEventConsumer
         _queue = queue;
     }
 
-    public void Consume()
+
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        var order = _queue.Consume("order-purchased");
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            await _queue.SubscribeAsync<OrderPurchasedEvent>("order-purchased", async message =>
+            {
+                _logger.LogInformation("Message received: {0}", message);
+               
+            });
 
-        _logger.LogInformation("Received OrderCompletedEvent: {@Order}", order.ToString());
-
-        return;
+            await Task.Delay(1000, stoppingToken);
+        }
     }
 }
+
 

@@ -35,7 +35,6 @@ public class CheckoutOrderCommandHandler : ICommandHandler<CheckoutOrderCommand,
 
     public async Task<Result<Order>> Handle(CheckoutOrderCommand command, CancellationToken cancellationToken)
     {
-        _queue.On();
 
         var order = await _orderRepository.GetByIdAsync(command.OrderId, cancellationToken, "Items");
 
@@ -57,10 +56,10 @@ public class CheckoutOrderCommandHandler : ICommandHandler<CheckoutOrderCommand,
 
         _orderRepository.Update(order);
 
-         _queue.Publish(new OrderCompletedEvent(
+         await _queue.PublishAsync(new OrderPurchasedEvent(
             order.Id,
             order.CalculateTotal(),
-            order.Items.Select(li => new LineItemOrderCompletedEvent(li.Id, li.ProductId, li.Quantity, li.Price.Amount)),
+            order.Items.Select(li => new LineItemOrderPurchasedEvent(li.Id, li.ProductId, li.Quantity, li.Price.Amount)),
             customer!.Name.Value,
             customer!.Email.Value,
             command.PaymentType,

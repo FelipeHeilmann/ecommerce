@@ -1,6 +1,7 @@
 ﻿using Application.Abstractions.Queue;
 using Microsoft.Extensions.Configuration;
 using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
 using System.Text;
 using System.Text.Json;
 
@@ -8,49 +9,71 @@ namespace Infra.Queue;
 
 public class RabbitMQAdapter : IQueue
 {
-    private IConnection _connection;
     private readonly IConfiguration _configuration;
+    private IConnection _connection;
 
     public RabbitMQAdapter(IConfiguration configuration)
     {
         _configuration = configuration;
     }
 
-    public void On()
+    public void Connect()
     {
         var rabbitSettings = _configuration.GetSection("MessageBroker");
-        var factory = new ConnectionFactory { 
-            HostName = rabbitSettings["Host"], 
-            UserName = rabbitSettings["Username"] ,
+        var factory = new ConnectionFactory
+        {
+            HostName = rabbitSettings["Host"],
+            UserName = rabbitSettings["Username"],
             Password = rabbitSettings["Password"]
         };
-       _connection = factory.CreateConnection();
+        _connection = factory.CreateConnection();
     }
 
-    public void Publish(object message, string queue)
+    public async Task SubscribeAsync<T>(string queueName, Func<T, Task> callback)
     {
-        var channel = _connection.CreateModel();
+        using (var channel = _connection.CreateModel())
+        {
+            channel.QueueDeclare(queue: queueName,
+                                 durable: false,
+                                 exclusive: false,
+                                 autoDelete: false,
+                                 arguments: null);
 
-        channel.QueueDeclare(queue: queue,
-                     durable: false,
-                     exclusive: false,
-                     autoDelete: false,
-                     arguments: null);
+            var consumer = new EventingBasicConsumer(channel);
+            consumer.Received += async (model, eventArgs) =>
+            {
+                var body = eventArgs.Body.ToArray();
+                var message = JsonSerializer.Deserialize<T>(Encoding.UTF8.GetString(body));
 
-        string jsonMessage = JsonSerializer.Serialize(message);
+                await callback(message);
 
-        var body = Encoding.UTF8.GetBytes(jsonMessage);
+                channel.BasicAck(eventArgs.DeliveryTag, false);
+            };
 
-        channel.BasicPublish(exchange: "",
-                             routingKey: queue,
-                             basicProperties: null,
-                             body: body);
-         channel.Close();
-        _connection.Close();
+            channel.BasicConsume(queue: queueName,
+                                 autoAck: false,
+                                 consumer: consumer);
+
+            await Task.Delay(-1);
+        }
     }
 
-    public void Consume(string queue)
+    public async Task PublishAsync<T>(T message, string queueName)
     {
-        throw new NotImplementedException();
+        using (var channel = _connection.CreateModel())
+        {
+            channel.QueueDeclare(queue: queueName,
+                                 durable: false,
+                                 exclusive: false,
+                                 autoDelete: false,
+                                 arguments: null);
+
+            var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(message));
+
+            channel.BasicPublish(exchange: "",
+                                 routingKey: queueName,
+                                 basicProperties: null,
+                                 body: body);
+        }
     }
 }

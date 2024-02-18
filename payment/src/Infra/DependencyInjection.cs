@@ -12,12 +12,13 @@ public static class DependecyInjection
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddSingleton<OrderPurchasedEventConsumer>();
         services.AddSingleton<IQueue, RabbitMQAdapter>(provider =>
         {
             var rabbitMQAdapter = new RabbitMQAdapter(configuration);
-            rabbitMQAdapter.On();
+            rabbitMQAdapter.Connect();
             return rabbitMQAdapter;
         });
+
+       services.AddHostedService<OrderPurchasedEventConsumer>();
     }
 }

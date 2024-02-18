@@ -1,4 +1,3 @@
-using Application.BackgroundTasks;
 using Application.Transactions.Consumers;
 using Infra;
 using Serilog;
@@ -16,8 +15,6 @@ builder.Host.UseSerilog();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-builder.Services.AddHostedService<QueueConsumerHostedService>();
 
 var app = builder.Build();
 

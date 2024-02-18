@@ -1,9 +1,9 @@
 ﻿namespace Domain.DomainEvents;
 
-public record OrderCompletedEvent(
+public record OrderPurchasedEvent(
     Guid OrderId,
     double total,
-    IEnumerable<LineItemOrderCompletedEvent> Items,
+    IEnumerable<LineItemOrderPurchasedEvent> Items,
     string CustomerName,
     string CustomerEmail,
     string PaymentType,
@@ -17,4 +17,4 @@ public record OrderCompletedEvent(
     string? ShippingAddressLine
 );
 
-public record LineItemOrderCompletedEvent(Guid Id, Guid ProductId, int Quantity, double Amount);
+public record LineItemOrderPurchasedEvent(Guid Id, Guid ProductId, int Quantity, double Amount);

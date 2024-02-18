@@ -4,18 +4,19 @@ namespace Infra.Queue;
 
 public class MemoryMQAdapter : IQueue
 {
-    public void On()
+   
+    public void Connect()
     {
         return;
     }
 
-    public void Consume(string queue)
+    public Task SubscribeAsync<T>(string queueName, Func<T, Task> callback)
     {
-        return;
+        return Task.CompletedTask;
     }
 
-    public void Publish(object message, string queue)
+    public Task PublishAsync<T>(T message, string queueName)
     {
-        return;
+        return Task.CompletedTask;
     }
 }
