@@ -15,27 +15,29 @@ public class CheckoutOrderCommandHandler : ICommandHandler<CheckoutOrderCommand,
     private readonly ICustomerRepository _customerRepository;
     private readonly IAddressRepository _addressRepository;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IEventBus _eventBus;
+    private readonly IQueue _queue;
 
     public CheckoutOrderCommandHandler
     (
         IOrderRepository orderRepository,
         ICustomerRepository customerRepository,
         IAddressRepository addressRepository,
-        IUnitOfWork unitOfWork, 
-        IEventBus eventBus
+        IUnitOfWork unitOfWork,
+        IQueue queue
     )
     {
         _orderRepository = orderRepository;
         _customerRepository = customerRepository;   
         _addressRepository = addressRepository;
         _unitOfWork = unitOfWork;
-        _eventBus = eventBus;
+        _queue = queue;
     }
 
     public async Task<Result<Order>> Handle(CheckoutOrderCommand command, CancellationToken cancellationToken)
     {
-        var order = await _orderRepository.GetByIdAsync(command.OrderId, cancellationToken);
+        _queue.On();
+
+        var order = await _orderRepository.GetByIdAsync(command.OrderId, cancellationToken, "Items");
 
         if (order == null) return Result.Failure<Order>(OrderErrors.OrderNotFound);
 
@@ -55,16 +57,23 @@ public class CheckoutOrderCommandHandler : ICommandHandler<CheckoutOrderCommand,
 
         _orderRepository.Update(order);
 
-        await _eventBus.PublicAsync(new OrderCheckoutedEvent(
-            order, 
-            customer!,
+         _queue.Publish(new OrderCompletedEvent(
+            order.Id,
+            order.CalculateTotal(),
+            order.Items.Select(li => new LineItemOrderCompletedEvent(li.Id, li.ProductId, li.Quantity, li.Price.Amount)),
+            customer!.Name.Value,
+            customer!.Email.Value,
             command.PaymentType,
             command.CardToken,
             command.Installments,
-            billingAddress, 
-            shippingAddress), 
-            cancellationToken
-         );
+            billingAddress.ZipCode.Value,
+            billingAddress.Number,
+            billingAddress.Apartment,
+            shippingAddress.ZipCode.Value,
+            shippingAddress.Number,
+            shippingAddress.Apartment),
+            "order-purchased"
+        );
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 

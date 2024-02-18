@@ -79,7 +79,7 @@ public class Order
             total += lineItem.Price.Amount * lineItem.Quantity;
         }
 
-        return total;
+        return Math.Round(total, 2);
     }
 
     public void RestoreLineItens(ICollection<LineItem> lineItens)

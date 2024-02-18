@@ -1,21 +1,8 @@
 version: '3.4'
 
-services:
-  order-api:
-    container_name: order-api
-    networks:
-      - ecomerce_network
-    image: ${DOCKER_REGISTRY-}order.api
-    build:
-      context: .
-      dockerfile: src/API/Dockerfile
-    ports:
-      - '5000:5000'
-      - '5001:5001'    
+services: 
   order-database:
     image: bitnami/postgresql:latest
-    networks:
-      - ecomerce_network
     container_name: order_database
     ports:
       - '5432:5432'
@@ -26,8 +13,3 @@ services:
     volumes:
       - ./containers/order-db:/var/lib/postgresql/data
 
-networks:
-  ecomerce_network:
-    external:
-        name: ecomerce_network
-  

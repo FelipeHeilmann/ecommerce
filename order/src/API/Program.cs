@@ -1,12 +1,18 @@
 using API.OptionSetup;
+using Application;
+using Domain.Orders.DomainEvents;
 using Infra;
 using Infra.Extensions;
-using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 builder.Services.AddInfrastructure(builder.Configuration);
 
@@ -19,21 +25,6 @@ builder.Services.ConfigureOptions<JwtOptionsSetup>();
 builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Application.AssemblyReference.Assembly));
-
-builder.Services.AddMassTransit(bussConfigurator =>
-{
-    bussConfigurator.SetKebabCaseEndpointNameFormatter();
-    bussConfigurator.UsingRabbitMq((context, configurator) =>
-    {
-        configurator.Host(new Uri(builder.Configuration["MessageBroker:Host"]!), h =>
-        {
-            h.Username(builder.Configuration["MessageBroker:Username"]);
-            h.Password(builder.Configuration["MessageBroker:Password"]);
-        });
-
-        configurator.ConfigureEndpoints(context);
-    });
-});
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

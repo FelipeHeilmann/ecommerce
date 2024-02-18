@@ -4,7 +4,6 @@ using Application.Customers.Login;
 using Application.Customers.Model;
 using Application.Data;
 using Domain.Customers;
-using Infra.Authenication;
 using Infra.Data;
 using Infra.Implementations;
 using Infra.Repositories.Memory;

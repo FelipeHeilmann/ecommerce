@@ -14,9 +14,9 @@ using Application.Data;
 using Domain.Customers;
 using Domain.Products;
 using Application.Orders.Checkout;
-using Infra.Queue;
 using Domain.Addresses;
 using Application.Abstractions.Queue;
+using Infra.Queue;
 namespace Integration;
 
 public class OrderTest
@@ -24,7 +24,7 @@ public class OrderTest
     private readonly IOrderRepository _orderRepository = new OrderRepositoryMemory();
     private readonly ICustomerRepository _customerRepository = new CustomerRepositoryMemory();
     private readonly IProductRepository _productRepository = new ProductRepositoryMemory();
-    private readonly IEventBus _eventBus = new EventBusFake();
+    private readonly IQueue _memoryMQAdapter = new MemoryMQAdapter();
     private readonly IAddressRepository _addressRepository = new AddressRepositoryInMemory();
     private readonly IUnitOfWork _unitOfWork = new UnitOfWorkMemory();
 
@@ -198,7 +198,7 @@ public class OrderTest
                 installments
             );
 
-        var commandHandler = new CheckoutOrderCommandHandler(_orderRepository, _customerRepository ,_addressRepository, _unitOfWork, _eventBus);
+        var commandHandler = new CheckoutOrderCommandHandler(_orderRepository, _customerRepository ,_addressRepository, _unitOfWork, _memoryMQAdapter);
 
         var result = await commandHandler.Handle(command, CancellationToken.None);
 

@@ -16,33 +16,38 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Infra;
-
-public static class DependecyInjection
+namespace Infra
 {
-    public static void AddInfrastructure(
-        this IServiceCollection services,
-        IConfiguration configuration)
+    public static class DependecyInjection
     {
-
-        services.AddDbContext<ApplicationContext>(opt =>
+        public static void AddInfrastructure(
+            this IServiceCollection services,
+            IConfiguration configuration)
         {
-            opt
-            .UseNpgsql(configuration.GetConnectionString("Database"))
-            .UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll);
-        });
+            services.AddDbContext<ApplicationContext>(opt =>
+            {
+                opt
+                .UseNpgsql(configuration.GetConnectionString("Database"))
+                .UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll);
+            });
 
-        services.AddScoped<ICustomerRepository, CustomerRepository>();
-        services.AddScoped<IOrderRepository, OrderRepository>();
-        services.AddScoped<IProductRepository, ProductRepository>();
-        services.AddScoped<ICategoryRepository, CategoryRepository>();
-        services.AddScoped<IAddressRepository, AddressRepository>();
+            services.AddSingleton<IQueue, RabbitMQAdapter>(provider =>
+            {
+                var rabbitMQAdapter = new RabbitMQAdapter(configuration);
+                rabbitMQAdapter.On();
+                return rabbitMQAdapter;
+            });
 
-        services.AddScoped<IPasswordHasher, PasswordHasher>();
-        services.AddScoped<IEventBus, EventBus>();
-        services.AddScoped<IJwtProvider, JwtProvider>();
+            services.AddScoped<ICustomerRepository, CustomerRepository>();
+            services.AddScoped<IOrderRepository, OrderRepository>();
+            services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<IAddressRepository, AddressRepository>();
 
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IPasswordHasher, PasswordHasher>();
+            services.AddScoped<IJwtProvider, JwtProvider>();
 
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+        }
     }
 }
