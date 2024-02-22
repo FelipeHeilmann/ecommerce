@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Domain.DomainEvents;
 using Application.Abstractions.Queue;
+using Domain.Events;
 
 namespace Application.Transactions.Consumers;
 
