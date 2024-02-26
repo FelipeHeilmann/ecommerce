@@ -11,12 +11,9 @@ public record OrderPurchasedEvent(
     string PaymentType,
     string? CardToken,
     int Installment,
-    string BillingAddressZipCode,
-    string BillingAddressNumber,
-    string? BillingAddressLine,
-    string ShippingAddressZipCode,
-    string ShippingAddressNumber,
-    string? ShippingAddressLine
+    string AddressZipCode,
+    string AddressNumber,
+    string? AddressLine
    );
 
 public record LineItemOrderPurchasedEvent(Guid Id, Guid ProductId, int Quantity, double Amount);
