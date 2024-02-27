@@ -143,13 +143,14 @@ public class RepositorySetup
     public static void PopulateCustomerRepository(ICustomerRepository _repository)
     {
         _repository.Add(new Customer(
-                Guid.Parse("f3b205c3-552d-4fd9-b10e-6414086910b0"), 
+                Guid.Parse("f3b205c3-552d-4fd9-b10e-6414086910b0"),
                 Name.Create("Felipe Heilmann").Value,
-                Email.Create("felipeheilmannm@gmail.com").Value, 
-                "senha", 
-                new DateOnly(2004, 6, 11), 
+                Email.Create("felipeheilmannm@gmail.com").Value,
+                CPF.Create("97067401046").Value,
+                "senha",
+                new DateOnly(2004, 6, 11),
                 DateTime.Now)
-            );
+            ); ;
     }
 
     public static void PopulateOrderRepository(IOrderRepository _repository)

@@ -12,5 +12,7 @@ public static class CustomerErrors
     public static Error InvalidAge => Error.Validation("Invalid.Age", "Age should be greatter than 18 years");
     public static Error CustomerInvalidCredencials => Error.Validation("Customer.Invalid.Credentials", "Invalid email or/and password");
     public static Error EmailAlredyInUse => Error.Conflict("Email.In.Use", "This is email is already in use");
+    public static Error CPFNull => Error.Validation("CPF.Null.Empty", "The cpf value should not be empty or null");
+    public static Error CPFFormat => Error.Validation("CPF.Invalid", "Cpf invalid");
 }
 

@@ -24,7 +24,7 @@ public class CustomerTest
         var birthDate = new DateTime(2004, 6, 2);
         var password = "senha";
 
-        var request = new CreateAccountRequest(name, email, password, birthDate);
+        var request = new CreateAccountRequest(name, email, password, birthDate, "97067401046");
 
         var command = new CreateAccountCommand(request);
 
@@ -39,14 +39,15 @@ public class CustomerTest
     [Fact]
     public async Task Should_Not_Create_Customer_Due_Email_In_Use()
     {
-        await new CreateAccountCommandHandler(_customerRepository, _unitOfWork, _passwordHasher).Handle(new CreateAccountCommand(new CreateAccountRequest("Felipe Heilmann", "felipeheilmannm@gmail.com", "senha", new DateTime(2004, 6, 2))), CancellationToken.None);
+        await new CreateAccountCommandHandler(_customerRepository, _unitOfWork, _passwordHasher).Handle(new CreateAccountCommand(new CreateAccountRequest("Felipe Heilmann", "felipeheilmannm@gmail.com", "senha", new DateTime(2004, 6, 2), "97067401046")), CancellationToken.None);
 
         var name = "Felipe Heilmann";
         var email = "felipeheilmannm@gmail.com";
         var birthDate = new DateTime(2004, 6, 2);
         var password = "senha";
+        var cpf = "97067401046";
 
-        var request = new CreateAccountRequest(name, email, password, birthDate);
+        var request = new CreateAccountRequest(name, email, password, birthDate,cpf);
 
         var command = new CreateAccountCommand(request);
 

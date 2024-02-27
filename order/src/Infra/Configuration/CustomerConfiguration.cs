@@ -17,7 +17,11 @@ public class CustomerConfiguration : IEntityTypeConfiguration<Customer>
         builder.Property(c => c.Email)
             .HasConversion(email => email.Value, value => Email.Create(value).Value)
             .HasMaxLength(250)
-            .HasColumnName("email");    
+            .HasColumnName("email");
+        builder.Property(c => c.CPF)
+            .HasConversion(cpf => cpf.Value, value => CPF.Create(value).Value)
+            .HasMaxLength(11)
+            .HasColumnName("cpf");
         builder.HasIndex(c => c.Email);
         builder.Property(c => c.Password).HasColumnName("password");
         builder.Property(c => c.BirthDate).HasColumnName("birth_date").HasColumnType("date");
