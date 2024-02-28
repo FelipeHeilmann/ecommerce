@@ -6,6 +6,53 @@ namespace Unit;
 public class CustomerTest
 {
     [Fact]
+    public void Should_Create_Valid_Name()
+    {
+        var name = Name.Create("Felipe Heilmann");
+        Assert.True(name.IsSuccess);
+        Assert.False(name.IsFailure);
+    }
+
+    [Fact]
+    public void Should_Not_Create_Valid_Name_Due_Invalid_Format()
+    {
+        var name = Name.Create("Felipe");
+        Assert.False(name.IsSuccess);
+        Assert.True(name.IsFailure);
+    }
+
+    [Fact]
+    public void Should_Not_Create_Valid_Name_Due_Null()
+    {
+        var name = Name.Create(null);
+        Assert.False(name.IsSuccess);
+        Assert.True(name.IsFailure);
+    }
+    [Fact]
+    public void Should_Create_Valid_Email()
+    {
+        var email = Email.Create("felipeheilmannm@gmail.com");
+        Assert.True(email.IsSuccess);
+        Assert.False(email.IsFailure);
+    }
+
+    [Fact]
+    public void Should_Not_Create_Valid_Email_Due_Invalid_Format()
+    {
+        var email = Email.Create("felipe.com");
+        Assert.False(email.IsSuccess);
+        Assert.True(email.IsFailure);
+    }
+
+    [Fact]
+    public void Should_Not_Create_Valid_Email_Due_Null()
+    { 
+        var email = Email.Create(null);
+        Assert.False(email.IsSuccess);
+        Assert.True(email.IsFailure);
+    }
+
+    [Fact]
     public void Should_Create_Valid_CPF()
     {
         var cpf = CPF.Create("44444444444");
@@ -46,70 +93,6 @@ public class CustomerTest
 
         Assert.True(custumer.IsSuccess);
         Assert.False(custumer.IsFailure);
-    }
-
-    [Fact]
-    public void Should_Not_Create_Custumer_Due_Email_Null()
-    {
-        var name = "Felipe Heilmann";
-        var email = "felipeheilmannm@gmail.com";
-        var birthDate = new DateOnly(2004, 6, 2);
-        var cpf = "44444444444";
-        var password = "senha";
-
-        var custumer = Customer.Create(null, email, password, birthDate, cpf);
-
-        Assert.False(custumer.IsSuccess);
-        Assert.True(custumer.IsFailure);
-        Assert.Equal(CustomerErrors.NameNull, custumer.Error);
-    }
-
-    [Fact]
-    public void Should_Not_Create_Custumer_Due_Name_Null()
-    {
-        var name = "Felipe Heilmann";
-        var email = "felipeheilmannm@gmail.com";
-        var birthDate = new DateOnly(2004, 6, 2);
-        var cpf = "44444444444";
-        var password = "senha";
-
-        var custumer = Customer.Create(null, email,password,birthDate, cpf);
-
-        Assert.False(custumer.IsSuccess);
-        Assert.True(custumer.IsFailure);
-        Assert.Equal(CustomerErrors.NameNull, custumer.Error);
-    }
-
-    [Fact]
-    public void Should_Not_Create_Custumer_Due_Invalid_Name()
-    {
-        var name = "Felipe";
-        var email = "felipeheilmannm@gmail.com";
-        var birthDate = new DateOnly(2004, 6, 2);
-        var cpf = "44444444444";
-        var password = "senha";
-
-        var custumer = Customer.Create(name, email, password ,birthDate, cpf);
-
-        Assert.False(custumer.IsSuccess);
-        Assert.True(custumer.IsFailure);
-        Assert.Equal(CustomerErrors.NameFormat, custumer.Error);
-    }
-
-    [Fact]
-    public void Should_Not_Create_Custumer_Due_Invalid_Email()
-    {
-        var name = "Felipe Heilmann";
-        var email = "felipe.com";
-        var birthDate = new DateOnly(2004, 6, 2);
-        var cpf = "44444444444";
-        var password = "senha";
-
-        var custumer = Customer.Create(name, email, password ,birthDate, cpf);
-
-        Assert.False(custumer.IsSuccess);
-        Assert.True(custumer.IsFailure);
-        Assert.Equal(CustomerErrors.EmailFormat, custumer.Error);
     }
 
     [Fact]
