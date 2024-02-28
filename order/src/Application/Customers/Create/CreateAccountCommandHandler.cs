@@ -35,7 +35,7 @@ public class CreateAccountCommandHandler : ICommandHandler<CreateAccountCommand,
 
         var birthDate = new DateOnly(request.birthDate.Year, request.birthDate.Month, request.birthDate.Day);
 
-        var result = Customer.Create(request.Name, request.Email, hashedPassword, birthDate, request.CPF);
+        var result = Customer.Create(request.Name, request.Email, hashedPassword, birthDate, request.CPF, request.Phone);
 
         if(result.IsFailure) return Result.Failure<Guid>(result.Error);
 

@@ -22,6 +22,10 @@ public class CustomerConfiguration : IEntityTypeConfiguration<Customer>
             .HasConversion(cpf => cpf.Value, value => CPF.Create(value).Value)
             .HasMaxLength(11)
             .HasColumnName("cpf");
+        builder.Property(c => c.Phone)
+            .HasConversion(phone => phone.Value, value => Phone.Create(value).Value)
+            .HasMaxLength(11)
+            .HasColumnName("phone");
         builder.HasIndex(c => c.Email);
         builder.Property(c => c.Password).HasColumnName("password");
         builder.Property(c => c.BirthDate).HasColumnName("birth_date").HasColumnType("date");

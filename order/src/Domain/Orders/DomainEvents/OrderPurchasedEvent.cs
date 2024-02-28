@@ -8,6 +8,7 @@ public record OrderPurchasedEvent(
     string CustomerName,
     string CustomerEmail,
     string CustomerDocument,
+    string CustomerPhone,
     string PaymentType,
     string? CardToken,
     int Installment, 

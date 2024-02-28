@@ -14,5 +14,7 @@ public static class CustomerErrors
     public static Error EmailAlredyInUse => Error.Conflict("Email.In.Use", "This is email is already in use");
     public static Error CPFNull => Error.Validation("CPF.Null.Empty", "The cpf value should not be empty or null");
     public static Error CPFFormat => Error.Validation("CPF.Invalid", "Cpf invalid");
+    public static Error PhoneNull => Error.Validation("Phone.Null.Empty", "The phone should be empty or null");
+    public static Error PhoneFormat => Error.Validation("Phone.Invalid", "Phone invalid");
 }
 

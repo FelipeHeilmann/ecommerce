@@ -7,11 +7,12 @@ public class Customer
     public Name Name { get; private set; }
     public Email Email { get; private set; }
     public CPF CPF { get; private set; } 
+    public Phone Phone { get; private set; }
     public string Password { get; private set; }
     public DateOnly BirthDate { get; private set; }
     public DateTime CreatedAt { get; private set; }
 
-    public Customer(Guid id, Name name, Email email, CPF cpf ,string password, DateOnly birthDate, DateTime createdAt)
+    public Customer(Guid id, Name name, Email email, CPF cpf, Phone phone ,string password, DateOnly birthDate, DateTime createdAt)
     {
         Id = id;
         Name = name;
@@ -20,11 +21,12 @@ public class Customer
         CreatedAt = createdAt;
         Password = password;
         CPF = cpf;  
+        Phone = phone;
     }
 
     public Customer() { }
 
-    public static Result<Customer> Create(string nameString, string emailString, string password, DateOnly birthDate, string cpfString)
+    public static Result<Customer> Create(string nameString, string emailString, string password, DateOnly birthDate, string cpfString, string phoneString)
     {
         var name = Name.Create(nameString);
         if (name.IsFailure) return Result.Failure<Customer>(name.Error);
@@ -38,7 +40,11 @@ public class Customer
         if (!IsOldEnough(birthDate))
             return Result.Failure<Customer>(CustomerErrors.InvalidAge);
 
-        return new Customer(Guid.NewGuid(), name.Value, email.Value, cpf.Value ,password, birthDate, DateTime.UtcNow);
+        var phone = Phone.Create(phoneString);
+        if (cpf.IsFailure) return Result.Failure<Customer>(phone.Error);
+
+
+        return new Customer(Guid.NewGuid(), name.Value, email.Value, cpf.Value, phone.Value, password, birthDate, DateTime.UtcNow);
     }
 
     private static bool IsOldEnough(DateOnly birthDate)

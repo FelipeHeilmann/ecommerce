@@ -147,6 +147,7 @@ public class RepositorySetup
                 Name.Create("Felipe Heilmann").Value,
                 Email.Create("felipeheilmannm@gmail.com").Value,
                 CPF.Create("97067401046").Value,
+                Phone.Create("11 97414-6507").Value,
                 "senha",
                 new DateOnly(2004, 6, 11),
                 DateTime.Now)

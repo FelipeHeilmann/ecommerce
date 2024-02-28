@@ -62,23 +62,31 @@ public class CustomerTest
     }
 
     [Fact]
-    public void Should_Not_Create_Valid_CPF_Due_Length()
+    public void Should_Not_Create_Valid_CPF_Format()
     {
-        var cpf = CPF.Create("4444444444");
+        var cpf = CPF.Create("873905240068");
 
         Assert.False(cpf.IsSuccess);
         Assert.True(cpf.IsFailure);
     }
 
     [Fact]
-    public void Should_Not_Create_Valid_CPF_Format()
+    public void Should_Create_Valid_Phone()
     {
-        var cpf = CPF.Create("873.905.240-06");
+        var phone = Phone.Create("11 97414-6507");
 
-        Assert.False(cpf.IsSuccess);
-        Assert.True(cpf.IsFailure);
+        Assert.True(phone.IsSuccess);
+        Assert.False(phone.IsFailure);
     }
 
+    [Fact]
+    public void Should_Not_Create_Valid_Phone()
+    {
+        var phone = Phone.Create("11 9741465070");
+
+        Assert.False(phone.IsSuccess);
+        Assert.True(phone.IsFailure);
+    }
 
     [Fact]
     public void Should_Create_Custumer()
@@ -87,9 +95,10 @@ public class CustomerTest
         var email = "felipeheilmannm@gmail.com";
         var birthDate = new DateOnly(2004, 6, 2);
         var cpf = "44444444444";
+        var phone = "11 97414-6507";
         var password = "senha";
 
-        var custumer = Customer.Create(name, email, password, birthDate, cpf);
+        var custumer = Customer.Create(name, email, password, birthDate, cpf, phone);
 
         Assert.True(custumer.IsSuccess);
         Assert.False(custumer.IsFailure);
@@ -102,9 +111,10 @@ public class CustomerTest
         var email = "felipeheilmannm@gmail.com";
         var birthDate = new DateOnly(2020, 6, 2);
         var cpf = "44444444444";
+        var phone = "11 97414-6507";
         var password = "senha";
 
-        var custumer = Customer.Create(name, email, password ,birthDate, cpf);
+        var custumer = Customer.Create(name, email, password ,birthDate, cpf, phone);
 
         Assert.False(custumer.IsSuccess);
         Assert.True(custumer.IsFailure);
