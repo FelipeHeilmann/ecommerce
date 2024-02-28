@@ -35,7 +35,7 @@ public class TransactionTest
             "felipe heilmann",
             "felipeheilmannm@gmail.com",
             "44444444444",
-            "11 97414-9507",
+            "11974149507",
             "credit",
             "my-token-card",
             2,
