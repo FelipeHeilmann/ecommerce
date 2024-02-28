@@ -52,7 +52,7 @@ public class AddressController : APIBaseController
                 request.Street,
                 request.Neighborhood,
                 request.Number,
-                request.Apartment,
+                request.Complement,
                 request.City,
                 request.State,
                 request.Country
@@ -78,7 +78,7 @@ public class AddressController : APIBaseController
                 request.Street,
                 request.Neighborhood,
                 request.Number,
-                request.Apartment,
+                request.Complement,
                 request.City,
                 request.State,
                 request.Country

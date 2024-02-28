@@ -70,7 +70,7 @@ public class CheckoutOrderCommandHandler : ICommandHandler<CheckoutOrderCommand,
             command.Installments,
             billingAddress.ZipCode.Value,
             billingAddress.Number,
-            billingAddress.Apartment
+            billingAddress.Complement
             ),
             "order-purchased"
         );

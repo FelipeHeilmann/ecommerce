@@ -10,7 +10,7 @@ public class Address
     public string Street { get; private set; } 
     public string Neighborhood { get; private set; }
     public string Number { get; private set; }
-    public string? Apartment {  get; private set; }
+    public string? Complement {  get; private set; }
     public string City { get; private set; }
     public string State { get; private set; }
     public string Country { get; private set; }
@@ -22,7 +22,7 @@ public class Address
         string street, 
         string neighborhood,
         string number, 
-        string? apartment,
+        string? complement,
         string city, 
         string state, 
         string country
@@ -34,7 +34,7 @@ public class Address
         Street = street;
         Neighborhood = neighborhood;
         Number = number;
-        Apartment = apartment;
+        Complement = complement;
         City = city;
         State = state;
         Country = country;
@@ -46,7 +46,7 @@ public class Address
         string street, 
         string neighborhood,
         string number, 
-        string? apartment, 
+        string? complement, 
         string city, 
         string state, 
         string country
@@ -63,7 +63,7 @@ public class Address
             street,
             neighborhood,
             number,
-            apartment,
+            complement,
             city,
             state,
             country
@@ -75,7 +75,7 @@ public class Address
         string street,
         string neighborhood,
         string number,
-        string? apartment,
+        string? complement,
         string city,
         string state,
         string country
@@ -89,7 +89,7 @@ public class Address
         Street = street;
         Neighborhood = neighborhood;
         Number = number;
-        Apartment = apartment;
+        Complement = complement;
         City = city;
         State = state;
         Country = country;

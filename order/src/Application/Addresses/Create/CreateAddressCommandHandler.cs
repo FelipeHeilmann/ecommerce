@@ -27,7 +27,7 @@ public class CreateAddressCommandHandler : ICommandHandler<CreateAddressCommand,
                 request.Street,
                 request.Neighborhood,
                 request.Number,
-                request.Apartment,
+                request.Complement,
                 request.City,
                 request.State,
                 request.Country

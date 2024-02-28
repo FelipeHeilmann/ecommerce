@@ -17,7 +17,7 @@ public class AddressConfiguration : IEntityTypeConfiguration<Address>
         builder.Property(a => a.Neighborhood).HasColumnName("'neighborhood");
         builder.Property(a => a.Number).HasColumnName("number");
         builder.Property(a => a.State).HasColumnName("state");
-        builder.Property(a => a.Apartment).HasColumnName("apartament");
+        builder.Property(a => a.Complement).HasColumnName("complement");
         builder.Property(a => a.City).HasColumnName("city");
         builder.Property(a => a.Country).HasColumnName("country");
 

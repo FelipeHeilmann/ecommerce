@@ -14,7 +14,7 @@ public record OrderPurchasedEvent(
     int Installment, 
     string AddressZipCode,
     string AddressNumber,
-    string? AddressLine
+    string? AddressComplement
 );
 
 public record LineItemOrderPurchasedEvent(Guid Id, Guid ProductId, int Quantity, double Amount);

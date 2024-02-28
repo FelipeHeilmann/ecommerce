@@ -6,7 +6,7 @@ public record CreateAddressRequest(
         string Street, 
         string Neighborhood, 
         string Number,
-        string? Apartment,
+        string? Complement,
         string City,
         string State, 
         string Country
@@ -19,7 +19,7 @@ public record UpdateAddressRequest(
         string Street,
         string Neighborhood,
         string Number,
-        string? Apartment,
+        string? Complement,
         string City,
         string State,
         string Country
@@ -30,7 +30,7 @@ public record AddressRequest(
         string Street,
         string Neighborhood,
         string Number,
-        string? Apartment,
+        string? Complement,
         string City,
         string State,
         string Country);
