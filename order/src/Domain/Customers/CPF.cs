@@ -11,12 +11,15 @@ public record CPF
 
     public static Result<CPF> Create(string cpf)
     {
-        if (string.IsNullOrWhiteSpace(cpf)) return Result.Failure<CPF>(CustomerErrors.CPFNull);
+        if (string.IsNullOrWhiteSpace(cpf))
+            return Result.Failure<CPF>(CustomerErrors.CPFNull);
 
-        var regex = new Regex(@"^\d{11}$");
-        if (!regex.Match(cpf).Success) return Result.Failure<CPF>(CustomerErrors.CPFFormat);
+            var cleanedCPF = Regex.Replace(cpf, @"\D", "");
 
-        return new CPF(cpf);
+            if (cleanedCPF.Length != 11)
+                return Result.Failure<CPF>(CustomerErrors.CPFFormat);
+
+            return new CPF(cleanedCPF);
     }
 
     private static bool ValidateDigit(string cpf)
