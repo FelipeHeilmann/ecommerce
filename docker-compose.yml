@@ -14,9 +14,13 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
-    networks:
-      - network  
-
-networks:
-  network:
-    driver: bridge 
+  ecommerce-database:
+    image: bitnami/postgresql:latest
+    container_name: ecommerce_database
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./containers/order-db:/var/lib/postgresql/data
