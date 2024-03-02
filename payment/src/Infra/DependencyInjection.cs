@@ -6,6 +6,7 @@ using Domain.Refunds;
 using Domain.Transactions;
 using Infra.Context;
 using Infra.Data;
+using Infra.Gateway.Payment;
 using Infra.Queue;
 using Infra.Repositories.Database;
 using Microsoft.EntityFrameworkCore;
@@ -35,7 +36,7 @@ public static class DependecyInjection
             return rabbitMQAdapter;
         });
 
-        services.AddSingleton<IPaymentGateway, MemoryGateway>();
+        services.AddSingleton<IPaymentGateway, PaymentGatewayMemory>();
         services.AddScoped<ITransactionRepository, TransactionRepository>();   
         services.AddScoped<IRefundRepository, RefundRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
