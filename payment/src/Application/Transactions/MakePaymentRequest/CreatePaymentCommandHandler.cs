@@ -1,7 +1,6 @@
 ﻿using Application.Abstractions.Gateway;
 using Application.Abstractions.Messaging;
 using Application.Transactions.Model;
-using Application.Transactions;
 using Domain.Shared;
 using System.Text.Json;
 using Domain.Transactions;

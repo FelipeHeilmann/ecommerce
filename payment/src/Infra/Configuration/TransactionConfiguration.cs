@@ -1,7 +1,6 @@
 ﻿using Domain.Transactions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System.Net;
 namespace Infra.Configuration;
 
 public class TransactionConfiguration : IEntityTypeConfiguration<Transaction>
