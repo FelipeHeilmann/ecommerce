@@ -45,7 +45,7 @@ namespace Infra.Queue
                     var body = eventArgs.Body.ToArray();
                     var message = JsonSerializer.Deserialize<T>(Encoding.UTF8.GetString(body));
 
-                    await callback(message);
+                    if(message is not null) await callback(message);
 
                     channel.BasicAck(eventArgs.DeliveryTag, false);
                 };
