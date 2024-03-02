@@ -16,7 +16,7 @@ public class PaymentGatewayMemory : IPaymentGateway
 
         string jsonResponse = await zipCodeResponse.Content.ReadAsStringAsync();
 
-        CepAPIResponse cepInfo = JsonSerializer.Deserialize<CepAPIResponse>(jsonResponse, new JsonSerializerOptions
+        var cepInfo = JsonSerializer.Deserialize<CepAPIResponse>(jsonResponse, new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
         })!;
@@ -53,6 +53,10 @@ public class PaymentGatewayMemory : IPaymentGateway
             Payments = new List<OrderPaymentType>() { GetPaymentType(request.PaymentType, request.Installment, request.CardToken) },
             Items = request.Items.Select(i => new CreateOrderItemModel() { Amount = i.Amount, Quantity = i.Quantity, Code = i.Id.ToString(), Description = "Produto" }).ToList(),
             Closed = true
+        }, new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            WriteIndented = true
         });
 
 
@@ -62,7 +66,14 @@ public class PaymentGatewayMemory : IPaymentGateway
       
         var response = await client.PostAsync("http://localhost:3333/payment-gateway/transactions", content);
 
-        return new PagarmeCreateOrderResponse(Guid.NewGuid().ToString());
+        string paymentResponseJson = await response.Content.ReadAsStringAsync();
+
+        PaymentAPIResponse payment = JsonSerializer.Deserialize<PaymentAPIResponse>(paymentResponseJson, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        })!;
+
+        return new PagarmeCreateOrderResponse((payment.Id.ToString()), payment.Payment.PaymentUrl);
     }
 
     private OrderPaymentType GetPaymentType(string type, int installments, string? cardToken = null)

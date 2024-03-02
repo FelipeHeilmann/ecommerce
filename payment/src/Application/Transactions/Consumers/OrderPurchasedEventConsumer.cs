@@ -34,9 +34,10 @@ public class OrderPurchasedEventConsumer : BackgroundService
                     var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
                     var paymentGateway = scope.ServiceProvider.GetRequiredService<IPaymentGateway>();
                     var transactionRepository = scope.ServiceProvider.GetRequiredService<ITransactionRepository>();
+                    var queue = scope.ServiceProvider.GetRequiredService<IQueue>();
 
                     var command = new CreatePaymentCommand(message);
-                    var commandHandler = new CreatePaymentCommandHandler(paymentGateway, transactionRepository, unitOfWork);
+                    var commandHandler = new CreatePaymentCommandHandler(paymentGateway, transactionRepository, unitOfWork, queue);
 
                     await commandHandler.Handle(command, stoppingToken);
                 }

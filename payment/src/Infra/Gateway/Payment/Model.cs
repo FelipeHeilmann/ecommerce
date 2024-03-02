@@ -95,3 +95,22 @@ public record CepAPIResponse
     public string Ddd { get; set; }
     public string Siafi { get; set; }
 }
+
+public record PaymentAPIResponse 
+{
+    public Guid Id { get; init; }
+    public Guid Code { get; init; }
+    public decimal Amount { get; init; }
+    public string Currency { get; init; }
+    public Payment Payment { get; init; }
+    public bool Closed { get; init; }
+    public List<CreateOrderItemModel> Items { get; init; }
+    public CreateCustomerModel Customer { get; init; }
+    public string Status { get; init; }
+    public DateTime CreatedAt { get; init; }
+    public DateTime UpdatedAt { get; init; }
+    public DateTime ClosedAt { get; init; }
+}
+
+public record Payment(string PaymentType, string? PaymentUrl);
+

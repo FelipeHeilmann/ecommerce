@@ -1,3 +1,3 @@
 ﻿namespace Application.Transactions.Model;
 
-public record PagarmeCreateOrderResponse(string Id);
+public record PagarmeCreateOrderResponse(string Id, string? PaymentUrl);
