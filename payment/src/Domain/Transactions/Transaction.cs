@@ -13,7 +13,7 @@ public class Transaction
     public DateTime? ApprovedAt { get; private set; }
     public DateTime? RefusedAt { get; private set; } 
 
-    public Transaction(Guid id, Guid orderId, Guid customerId, Guid paymentServiceId, double amount ,PaymentType paymentType, TransactionStatus status, DateTime createdAt, DateTime? approvedAt, DateTime? refusedAt, DateTime? extornedAt)
+    public Transaction(Guid id, Guid orderId, Guid customerId, Guid paymentServiceId, double amount ,PaymentType paymentType, TransactionStatus status, DateTime createdAt, DateTime? approvedAt, DateTime? refusedAt)
     {
         Id = id;
         OrderId = orderId;
@@ -24,14 +24,14 @@ public class Transaction
         ApprovedAt = approvedAt;
         RefusedAt = refusedAt;
         PaymentServiceId = paymentServiceId;
-        Amount = amount;
+        Amount = Math.Round(amount, 2);
     }
 
     public static Transaction Create(Guid orderId, Guid customerId, Guid paymentServiceId, double amount ,string paymentTypeString)
     {
         var paymentType = ConvertToPaymentType(paymentTypeString);
 
-        return new Transaction(Guid.NewGuid(), orderId, customerId, paymentServiceId, amount, paymentType, TransactionStatus.WaitingPayment, DateTime.UtcNow, null, null, null);
+        return new Transaction(Guid.NewGuid(), orderId, customerId, paymentServiceId, amount, paymentType, TransactionStatus.WaitingPayment, DateTime.UtcNow, null, null);
 
     }
 

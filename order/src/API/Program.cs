@@ -1,6 +1,4 @@
 using API.OptionSetup;
-using Application;
-using Domain.Orders.DomainEvents;
 using Infra;
 using Infra.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

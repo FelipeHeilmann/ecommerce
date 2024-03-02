@@ -21,7 +21,7 @@ public abstract class APIBaseController : ControllerBase
 
         if (!user.Identity.IsAuthenticated) return null;
 
-        var id = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+        var id = user?.Claims?.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
         return Guid.Parse(id);
     }

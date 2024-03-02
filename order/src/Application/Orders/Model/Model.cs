@@ -6,5 +6,5 @@ public record OrderItemRequest(Guid ProductId, int Quantity);
 
 public record AddItemRequest(int Quantity);
 
-public record CheckoutOrderRequest(string PaymentType, int Installment, string? CardToken, Guid ShippingAddressId, Guid BillingAddressId);
+public record CheckoutOrderRequest(string PaymentType, int Installments, string? CardToken, Guid ShippingAddressId, Guid BillingAddressId);
 
