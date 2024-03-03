@@ -8,3 +8,6 @@ public record AddItemRequest(int Quantity);
 
 public record CheckoutOrderRequest(string PaymentType, int Installments, string? CardToken, Guid ShippingAddressId, Guid BillingAddressId);
 
+public record PaymentSystemTransactionResponse(Guid OrderId, string? PaymentUrl);
+
+
