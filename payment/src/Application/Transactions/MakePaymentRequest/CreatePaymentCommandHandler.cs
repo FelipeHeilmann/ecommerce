@@ -5,10 +5,11 @@ using Domain.Transactions;
 using Application.Data;
 using Application.Abstractions.Queue;
 using Domain.Events;
+using MediatR;
 
 namespace Application.Transactions.MakePaymentRequest;
 
-public class CreatePaymentCommandHandler : ICommandHandler<CreatePaymentCommand>
+public class CreatePaymentCommandHandler : ICommandHandler<CreatePaymentCommand, TransactionCreated>
 {
     private readonly IPaymentGateway _paymentGateway;
     private readonly ITransactionRepository _transactionRepository;
@@ -23,7 +24,7 @@ public class CreatePaymentCommandHandler : ICommandHandler<CreatePaymentCommand>
         _queue = queue;
     }
 
-    public async Task<Result> Handle(CreatePaymentCommand command, CancellationToken cancellationToken)
+    public async Task<Result<TransactionCreated>> Handle(CreatePaymentCommand command, CancellationToken cancellationToken)
     {
         var request = command.request;
 
@@ -37,8 +38,8 @@ public class CreatePaymentCommandHandler : ICommandHandler<CreatePaymentCommand>
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        await _queue.PublishAsync(new TransactionCreated(transaction.Id, request.OrderId, response.PaymentUrl), "transaction-created");
+        var result = new TransactionCreated(transaction.Id, request.OrderId, response.PaymentUrl);
 
-        return Result.Success();
+        return Result.Success(result);
     }
 }
