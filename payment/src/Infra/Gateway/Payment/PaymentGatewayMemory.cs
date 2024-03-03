@@ -73,7 +73,9 @@ public class PaymentGatewayMemory : IPaymentGateway
             PropertyNameCaseInsensitive = true
         })!;
 
-        return new PagarmeCreateOrderResponse((payment.Id.ToString()), payment.Payment.PaymentUrl);
+        var result = new PagarmeCreateOrderResponse((payment.Id.ToString()), payment.Payment.PaymentUrl);
+
+        return result;
     }
 
     private OrderPaymentType GetPaymentType(string type, int installments, string? cardToken = null)

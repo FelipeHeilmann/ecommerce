@@ -71,7 +71,7 @@ public class OrderPaymentType
 
     public OrderPaymentType(Pix pix)
     {
-        PaymentType = "Pix";
+        PaymentType = "pix";
         Pix = pix ?? throw new ArgumentNullException(nameof(pix));
     }
 }
@@ -112,5 +112,5 @@ public record PaymentAPIResponse
     public DateTime ClosedAt { get; init; }
 }
 
-public record Payment(string PaymentType, string? PaymentUrl);
+public record Payment(string PaymentType, string PaymentUrl);
 

@@ -43,23 +43,23 @@ type CreateCustomerPhoneModel = {
 
 
 type OrderPaymentType = {
-    CreditCard: CreditCard | null
-    Boleto: Boleto | null
-    Pix: Pix | null
-    PaymentType: string
-}
+    creditCard: CreditCard | null
+    boleto: Boleto | null
+    pix: Pix | null
+    paymentType: string
+}[]
 
 type CreditCard = {
-    StatementDescriptor: string,
-    OperationType: string,
-    Intallments: number,
-    CardToken: string
+    statementDescriptor: string,
+    pperationType: string,
+    intallments: number,
+    cardToken: string
 }
 
 type Boleto = {
-    Bank: string,
-    DueAt: string,
-    Instructions: string
+    bank: string,
+    dueAt: string,
+    instructions: string
 }
 
 type Pix = {

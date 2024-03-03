@@ -6,11 +6,13 @@ export async function createTransaction(app: FastifyInstance) {
     app.post("/payment-gateway/transactions", async (req, reply) => {
         const data = req.body as TransactionRequest
 
+        const paymentType = data.payments[0].paymentType
         const id = randomUUID()
         let paymentUrl = null
-        if (data.payments.PaymentType === "Pix" || data.payments) paymentUrl = "httpshttps://www.instagram.com/p/C38mWMeMSn7/?utm_source=ig_embed&ig_rid=e61afe49-0878-41c0-9b1e-b17f00f5cf76"
 
-        console.log(id)
+        if (paymentType === "pix" || paymentType === "boleto") paymentUrl = "https://www.instagram.com/p/C38mWMeMSn7/?utm_source=ig_embed&ig_rid=e61afe49-0878-41c0-9b1e-b17f00f5cf76"
+
+        console.log(paymentUrl)
 
         const response = {
             id,
@@ -32,20 +34,20 @@ export async function createTransaction(app: FastifyInstance) {
                     state: data.customer.address.state,
                     country: data.customer.address.country
                 },
-                phones: {
+                phone: {
                     country_code: data.customer.phone.countryCode,
                     area_code: data.customer.phone.areaCode,
                     number: data.customer.phone.number
                 }
             },
             payment: {
-                payment_type: data.payments.PaymentType,
-                payment_url: paymentUrl,
+                paymentType: paymentType,
+                paymentUrl: paymentUrl,
             },
             status: "created",
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-            closed_at: new Date().toISOString(),
+            created_at: new Date(),
+            updated_at: new Date(),
+            closed_at: new Date(),
         }
 
         return reply.status(200).send(response)
