@@ -1,22 +1,21 @@
 ﻿using Application.Abstractions.Messaging;
-using Application.Abstractions.Queue;
 using Application.Data;
 using Domain.Addresses;
 using Domain.Customers;
 using Domain.Orders;
 using Domain.Orders.DomainEvents;
 using Domain.Shared;
-using System.Text.Json;
-using System.Text;
 using Application.Orders.Model;
+using Application.Abstractions.Gateway;
 
 namespace Application.Orders.Checkout;
 
-public class CheckoutOrderCommandHandler : ICommandHandler<CheckoutOrderCommand, PaymentSystemTransactionResponse>
+public class CheckoutOrderCommandHandler : ICommandHandler<CheckoutOrderCommand, object>
 {
     private readonly IOrderRepository _orderRepository;
     private readonly ICustomerRepository _customerRepository;
     private readonly IAddressRepository _addressRepository;
+    private readonly IPaymentGateway _paymentGateway;
     private readonly IUnitOfWork _unitOfWork;
 
     public CheckoutOrderCommandHandler
@@ -25,15 +24,17 @@ public class CheckoutOrderCommandHandler : ICommandHandler<CheckoutOrderCommand,
         ICustomerRepository customerRepository,
         IAddressRepository addressRepository,
         IUnitOfWork unitOfWork
-    )
+,
+        IPaymentGateway paymentGateway)
     {
         _orderRepository = orderRepository;
-        _customerRepository = customerRepository;   
+        _customerRepository = customerRepository;
         _addressRepository = addressRepository;
         _unitOfWork = unitOfWork;
+        _paymentGateway = paymentGateway;
     }
 
-    public async Task<Result<PaymentSystemTransactionResponse>> Handle(CheckoutOrderCommand command, CancellationToken cancellationToken)
+    public async Task<Result<object>> Handle(CheckoutOrderCommand command, CancellationToken cancellationToken)
     {
 
         var order = await _orderRepository.GetByIdAsync(command.OrderId, cancellationToken, "Items");
@@ -72,25 +73,11 @@ public class CheckoutOrderCommandHandler : ICommandHandler<CheckoutOrderCommand,
             billingAddress.Number,
             billingAddress.Complement
          );
-        
-        using(HttpClient client = new HttpClient())
-        {
-            client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
 
-            var content = new StringContent(JsonSerializer.Serialize(orderPurchased), Encoding.UTF8, "application/json");
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            var response = await client.PostAsync("http://localhost:5129/api/transactions", content);
+        if (command.PaymentType == "credit") return await _paymentGateway.LongDurationTransaction(orderPurchased);
 
-            string paymentResponseJson = await response.Content.ReadAsStringAsync();
-
-            PaymentSystemTransactionResponse payment = JsonSerializer.Deserialize<PaymentSystemTransactionResponse>(paymentResponseJson, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            })!;
-
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-            return payment;
-        }
+        return await _paymentGateway.ShortDurationTransaction(orderPurchased);
     }
 }
