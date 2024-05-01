@@ -1,6 +1,7 @@
 ﻿using Application.Abstractions.Messaging;
 using Application.Abstractions.Services;
 using Application.Data;
+using Application.Gateway;
 using Domain.Customers;
 using Domain.Shared;
 
@@ -10,13 +11,15 @@ public class CreateAccountCommandHandler : ICommandHandler<CreateAccountCommand,
 {
     private readonly ICustomerRepository _repository;
     private readonly IPasswordHasher _passwordHasher;
+    private readonly INotifyGateway _notifyGateway;
     private readonly IUnitOfWork _unitOfWork;
 
-    public CreateAccountCommandHandler(ICustomerRepository repository, IUnitOfWork unitOfWork, IPasswordHasher passwordHasher)
+    public CreateAccountCommandHandler(ICustomerRepository repository, IUnitOfWork unitOfWork, IPasswordHasher passwordHasher, INotifyGateway notifyGateway)
     {
         _repository = repository;
         _unitOfWork = unitOfWork;
         _passwordHasher = passwordHasher;
+        _notifyGateway = notifyGateway;
     }
 
     public async Task<Result<Guid>> Handle(CreateAccountCommand command, CancellationToken cancellationToken)
@@ -42,6 +45,8 @@ public class CreateAccountCommandHandler : ICommandHandler<CreateAccountCommand,
         var customer = result.Value;
 
         _repository.Add(customer);
+
+        await _notifyGateway.SendMail(customer.Name.Value, customer.Email.Value);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
