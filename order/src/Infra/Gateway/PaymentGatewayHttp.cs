@@ -18,7 +18,7 @@ public class PaymentGatewayHttp : IPaymentGateway
 
     public async Task<object> ProccessPayment(OrderPurchasedEvent order)
     {
-        if(order.PaymentType == "credit")
+        if(order.PaymentType == "pix" || order.PaymentType == "billet")
         {
             using (HttpClient client = new HttpClient())
             {
