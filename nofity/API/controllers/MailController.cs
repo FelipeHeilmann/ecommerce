@@ -1,4 +1,4 @@
-﻿using API.gateway;
+﻿using API.Gateway;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,8 +14,7 @@ namespace API.controllers
             _mailerGateway = mailerGateway;
         }
 
-        [HttpPost]
-        [Route("/welcome")]
+        [HttpPost("welcome")]
         public async Task<ActionResult> SendMail([FromBody] EmailRequest request)
         {
             var mailData = new Maildata()

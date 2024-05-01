@@ -3,7 +3,7 @@ using MimeKit;
 using MailKit.Net.Smtp;
 using Org.BouncyCastle.Asn1.Pkcs;
 
-namespace API.gateway
+namespace API.Gateway
 {
     public class MailtrapAdapter : IMailerGateway
     {

@@ -1,5 +1,5 @@
 using API;
-using API.gateway;
+using API.Gateway;
 
 var builder = WebApplication.CreateBuilder(args);
 

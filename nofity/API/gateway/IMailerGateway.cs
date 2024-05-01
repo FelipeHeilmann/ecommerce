@@ -1,4 +1,4 @@
-﻿namespace API.gateway;
+﻿namespace API.Gateway;
 
 public interface IMailerGateway
 {
