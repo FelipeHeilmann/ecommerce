@@ -15,9 +15,18 @@ namespace API.controllers
         }
 
         [HttpPost]
+        [Route("/welcome")]
         public async Task<ActionResult> SendMail([FromBody] EmailRequest request)
         {
-            await _mailerGateway.Send(request.name, request.email);
+            var mailData = new Maildata()
+            {
+                EmailBody = Templates.Welcome(request.name),
+                EmailSubject = "Welcome",
+                EmailToEmail = request.email,
+                EmailToName = request.name,
+            };
+
+            await _mailerGateway.Send(mailData);
 
             return Ok();
         }

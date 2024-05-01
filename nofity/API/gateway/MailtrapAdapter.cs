@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using MimeKit;
 using MailKit.Net.Smtp;
+using Org.BouncyCastle.Asn1.Pkcs;
 
 namespace API.gateway
 {
@@ -12,7 +13,7 @@ namespace API.gateway
             _mailSettings = mailSettingsOptions.Value;
         }
 
-        public async Task Send(string email, string name)
+        public async Task Send(Maildata mailData)
         {      
           
             using (MimeMessage emailMessage = new MimeMessage())
@@ -20,11 +21,11 @@ namespace API.gateway
                 MailboxAddress emailFrom = new MailboxAddress(_mailSettings.SenderName, _mailSettings.SenderMail);
                 emailMessage.From.Add(emailFrom);
                 emailMessage.From.Add(emailFrom);
-                MailboxAddress emailTo = new MailboxAddress(name, email);
+                MailboxAddress emailTo = new MailboxAddress(mailData.EmailToName, mailData.EmailToEmail);
                 emailMessage.To.Add(emailTo);
 
                 BodyBuilder emailBodyBuilder = new BodyBuilder();
-                emailBodyBuilder.TextBody = "Corpo do email";
+                emailBodyBuilder.HtmlBody = mailData.EmailBody;
 
                 emailMessage.Body = emailBodyBuilder.ToMessageBody();
                 
@@ -36,7 +37,6 @@ namespace API.gateway
                     await mailClient.DisconnectAsync(true);
                 }
             }
-
         }
     }
 }
