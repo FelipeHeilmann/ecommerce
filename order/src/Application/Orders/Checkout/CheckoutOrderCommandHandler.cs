@@ -76,8 +76,6 @@ public class CheckoutOrderCommandHandler : ICommandHandler<CheckoutOrderCommand,
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        if (command.PaymentType == "credit") return await _paymentGateway.LongDurationTransaction(orderPurchased);
-
-        return await _paymentGateway.ShortDurationTransaction(orderPurchased);
+        return await _paymentGateway.ProccessPayment(orderPurchased);
     }
 }

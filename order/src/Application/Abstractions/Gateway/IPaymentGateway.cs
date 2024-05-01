@@ -4,6 +4,5 @@ namespace Application.Abstractions.Gateway;
 
 public interface IPaymentGateway
 {
-    Task<object> LongDurationTransaction(OrderPurchasedEvent events);
-    Task<object> ShortDurationTransaction(OrderPurchasedEvent events);
+    Task<object> ProccessPayment(OrderPurchasedEvent events);
 }

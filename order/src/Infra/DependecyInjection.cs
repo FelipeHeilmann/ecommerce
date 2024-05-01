@@ -48,7 +48,7 @@ public static class DependecyInjection
 
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IJwtProvider, JwtProvider>();
-        services.AddScoped<IPaymentGateway, PaymentGateway>();
+        services.AddScoped<IPaymentGateway, PaymentGatewayHttp>();
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
     }
