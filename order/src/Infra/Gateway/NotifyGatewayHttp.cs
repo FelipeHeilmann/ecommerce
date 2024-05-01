@@ -32,4 +32,5 @@ public class NotifyGatewayHttp : INotifyGateway
             await client.PostAsync("http://localhost:5130/api/notify/order-created", content);
         }
     }
+
 }

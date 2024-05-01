@@ -7,22 +7,24 @@ using Application.Abstractions.Gateway;
 using Application.Data;
 using Domain.Transactions;
 using Microsoft.Extensions.DependencyInjection;
+using Application.Gateway;
 
 namespace Application.Transactions.Consumers;
 
 public class OrderPurchasedEventConsumer : BackgroundService
 {
     private readonly ILogger<OrderPurchasedEventConsumer> _logger;
+    private readonly INotifyGateway _notifyGateway;
     private readonly IServiceProvider _serviceProvider;
     private readonly IQueue _queue;
 
-    public OrderPurchasedEventConsumer(ILogger<OrderPurchasedEventConsumer> logger, IQueue queue, IServiceProvider serviceProvider)
+    public OrderPurchasedEventConsumer(ILogger<OrderPurchasedEventConsumer> logger, IQueue queue, IServiceProvider serviceProvider, INotifyGateway notifyGateway)
     {
         _logger = logger;
         _queue = queue;
         _serviceProvider = serviceProvider;
+        _notifyGateway = notifyGateway;
     }
-
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -40,6 +42,8 @@ public class OrderPurchasedEventConsumer : BackgroundService
                     var commandHandler = new CreatePaymentCommandHandler(paymentGateway, transactionRepository, unitOfWork);
 
                     await commandHandler.Handle(command, stoppingToken);
+
+                    await _notifyGateway.SendPaymentRecivedMail(new PaymenRecivedRequest(message.CustomerName, message.CustomerEmail, message.OrderId, message.Items.Sum(item => item.Amount * item.Quantity)));
                 }
             });
 

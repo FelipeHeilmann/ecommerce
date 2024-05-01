@@ -1,11 +1,13 @@
 ﻿using Application.Abstractions.Gateway;
 using Application.Abstractions.Queue;
 using Application.Data;
+using Application.Gateway;
 using Application.Transactions.Consumers;
 using Domain.Refunds;
 using Domain.Transactions;
 using Infra.Context;
 using Infra.Data;
+using Infra.Gateway.Nofify;
 using Infra.Gateway.Payment;
 using Infra.Queue;
 using Infra.Repositories.Database;
@@ -37,9 +39,10 @@ public static class DependecyInjection
         });
 
         services.AddSingleton<IPaymentGateway, PaymentGatewayFake>();
-        services.AddScoped<ITransactionRepository, TransactionRepository>();   
-        services.AddScoped<IRefundRepository, RefundRepository>();
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddTransient<ITransactionRepository, TransactionRepository>();   
+        services.AddTransient<IRefundRepository, RefundRepository>();
+        services.AddSingleton<INotifyGateway, NotifyGatewayHttp>();
+        services.AddTransient<IUnitOfWork, UnitOfWork>();
 
        services.AddHostedService<OrderPurchasedEventConsumer>();
     }
