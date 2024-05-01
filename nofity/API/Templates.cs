@@ -1,10 +1,13 @@
-﻿namespace API;
+﻿using API.Request;
+using System.Text;
+
+namespace API;
 
 public class Templates
 {
     public static string Welcome(string name)
     {
-        var template =  @"
+        string template =  @"
             <html>
             <head>
                 <style>
@@ -60,6 +63,77 @@ public class Templates
             ";
 
         template = template.Replace("[User]", name);
+        return template;
+    }
+    public static string OrderCreated(OrderCreatedRequest order)
+    {
+        string template = @"
+            <html>
+            <head>
+                <style>
+                    /* Define your CSS styles here */
+                    /* Example styles */
+                    body {
+                        font-family: Arial, sans-serif;
+                        line-height: 1.6;
+                    }
+                    .container {
+                        max-width: 600px;
+                        margin: 0 auto;
+                        padding: 20px;
+                        border: 1px solid #ccc;
+                        border-radius: 10px;
+                    }
+                    .order-details {
+                        margin-bottom: 20px;
+                    }
+                    .order-item {
+                        margin-bottom: 10px;
+                    }
+                    .footer {
+                        margin-top: 20px;
+                        font-size: 12px;
+                        color: #666;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class='container'>
+                    <h1>Order Confirmation</h1>
+                    <p>Dear [User],</p>
+                    <p>Thank you for your order with our e-commercce! Your order details are as follows:</p>
+                    <div class='order-details'>
+                        <p><strong>Order Number:</strong> #[OrderNumber]</p>
+                        <p><strong>Order Date:</strong> [OrderDate]</p>
+                    </div>
+                    <p><strong>Order Items:</strong></p>
+                    <ul class='order-items'>
+                        [OrderItems]
+                    </ul>
+                    <p><strong>Total Amount:</strong> $[TotalAmount]</p>
+                    <p>Your order is currently being processed. You will receive another email once your order has been shipped.</p>
+                    <p>Thank you for shopping with us!</p>
+                    <div class='footer'>
+                        <p>Best regards,<br/>Felipe Heilmann<br/>CTO<br/>e-commercce</p>
+                    </div>
+                </div>
+            </body>
+            </html>
+        ";
+
+        template = template.Replace("[User]", order.Name);
+        template = template.Replace("[OrderNumber]", order.OrderId.ToString());
+        template = template.Replace("[OrderDate]", order.Date.ToString("MM/dd/yyyy"));
+        template = template.Replace("[TotalAmount]", order.Items.Sum(item => item.Quantity * item.Price).ToString("0.00"));
+        StringBuilder itemsHtml = new StringBuilder();
+
+        foreach (var item in order.Items)
+        {
+            itemsHtml.Append("<li class='order-item'>");
+            itemsHtml.Append($"<strong>{item.Name}</strong> - ${item.Price} x {item.Quantity}");
+            itemsHtml.Append("</li>");
+        }
+        template = template.Replace("[OrderItems]", itemsHtml.ToString());
         return template;
     }
 }
