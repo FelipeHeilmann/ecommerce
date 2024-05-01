@@ -6,7 +6,7 @@ using System.Text.Json;
 
 namespace Infra.Gateway.Payment;
 
-public class PaymentGatewayMemory : IPaymentGateway
+public class PaymentGatewayFake : IPaymentGateway
 {
     public async Task<PagarmeCreateOrderResponse> CreateOrder(OrderPurchasedEvent request)
     {
@@ -60,20 +60,10 @@ public class PaymentGatewayMemory : IPaymentGateway
         });
 
 
-        client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+        var paymentId = Guid.NewGuid();
+        var paymentUrl = "https://www.instagram.com/p/C38mWMeMSn7/?utm_source=ig_embed&ig_rid=e61afe49-0878-41c0-9b1e-b17f00f5cf76";
 
-        var content = new StringContent(body, Encoding.UTF8, "application/json");
-      
-        var response = await client.PostAsync("http://localhost:3333/payment-gateway/transactions", content);
-
-        string paymentResponseJson = await response.Content.ReadAsStringAsync();
-
-        PaymentAPIResponse payment = JsonSerializer.Deserialize<PaymentAPIResponse>(paymentResponseJson, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        })!;
-
-        var result = new PagarmeCreateOrderResponse((payment.Id.ToString()), payment.Payment.PaymentUrl);
+        var result = new PagarmeCreateOrderResponse((paymentId.ToString()), paymentUrl);
 
         return result;
     }

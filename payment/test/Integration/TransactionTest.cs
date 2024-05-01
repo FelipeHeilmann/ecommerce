@@ -13,7 +13,7 @@ namespace Integration;
 public class TransactionTest
 {
     private readonly ITransactionRepository _transactionRepository =  new TransactionRepositoryMemory();
-    private readonly IPaymentGateway _paymentGateway = new PaymentGatewayMemory();
+    private readonly IPaymentGateway _paymentGateway = new PaymentGatewayFake();
     private readonly IUnitOfWork _unitOfWord = new UnitOfWorkMemory();
 
     [Fact]

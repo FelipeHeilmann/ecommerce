@@ -36,7 +36,7 @@ public static class DependecyInjection
             return rabbitMQAdapter;
         });
 
-        services.AddSingleton<IPaymentGateway, PaymentGatewayMemory>();
+        services.AddSingleton<IPaymentGateway, PaymentGatewayFake>();
         services.AddScoped<ITransactionRepository, TransactionRepository>();   
         services.AddScoped<IRefundRepository, RefundRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
