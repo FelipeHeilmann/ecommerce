@@ -13,15 +13,13 @@ public class CreatePaymentCommandHandler : ICommandHandler<CreatePaymentCommand,
 {
     private readonly IPaymentGateway _paymentGateway;
     private readonly ITransactionRepository _transactionRepository;
-    private readonly IQueue _queue;
     private IUnitOfWork _unitOfWork;
 
-    public CreatePaymentCommandHandler(IPaymentGateway paymentGateway, ITransactionRepository transactionRepository, IUnitOfWork unitOfWork, IQueue queue)
+    public CreatePaymentCommandHandler(IPaymentGateway paymentGateway, ITransactionRepository transactionRepository, IUnitOfWork unitOfWork)
     {
         _paymentGateway = paymentGateway;
         _transactionRepository = transactionRepository;
         _unitOfWork = unitOfWork;
-        _queue = queue;
     }
 
     public async Task<Result<TransactionCreated>> Handle(CreatePaymentCommand command, CancellationToken cancellationToken)
