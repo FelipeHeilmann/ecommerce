@@ -4,6 +4,7 @@ namespace Domain.Customers;
 
 public static class CustomerErrors
 {
+    public static Error CustomerNotFound => Error.NotFound("Customer.Not.Found", "The customer was not found");
     public static Error EmailNull => Error.Validation("Email.Null.Empty", "The email value should not be empty or null");
     public static Error EmailFormat => Error.Validation("Email.Invalid", "Invalid email format");
     public static Error EmailIsAreadyUsed => Error.Failure("Email.Used", "The email is already used");

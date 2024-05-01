@@ -46,7 +46,7 @@ public class CreateAccountCommandHandler : ICommandHandler<CreateAccountCommand,
 
         _repository.Add(customer);
 
-        await _notifyGateway.SendMail(customer.Name.Value, customer.Email.Value);
+        await _notifyGateway.SendWelcomeMail(customer.Name.Value, customer.Email.Value);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 

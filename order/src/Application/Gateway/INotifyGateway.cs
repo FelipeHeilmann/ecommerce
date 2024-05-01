@@ -2,5 +2,9 @@
 
 public interface INotifyGateway
 {
-    public Task SendMail(string name, string email);
+    public Task SendWelcomeMail(string name, string email);
+    public Task SendOrderCreatedMail(OrderCreatedMail order);
 }
+
+public record OrderCreatedMail(Guid OrderId, DateTime Date, string Name, string Email, List<ItemsMail> Items);
+public record ItemsMail(string Name, double Price, int Quantity);
