@@ -1,9 +1,9 @@
 ﻿using Application.Abstractions.Gateway;
 using Application.Abstractions.Queue;
 using Application.Orders.Model;
-using Domain.Orders.DomainEvents;
 using System.Text.Json;
 using System.Text;
+using Domain.Orders;
 
 namespace Infra.Gateway;
 

@@ -3,7 +3,6 @@ using Application.Data;
 using Domain.Addresses;
 using Domain.Customers;
 using Domain.Orders;
-using Domain.Orders.DomainEvents;
 using Domain.Shared;
 using Application.Orders.Model;
 using Application.Abstractions.Gateway;

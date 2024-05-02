@@ -1,4 +1,6 @@
-﻿namespace Application.Gateway;
+﻿using Domain.Orders;
+
+namespace Application.Gateway;
 
 public interface INotifyGateway
 {
@@ -8,3 +10,6 @@ public interface INotifyGateway
 
 public record OrderCreatedMail(Guid OrderId, DateTime Date, string Name, string Email, List<ItemsMail> Items);
 public record ItemsMail(string Name, double Price, int Quantity);
+
+
+

@@ -1,4 +1,4 @@
-﻿using Domain.Orders.DomainEvents;
+﻿using Domain.Orders;
 
 namespace Application.Abstractions.Gateway;
 

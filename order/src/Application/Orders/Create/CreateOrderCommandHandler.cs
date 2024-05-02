@@ -5,6 +5,7 @@ using Domain.Customers;
 using Domain.Orders;
 using Domain.Products;
 using Domain.Shared;
+using MediatR;
 
 namespace Application.Orders.Create;
 
@@ -13,15 +14,15 @@ public class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, Gui
     private readonly IOrderRepository _orderRepository;
     private readonly IProductRepository _productRepository;
     private readonly ICustomerRepository _customerRepository;
-    private readonly INotifyGateway _notifyGateway;
+    private readonly IMediator _mediator;
     private readonly IUnitOfWork _unitOfWork;
 
-    public CreateOrderCommandHandler(IOrderRepository orderRepository, IProductRepository productRepository, IUnitOfWork unitOfWork, INotifyGateway notifyGateway, ICustomerRepository customerRepository)
+    public CreateOrderCommandHandler(IOrderRepository orderRepository, IProductRepository productRepository, IUnitOfWork unitOfWork, IMediator mediator, ICustomerRepository customerRepository)
     {
         _orderRepository = orderRepository;
         _productRepository = productRepository;
         _unitOfWork = unitOfWork;
-        _notifyGateway = notifyGateway;
+        _mediator = mediator;
         _customerRepository = customerRepository;
     }
 
@@ -38,8 +39,6 @@ public class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, Gui
             return Result.Failure<Guid>(CustomerErrors.CustomerNotFound);
         }
 
-        List<ItemsMail> itemsMail = new List<ItemsMail>();
-
         foreach (var item in orderItemList)
         {
             var product = await _productRepository.GetByIdAsync(item.ProductId, cancellationToken);
@@ -48,14 +47,13 @@ public class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, Gui
                 return Result.Failure<Guid>(ProductErrors.ProductNotFound);
             }
             order.AddItem(item.ProductId, product.Price, item.Quantity);
-            itemsMail.Add(new ItemsMail(product.Name, product.Price.Amount, item.Quantity));
         }
 
         _orderRepository.Add(order);
 
-        await _notifyGateway.SendOrderCreatedMail(new OrderCreatedMail(order.Id, DateTime.UtcNow, customer.Name.Value, customer.Email.Value, itemsMail));
-
         await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        await _mediator.Publish(new OrderCreatedEvent(order.Id),cancellationToken);
 
         return Result.Success(order.Id);
     }

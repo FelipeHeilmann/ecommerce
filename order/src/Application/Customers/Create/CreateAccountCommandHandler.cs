@@ -4,6 +4,7 @@ using Application.Data;
 using Application.Gateway;
 using Domain.Customers;
 using Domain.Shared;
+using MediatR;
 
 namespace Application.Customers.Create;
 
@@ -11,15 +12,15 @@ public class CreateAccountCommandHandler : ICommandHandler<CreateAccountCommand,
 {
     private readonly ICustomerRepository _repository;
     private readonly IPasswordHasher _passwordHasher;
-    private readonly INotifyGateway _notifyGateway;
+    private readonly IMediator _mediator;
     private readonly IUnitOfWork _unitOfWork;
 
-    public CreateAccountCommandHandler(ICustomerRepository repository, IUnitOfWork unitOfWork, IPasswordHasher passwordHasher, INotifyGateway notifyGateway)
+    public CreateAccountCommandHandler(ICustomerRepository repository, IUnitOfWork unitOfWork, IPasswordHasher passwordHasher, IMediator mediator)
     {
         _repository = repository;
         _unitOfWork = unitOfWork;
         _passwordHasher = passwordHasher;
-        _notifyGateway = notifyGateway;
+        _mediator = mediator;
     }
 
     public async Task<Result<Guid>> Handle(CreateAccountCommand command, CancellationToken cancellationToken)
@@ -46,9 +47,9 @@ public class CreateAccountCommandHandler : ICommandHandler<CreateAccountCommand,
 
         _repository.Add(customer);
 
-        await _notifyGateway.SendWelcomeMail(customer.Name.Value, customer.Email.Value);
-
         await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        await _mediator.Publish(new CustomerCreatedEvent(customer.Name.Value, customer.Email.Value), cancellationToken);
 
         return Result.Success(customer.Id);
     }

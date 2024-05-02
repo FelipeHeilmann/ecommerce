@@ -1,4 +1,4 @@
-﻿namespace Domain.Orders.DomainEvents;
+﻿namespace Domain.Orders;
 
 public record OrderPurchasedEvent(
     Guid OrderId,
@@ -8,7 +8,7 @@ public record OrderPurchasedEvent(
     string CustomerName,
     string CustomerEmail,
     string CustomerDocument,
-    string CustomerPhone, 
+    string CustomerPhone,
     string PaymentType,
     string? CardToken,
     int Installment,
