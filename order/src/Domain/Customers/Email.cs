@@ -11,7 +11,7 @@ public record Email
 
     public static Result<Email> Create(string email)
     {
-        if (string.IsNullOrWhiteSpace(email)) return Result.Failure<Email>(CustomerErrors.EmailNull);
+        if (string.IsNullOrWhiteSpace(email)) return Result.Failure<Email>(CustomerErrors.EmailFormat);
 
         var regex = new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
         if (!regex.Match(email).Success) return Result.Failure<Email>(CustomerErrors.EmailFormat);

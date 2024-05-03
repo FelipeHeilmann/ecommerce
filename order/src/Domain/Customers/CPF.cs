@@ -12,7 +12,7 @@ public record CPF
     public static Result<CPF> Create(string cpf)
     {
         if (string.IsNullOrWhiteSpace(cpf))
-            return Result.Failure<CPF>(CustomerErrors.CPFNull);
+            return Result.Failure<CPF>(CustomerErrors.CPFFormat);
 
             var cleanedCPF = Regex.Replace(cpf, @"\D", "");
 
