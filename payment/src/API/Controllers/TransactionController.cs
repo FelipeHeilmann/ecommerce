@@ -12,7 +12,7 @@ public class TransactionController : APIBaseController
     public TransactionController(ISender _sender) : base(_sender) { }
 
     [HttpPost]
-    public async Task<IResult> CreateTransaction([FromBody ]OrderPurchasedEvent request, CancellationToken cancellationToken)
+    public async Task<IResult> CreateTransaction([FromBody]OrderPurchasedEvent request, CancellationToken cancellationToken)
     {
         var command = new CreatePaymentCommand(request);
 

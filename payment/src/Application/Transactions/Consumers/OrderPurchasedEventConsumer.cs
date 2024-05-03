@@ -8,22 +8,23 @@ using Application.Data;
 using Domain.Transactions;
 using Microsoft.Extensions.DependencyInjection;
 using Application.Gateway;
+using MediatR;
 
 namespace Application.Transactions.Consumers;
 
 public class OrderPurchasedEventConsumer : BackgroundService
 {
     private readonly ILogger<OrderPurchasedEventConsumer> _logger;
-    private readonly INotifyGateway _notifyGateway;
+    private readonly IMediator _mediator;
     private readonly IServiceProvider _serviceProvider;
     private readonly IQueue _queue;
 
-    public OrderPurchasedEventConsumer(ILogger<OrderPurchasedEventConsumer> logger, IQueue queue, IServiceProvider serviceProvider, INotifyGateway notifyGateway)
+    public OrderPurchasedEventConsumer(ILogger<OrderPurchasedEventConsumer> logger, IQueue queue, IServiceProvider serviceProvider, IMediator mediator)
     {
         _logger = logger;
         _queue = queue;
         _serviceProvider = serviceProvider;
-        _notifyGateway = notifyGateway;
+        _mediator = mediator;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -37,13 +38,12 @@ public class OrderPurchasedEventConsumer : BackgroundService
                     var paymentGateway = scope.ServiceProvider.GetRequiredService<IPaymentGateway>();
                     var transactionRepository = scope.ServiceProvider.GetRequiredService<ITransactionRepository>();
                     var queue = scope.ServiceProvider.GetRequiredService<IQueue>();
+                    var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
                     var command = new CreatePaymentCommand(message);
-                    var commandHandler = new CreatePaymentCommandHandler(paymentGateway, transactionRepository, unitOfWork);
+                    var commandHandler = new CreatePaymentCommandHandler(paymentGateway, transactionRepository, unitOfWork, mediator);
 
                     await commandHandler.Handle(command, stoppingToken);
-
-                    await _notifyGateway.SendPaymentRecivedMail(new PaymenRecivedRequest(message.CustomerName, message.CustomerEmail, message.OrderId, message.Items.Sum(item => item.Amount * item.Quantity)));
                 }
             });
 
