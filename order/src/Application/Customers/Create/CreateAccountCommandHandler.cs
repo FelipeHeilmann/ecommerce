@@ -1,7 +1,6 @@
 ﻿using Application.Abstractions.Messaging;
 using Application.Abstractions.Services;
 using Application.Data;
-using Application.Gateway;
 using Domain.Customers;
 using Domain.Shared;
 using MediatR;
