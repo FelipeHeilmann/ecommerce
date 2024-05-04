@@ -1,5 +1,9 @@
 using API;
+using API.Consumers;
 using API.Gateway;
+using API.Queue;
+using Application.Abstractions.Queue;
+using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +16,16 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.Configure<MailtrapSettings>(builder.Configuration.GetSection("MailSettings"));
 builder.Services.AddTransient<IMailerGateway, MailtrapAdapter>();
+builder.Services.AddSingleton<IQueue, RabbitMQAdapter>(provider =>
+{
+    var rabbitMQAdapter = new RabbitMQAdapter(builder.Configuration);
+    rabbitMQAdapter.Connect();
+    return rabbitMQAdapter;
+});
+builder.Services.AddHostedService<CustomerCreatedConsumer>();
+builder.Services.AddHostedService<OrderCreatedConsumer>();
+builder.Services.AddHostedService<OrderPurchasedConsumer>();
+
 
 var app = builder.Build();
 

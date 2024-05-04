@@ -22,6 +22,7 @@ public class MailtrapAdapter : IMailerGateway
             emailMessage.From.Add(emailFrom);
             MailboxAddress emailTo = new MailboxAddress(mailData.EmailToName, mailData.EmailToEmail);
             emailMessage.To.Add(emailTo);
+            emailMessage.Subject = mailData.EmailSubject;
 
             BodyBuilder emailBodyBuilder = new BodyBuilder();
             emailBodyBuilder.HtmlBody = mailData.EmailBody;

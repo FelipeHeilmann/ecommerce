@@ -1,4 +1,5 @@
-﻿using API.Request;
+﻿using API.Events;
+using API.Request;
 using System.Text;
 
 namespace API;
@@ -65,7 +66,7 @@ public class Templates
         template = template.Replace("[User]", name);
         return template;
     }
-    public static string OrderCreated(OrderCreatedRequest order)
+    public static string OrderCreated(OrderCreatedEvent order)
     {
         string template = @"
             <html>
@@ -136,7 +137,7 @@ public class Templates
         template = template.Replace("[OrderItems]", itemsHtml.ToString());
         return template;
     }
-    public static string PaymentRecived(string name, Guid orderId, double amount) 
+    public static string OrderPurchased(string name, Guid orderId, double amount) 
     {
         string template = @"
             <html>

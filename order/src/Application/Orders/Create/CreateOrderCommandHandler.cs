@@ -1,6 +1,5 @@
 ﻿using Application.Abstractions.Messaging;
 using Application.Data;
-using Application.Gateway;
 using Domain.Customers;
 using Domain.Orders;
 using Domain.Products;

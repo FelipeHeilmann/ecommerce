@@ -7,11 +7,11 @@ using Domain.Orders;
 
 namespace Infra.Gateway;
 
-public class PaymentGatewayHttp : IPaymentGateway
+public class PaymentGateway : IPaymentGateway
 {
     private readonly IQueue _queue;
 
-    public PaymentGatewayHttp(IQueue queue)
+    public PaymentGateway(IQueue queue)
     {
         _queue = queue;
     }
@@ -39,9 +39,8 @@ public class PaymentGatewayHttp : IPaymentGateway
             }
         }
 
-        await _queue.PublishAsync(order, "order-purchased");
+        await _queue.PublishAsync(order, "order.purchased");
 
         return string.Empty;
     }
-
 }

@@ -5,77 +5,75 @@ using RabbitMQ.Client.Events;
 using System.Text;
 using System.Text.Json;
 
-namespace Infra.Queue
+namespace Infra.Queue;
+
+public class RabbitMQAdapter : IQueue
 {
-    public class RabbitMQAdapter : IQueue
+    private readonly IConfiguration _configuration;
+    private IConnection _connection;
+
+    public RabbitMQAdapter(IConfiguration configuration)
     {
-        private readonly IConfiguration _configuration;
-        private IConnection _connection;
+        _configuration = configuration;
+    }
 
-        public RabbitMQAdapter(IConfiguration configuration)
+    public void Connect()
+    {
+        var rabbitSettings = _configuration.GetSection("MessageBroker");
+        var factory = new ConnectionFactory
         {
-            _configuration = configuration;
-        }
+            HostName = rabbitSettings["Host"],
+            UserName = rabbitSettings["Username"],
+            Password = rabbitSettings["Password"]
+        };
+        _connection = factory.CreateConnection();
+    }
 
-        public void Connect()
+    public async Task SubscribeAsync<T>(string queueName, string routingKey, Func<T, Task> callback)
+    {
+        using (var channel = _connection.CreateModel())
         {
-            var rabbitSettings = _configuration.GetSection("MessageBroker");
-            var factory = new ConnectionFactory
+            channel.ExchangeDeclare(exchange: "order.events", type: ExchangeType.Topic);
+            channel.QueueDeclare(queue: queueName,
+                                durable: true,
+                                exclusive: false,
+                                autoDelete: false,
+                                arguments: null);
+            channel.QueueBind(queue: queueName,
+                              exchange: "order.events",
+                              routingKey: routingKey);
+
+            var consumer = new EventingBasicConsumer(channel);
+            consumer.Received += async (model, eventArgs) =>
             {
-                HostName = rabbitSettings["Host"],
-                UserName = rabbitSettings["Username"],
-                Password = rabbitSettings["Password"]
+                var body = eventArgs.Body.ToArray();
+                var message = JsonSerializer.Deserialize<T>(Encoding.UTF8.GetString(body));
+
+                await callback(message);
+
+                channel.BasicAck(eventArgs.DeliveryTag, false);
             };
-            _connection = factory.CreateConnection();
-        }
 
-        public async Task SubscribeAsync<T>(string queueName, Func<T, Task> callback)
-        {
-            using (var channel = _connection.CreateModel())
-            {
-                channel.QueueDeclare(queue: queueName,
-                                     durable: false,
-                                     exclusive: false,
-                                     autoDelete: false,
-                                     arguments: null);
+            channel.BasicConsume(queue: queueName,
+                                 autoAck: false,
+                                 consumer: consumer);
 
-                var consumer = new EventingBasicConsumer(channel);
-                consumer.Received += async (model, eventArgs) =>
-                {
-                    var body = eventArgs.Body.ToArray();
-                    var message = JsonSerializer.Deserialize<T>(Encoding.UTF8.GetString(body));
-
-                    if(message is not null) await callback(message);
-
-                    channel.BasicAck(eventArgs.DeliveryTag, false);
-                };
-
-                channel.BasicConsume(queue: queueName,
-                                     autoAck: false,
-                                     consumer: consumer);
-
-                await Task.Delay(-1);
-            }
-        }
-
-        public async Task PublishAsync<T>(T message, string queueName)
-        {
-            using (var channel = _connection.CreateModel())
-            {
-                channel.QueueDeclare(queue: queueName,
-                                     durable: false,
-                                     exclusive: false,
-                                     autoDelete: false,
-                                     arguments: null);
-
-                var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(message));
-
-                channel.BasicPublish(exchange: "",
-                                     routingKey: queueName,
-                                     basicProperties: null,
-                                     body: body);
-            }
+            await Task.Delay(-1);
         }
     }
 
+    public async Task PublishAsync<T>(T message, string routingKey)
+    {
+        using (var channel = _connection.CreateModel())
+        {
+            channel.ExchangeDeclare(exchange: "order.events", type: ExchangeType.Topic);
+
+            var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(message));
+
+            channel.BasicPublish(exchange: "order.events",
+                                 routingKey: routingKey,
+                                 basicProperties: null,
+                                 body: body);
+        }
+    }
 }

@@ -1,4 +1,5 @@
-﻿using API.Gateway;
+﻿using API.Events;
+using API.Gateway;
 using API.Request;
 using Microsoft.AspNetCore.Mvc;
 
@@ -31,7 +32,7 @@ namespace API.controllers
         }
 
         [HttpPost("order-created")]
-        public async Task<ActionResult> SendOrderCreatedMail([FromBody] OrderCreatedRequest request)
+        public async Task<ActionResult> SendOrderCreatedMail([FromBody] OrderCreatedEvent request)
         {
             var mailData = new Maildata()
             {
@@ -53,7 +54,7 @@ namespace API.controllers
             {
                 EmailToEmail = request.Email,
                 EmailToName = request.Name,
-                EmailBody = Templates.PaymentRecived(request.Name, request.OrderId, request.Amount),
+                EmailBody = Templates.OrderPurchased(request.Name, request.OrderId, request.Amount),
                 EmailSubject = "Payment Recived"
             };
 

@@ -1,4 +1,4 @@
-﻿using Application.Gateway;
+﻿using Application.Abstractions.Queue;
 using Domain.Customers;
 using MediatR;
 
@@ -6,15 +6,15 @@ namespace Application.Customers.EventHandler;
 
 public class CustomerCreatedEventHandler : INotificationHandler<CustomerCreatedEvent>
 {
-    private readonly INotifyGateway _notifyGateway;
+    private readonly IQueue _queue;
 
-    public CustomerCreatedEventHandler(INotifyGateway notifyGateway)
+    public CustomerCreatedEventHandler(IQueue queue)
     {
-        _notifyGateway = notifyGateway;
+        _queue = queue;
     }
 
     public async Task Handle(CustomerCreatedEvent notification, CancellationToken cancellationToken)
     {
-        await _notifyGateway.SendWelcomeMail(notification.Name, notification.Email);
+        await _queue.PublishAsync(new { Name = notification.Name, Email = notification.Email }, "customers");
     }
 }

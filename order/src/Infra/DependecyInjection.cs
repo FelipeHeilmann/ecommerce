@@ -2,7 +2,6 @@
 using Application.Abstractions.Queue;
 using Application.Abstractions.Services;
 using Application.Data;
-using Application.Gateway;
 using Domain.Addresses;
 using Domain.Categories;
 using Domain.Customers;
@@ -49,8 +48,7 @@ public static class DependecyInjection
 
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IJwtProvider, JwtProvider>();
-        services.AddScoped<IPaymentGateway, PaymentGatewayHttp>();
-        services.AddScoped<INotifyGateway, NotifyGatewayHttp>();
+        services.AddScoped<IPaymentGateway, PaymentGateway>();
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
     }

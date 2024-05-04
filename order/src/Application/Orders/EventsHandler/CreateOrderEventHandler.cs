@@ -1,23 +1,21 @@
-﻿using Application.Gateway;
-using Application.Orders.Model;
+﻿using Application.Abstractions.Queue;
 using Domain.Customers;
 using Domain.Orders;
 using Domain.Products;
-using Domain.Shared;
 using MediatR;
 
 namespace Application.Orders.EventsHandler;
 
 public class CreateOrderEventHandler : INotificationHandler<OrderCreatedEvent>
 {
-    private readonly INotifyGateway _notifyGateway;
+    private readonly IQueue _queue;
     private readonly IOrderRepository _orderRepository;
     private readonly IProductRepository _productRepository;
     private readonly ICustomerRepository _customerRepository;
 
-    public CreateOrderEventHandler(INotifyGateway notifyGateway, IOrderRepository orderRepository, IProductRepository productRepository, ICustomerRepository customerRepository)
+    public CreateOrderEventHandler(IQueue queue, IOrderRepository orderRepository, IProductRepository productRepository, ICustomerRepository customerRepository)
     {
-        _notifyGateway = notifyGateway;
+        _queue = queue;
         _orderRepository = orderRepository;
         _productRepository = productRepository;
         _customerRepository = customerRepository;
@@ -29,14 +27,14 @@ public class CreateOrderEventHandler : INotificationHandler<OrderCreatedEvent>
 
         var custmer = await _customerRepository.GetByIdAsync(order!.CustomerId, cancellationToken);
 
-        List<ItemsMail> products = new List<ItemsMail>();
+        List<OrderCreatedItem> products = new List<OrderCreatedItem>();
 
         foreach (var orderItem in order.Items) 
         {
             var product = await _productRepository.GetByIdAsync(orderItem.ProductId, cancellationToken);
-            products.Add(new ItemsMail(product!.Name, product!.Price.Amount, orderItem.Quantity));
+            products.Add(new OrderCreatedItem(product!.Name, product!.Price.Amount, orderItem.Quantity));
         }
 
-        await _notifyGateway.SendOrderCreatedMail(new OrderCreatedMail(order.Id, DateTime.Now, custmer!.Name, custmer.Email, products));
+        await _queue.PublishAsync(new OrderCreatedMailEvent(order.Id, DateTime.Now, custmer!.Name, custmer.Email, products), "order.create");
     }
 }

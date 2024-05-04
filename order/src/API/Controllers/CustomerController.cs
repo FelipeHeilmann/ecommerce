@@ -21,7 +21,7 @@ public class CustomerController : APIBaseController
 
         var result = await _sender.Send(command, cancellationToken);
 
-        return result.IsFailure ? result.ToProblemDetail() : Results.Created<Guid>($"/customers/{result.Value}", result.Value);
+        return result.IsFailure ? result.ToProblemDetail() : Results.Created($"/customers/{result.Value}", new { Id = result.Value });
     }
 
     [HttpPost("auth")]

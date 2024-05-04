@@ -11,6 +11,5 @@ public class OrderCreatedEvent : INotification
     {
         OrderId = orderId;
     }
-
 }
 
