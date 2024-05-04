@@ -17,6 +17,12 @@ using Application.Orders.Checkout;
 using Domain.Addresses;
 using Application.Abstractions.Queue;
 using Infra.Queue;
+using Moq;
+using MediatR;
+using Application.Abstractions.Gateway;
+using Domain.Shared;
+using System.Text;
+
 namespace Integration;
 
 public class OrderTest
@@ -51,7 +57,11 @@ public class OrderTest
 
         var command = new CreateOrderCommand(request);
 
-        var commandHandler = new CreateOrderCommandHandler(_orderRepository, _productRepository, _unitOfWork);
+        var mediatorMock = new Mock<IMediator>();
+
+        mediatorMock.Setup(m => m.Publish(It.IsAny<OrderCreatedEvent>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
+
+        var commandHandler = new CreateOrderCommandHandler(_orderRepository, _productRepository, _unitOfWork, mediatorMock.Object, _customerRepository);
 
         await commandHandler.Handle(command, CancellationToken.None);
 
@@ -198,12 +208,17 @@ public class OrderTest
                 installments
             );
 
-        var commandHandler = new CheckoutOrderCommandHandler(_orderRepository, _customerRepository ,_addressRepository, _unitOfWork, _memoryMQAdapter);
+        var paymentGatewayMock = new Mock<IPaymentGateway>();
+
+        object emptyString = "";
+
+        paymentGatewayMock.Setup(p => p.ProccessPayment(It.IsAny<OrderPurchasedEvent>())).Returns(Task.FromResult(emptyString));
+
+        var commandHandler = new CheckoutOrderCommandHandler(_orderRepository, _customerRepository ,_addressRepository, _unitOfWork, paymentGatewayMock.Object);
 
         var result = await commandHandler.Handle(command, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
         Assert.False(result.IsFailure);
-        Assert.Equal(OrderStatus.WaitingPayment, result.Value.Status);
     }
 }

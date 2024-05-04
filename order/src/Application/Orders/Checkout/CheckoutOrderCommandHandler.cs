@@ -74,6 +74,6 @@ public class CheckoutOrderCommandHandler : ICommandHandler<CheckoutOrderCommand,
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return await _paymentGateway.ProccessPayment(orderPurchased);
+        return Result.Success(await _paymentGateway.ProccessPayment(orderPurchased));
     }
 }
