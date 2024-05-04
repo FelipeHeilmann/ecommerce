@@ -399,3 +399,6 @@ FodyWeavers.xsd
 
 #docker
 **containers/
+
+# Projects
+notify/API/appsettings.json
