@@ -10,12 +10,13 @@ public class MemoryMQAdapter : IQueue
         return;
     }
 
-    public Task SubscribeAsync<T>(string queueName, Func<T, Task> callback)
+
+    public Task PublishAsync<T>(T message, string queueName)
     {
         return Task.CompletedTask;
     }
 
-    public Task PublishAsync<T>(T message, string queueName)
+    public Task SubscribeAsync<T>(string queueName, string routingKey, Func<T, Task> callback)
     {
         return Task.CompletedTask;
     }

@@ -1,11 +1,10 @@
 ﻿using Application.Abstractions.Queue;
-using Microsoft.Extensions.Configuration;
-using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using System.Text;
+using RabbitMQ.Client;
 using System.Text.Json;
+using System.Text;
 
-namespace Infra.Queue;
+namespace API.Queue;
 
 public class RabbitMQAdapter : IQueue
 {
@@ -70,7 +69,7 @@ public class RabbitMQAdapter : IQueue
             channel.ExchangeDeclare(exchange: EXCHANGE, type: ExchangeType.Topic);
 
             var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(message));
-    
+
             channel.BasicPublish(exchange: EXCHANGE,
                                  routingKey: routingKey,
                                  basicProperties: null,

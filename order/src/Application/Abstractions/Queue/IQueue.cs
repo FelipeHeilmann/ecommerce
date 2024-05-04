@@ -3,7 +3,7 @@
     public interface IQueue
     {
         void Connect();
-        Task SubscribeAsync<T>(string queueName, Func<T, Task> callback);
+        Task SubscribeAsync<T>(string queueName, string routingKey, Func<T, Task> callback);
         Task PublishAsync<T>(T message, string queueName);
     }
 }
