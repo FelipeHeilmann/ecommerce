@@ -4,10 +4,14 @@ namespace Domain.Customers;
 public class Customer
 {
     public Guid Id { get; private set; }
-    public Name Name { get; private set; }
-    public Email Email { get; private set; }
-    public CPF CPF { get; private set; } 
-    public Phone Phone { get; private set; }
+    private Name _name;
+    private Email _email;
+    private CPF _cpf;
+    private Phone _phone;
+    public string Name { get => _name.Value; private set => _name = Customers.Name.Create(value).Value; }
+    public string Email { get => _email.Value; private set => _email = Customers.Email.Create(value).Value; }
+    public string CPF { get => _cpf.Value; private set => _cpf = Customers.CPF.Create(value).Value; }
+    public string Phone { get => _phone.Value; private set => _phone = Customers.Phone.Create(value).Value; }
     public string Password { get; private set; }
     public DateOnly BirthDate { get; private set; }
     public DateTime CreatedAt { get; private set; }
@@ -15,32 +19,32 @@ public class Customer
     public Customer(Guid id, Name name, Email email, CPF cpf, Phone phone ,string password, DateOnly birthDate, DateTime createdAt)
     {
         Id = id;
-        Name = name;
-        Email = email;
+        _name = name;
+        _email = email;
         BirthDate = birthDate;
         CreatedAt = createdAt;
         Password = password;
-        CPF = cpf;  
-        Phone = phone;
+        _cpf = cpf;  
+        _phone = phone;
     }
 
     public Customer() { }
 
     public static Result<Customer> Create(string nameString, string emailString, string password, DateOnly birthDate, string cpfString, string phoneString)
     {
-        var name = Name.Create(nameString);
+        var name = Customers.Name.Create(nameString);
         if (name.IsFailure) return Result.Failure<Customer>(name.Error);
 
-        var email = Email.Create(emailString);
+        var email = Customers.Email.Create(emailString);
         if (email.IsFailure) return Result.Failure<Customer>(email.Error);
         
-        var cpf = CPF.Create(cpfString);
+        var cpf = Customers.CPF.Create(cpfString);
         if (cpf.IsFailure) return Result.Failure<Customer>(cpf.Error);
 
         if (!IsOldEnough(birthDate))
             return Result.Failure<Customer>(CustomerErrors.InvalidAge);
 
-        var phone = Phone.Create(phoneString);
+        var phone = Customers.Phone.Create(phoneString);
         if (cpf.IsFailure) return Result.Failure<Customer>(phone.Error);
 
 

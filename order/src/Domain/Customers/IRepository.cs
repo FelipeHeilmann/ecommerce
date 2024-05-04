@@ -4,6 +4,6 @@ namespace Domain.Customers;
 
 public interface ICustomerRepository :IRepositoryBase<Customer> 
 {
-    Task<bool> IsEmailUsedAsync(Email email, CancellationToken cancellationToken);
-    Task<Customer?> GetByEmailAsync(Email email, CancellationToken cancellationToken);
+    Task<bool> IsEmailUsedAsync(string email, CancellationToken cancellationToken);
+    Task<Customer?> GetByEmailAsync(string email, CancellationToken cancellationToken);
 }

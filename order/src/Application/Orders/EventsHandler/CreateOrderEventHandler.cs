@@ -37,6 +37,6 @@ public class CreateOrderEventHandler : INotificationHandler<OrderCreatedEvent>
             products.Add(new ItemsMail(product!.Name, product!.Price.Amount, orderItem.Quantity));
         }
 
-        await _notifyGateway.SendOrderCreatedMail(new OrderCreatedMail(order.Id, DateTime.Now, custmer!.Name.Value, custmer.Email.Value, products));
+        await _notifyGateway.SendOrderCreatedMail(new OrderCreatedMail(order.Id, DateTime.Now, custmer!.Name, custmer.Email, products));
     }
 }

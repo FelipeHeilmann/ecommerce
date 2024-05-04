@@ -13,7 +13,6 @@ public record Phone
     {
         if (string.IsNullOrEmpty(phone))
             return Result.Failure<Phone>(CustomerErrors.PhoneFormat);
-
         
         string cleanedPhone = Regex.Replace(phone, @"[^\d]", "");
 

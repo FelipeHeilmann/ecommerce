@@ -26,11 +26,7 @@ public class CreateAccountCommandHandler : ICommandHandler<CreateAccountCommand,
     {
         var request = command.request;
 
-        var email = Email.Create(request.Email);
-
-        if (email.IsFailure) return Result.Failure<Guid>(email.Error);
-
-        var emailAreadyUsed = await _repository.IsEmailUsedAsync(email.Value, cancellationToken);
+        var emailAreadyUsed = await _repository.IsEmailUsedAsync(request.Email, cancellationToken);
 
         if(emailAreadyUsed) return Result.Failure<Guid>(CustomerErrors.EmailAlredyInUse);
 
@@ -48,7 +44,7 @@ public class CreateAccountCommandHandler : ICommandHandler<CreateAccountCommand,
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        await _mediator.Publish(new CustomerCreatedEvent(customer.Name.Value, customer.Email.Value), cancellationToken);
+        await _mediator.Publish(new CustomerCreatedEvent(customer.Name, customer.Email), cancellationToken);
 
         return Result.Success(customer.Id);
     }
