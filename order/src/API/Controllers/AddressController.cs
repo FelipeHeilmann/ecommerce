@@ -62,7 +62,7 @@ public class AddressController : APIBaseController
 
         var result = await _sender.Send(command, cancellationToken);
 
-        return result.IsFailure ? result.ToProblemDetail() : Results.Created($"/addresses/{result.Value}", result.Value);
+        return result.IsFailure ? result.ToProblemDetail() : Results.Created($"/addresses/{result.Value}", new { Id = result.Value });
     }
 
     [Authorize]

@@ -20,7 +20,7 @@ public class CategoryController : APIBaseController
     {
         var query = new GetAllCategoriesQuery();
 
-        var result = await _sender.Send(query);
+        var result = await _sender.Send(query, cancellationToken);
 
         return Results.Ok(result.Value);
     }
@@ -30,7 +30,7 @@ public class CategoryController : APIBaseController
     {
         var query = new GetCategoryByIdQuery(id);
 
-        var result = await _sender.Send(query);
+        var result = await _sender.Send(query, cancellationToken);
 
         return result.IsFailure ? result.ToProblemDetail() :  Results.Ok(result.Value);
     }
@@ -38,19 +38,19 @@ public class CategoryController : APIBaseController
     [HttpPost]
     public async Task<IResult> Create([FromBody] CreateCategoryRequest request, CancellationToken cancellationToken)
     {
-        var query = new CreateCategoryCommand(request);
+        var command = new CreateCategoryCommand(request);
 
-        var result = await _sender.Send(query);
+        var result = await _sender.Send(command, cancellationToken);
 
-        return result.IsFailure ? result.ToProblemDetail() : Results.Created<Guid>($"/categories/{result.Value}", result.Value);
+        return result.IsFailure ? result.ToProblemDetail() : Results.Created($"/categories/{result.Value}", new { Id = result.Value } );
     }
 
     [HttpPut("{id}")]
-    public async Task<IResult> Create(Guid id, [FromBody] CreateCategoryRequest request, CancellationToken cancellationToken)
+    public async Task<IResult> Update(Guid id, [FromBody] CreateCategoryRequest request, CancellationToken cancellationToken)
     {
-        var query = new UpdateCategoryCommand(new UpdateCategoryRequest(request.Name, request.Description, id));
+        var command = new UpdateCategoryCommand(new UpdateCategoryRequest(request.Name, request.Description, id));
 
-        var result = await _sender.Send(query);
+        var result = await _sender.Send(command, cancellationToken);
 
         return result.IsFailure ? result.ToProblemDetail() : Results.NoContent();
     }

@@ -52,7 +52,7 @@ public class OrderController : APIBaseController
 
         var result = await _sender.Send(command, cancellationToken);
 
-        return result.IsFailure ? result.ToProblemDetail() : Results.Ok(result.Value);
+        return result.IsFailure ? result.ToProblemDetail() : result.Value.ToString() == string.Empty ? Results.Ok(result.Value) : Results.Ok();
     }
 
     [Authorize]
@@ -67,7 +67,7 @@ public class OrderController : APIBaseController
 
         var result = await _sender.Send(command, cancellationToken);
 
-        return result.IsFailure ? result.ToProblemDetail() : Results.Created($"/orders/{result.Value}", result.Value);
+        return result.IsFailure ? result.ToProblemDetail() : Results.Created($"/orders/{result.Value}", new { Id = result.Value });
     }
 
     [Authorize]

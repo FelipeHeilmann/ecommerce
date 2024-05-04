@@ -39,17 +39,17 @@ public class ProductController : APIBaseController
     [HttpPost]
     public async Task<IResult> Create([FromBody] CreateProductRequest request, CancellationToken cancellationToken)
     {
-        var query = new CreateProductCommand(request);
+        var command = new CreateProductCommand(request);
 
-        var result = await _sender.Send(query, cancellationToken);
+        var result = await _sender.Send(command, cancellationToken);
 
-        return result.IsFailure ? result.ToProblemDetail() : Results.Created<Guid>($"/products/{result.Value}", result.Value);
+        return result.IsFailure ? result.ToProblemDetail() : Results.Created($"/products/{result.Value}", new { Id = result.Value });
     }
 
     [HttpPut("{id}")]
     public async Task<IResult> Update(Guid id, [FromBody] CreateProductRequest request, CancellationToken cancellationToken)
     {
-        var query = new UpdateProductCommand(
+        var command = new UpdateProductCommand(
             new UpdateProductRequest(
                 id, 
                 request.Name, 
@@ -61,7 +61,7 @@ public class ProductController : APIBaseController
                 request.CategoryId)
             );
 
-        var result = await _sender.Send(query, cancellationToken);
+        var result = await _sender.Send(command, cancellationToken);
 
         return result.IsFailure ? result.ToProblemDetail() : Results.NoContent();
     }

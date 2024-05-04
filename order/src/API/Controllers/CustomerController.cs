@@ -29,8 +29,8 @@ public class CustomerController : APIBaseController
     {
         var command = new LoginCommand(request);
 
-        var result = await _sender.Send(command);
+        var result = await _sender.Send(command, cancellationToken);
 
-        return result.IsFailure ? result.ToProblemDetail() : Results.Ok(result.Value);
+        return result.IsFailure ? result.ToProblemDetail() : Results.Ok(new {Token = result.Value });
     }
 }
