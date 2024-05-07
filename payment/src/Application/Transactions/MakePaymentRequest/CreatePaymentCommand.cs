@@ -3,4 +3,4 @@ using Domain.Events;
 
 namespace Application.Transactions.MakePaymentRequest;
 
-public record CreatePaymentCommand (OrderPurchasedEvent request) : ICommand<TransactionCreated>;
+public record CreatePaymentCommand (OrderPurchasedEvent request) : ICommand;

@@ -39,9 +39,8 @@ public static class DependecyInjection
         });
 
         services.AddSingleton<IPaymentGateway, PaymentGatewayFake>();
-        services.AddTransient<ITransactionRepository, TransactionRepository>();   
+        services.AddTransient<ITransactionRepository, TransactionRepository>();
         services.AddTransient<IRefundRepository, RefundRepository>();
-        services.AddSingleton<INotifyGateway, NotifyGatewayHttp>();
         services.AddTransient<IUnitOfWork, UnitOfWork>();
 
        services.AddHostedService<OrderPurchasedEventConsumer>();

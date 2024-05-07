@@ -3,35 +3,37 @@ using Application.Abstractions.Messaging;
 using Domain.Shared;
 using Domain.Transactions;
 using Application.Data;
-using Domain.Events;
 using MediatR;
+using Application.Abstractions.Queue;
 
 namespace Application.Transactions.MakePaymentRequest;
 
-public class CreatePaymentCommandHandler : ICommandHandler<CreatePaymentCommand, TransactionCreated>
+public class CreatePaymentCommandHandler : ICommandHandler<CreatePaymentCommand>
 {
     private readonly IPaymentGateway _paymentGateway;
     private readonly IMediator _mediator;
     private readonly ITransactionRepository _transactionRepository;
-    private IUnitOfWork _unitOfWork;
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly IQueue _queue;
 
-    public CreatePaymentCommandHandler(IPaymentGateway paymentGateway, ITransactionRepository transactionRepository, IUnitOfWork unitOfWork, IMediator mediator)
+    public CreatePaymentCommandHandler(IPaymentGateway paymentGateway, ITransactionRepository transactionRepository, IUnitOfWork unitOfWork, IMediator mediator, IQueue queue)
     {
         _paymentGateway = paymentGateway;
         _transactionRepository = transactionRepository;
         _unitOfWork = unitOfWork;
         _mediator = mediator;
+        _queue = queue;
     }
 
-    public async Task<Result<TransactionCreated>> Handle(CreatePaymentCommand command, CancellationToken cancellationToken)
+    public async Task<Result> Handle(CreatePaymentCommand command, CancellationToken cancellationToken)
     {
         var request = command.request;
 
-        var response = await _paymentGateway.CreateOrder(request);
+        var responsePaymentGateway = await _paymentGateway.ProccessPayment(request);
 
         var total = request.Items.Sum(i => i.Amount * i.Quantity);
 
-        var transaction = Transaction.Create(request.OrderId, request.CustomerId, Guid.Parse(response.Id), total, request.PaymentType);
+        var transaction = Transaction.Create(request.OrderId, request.CustomerId, Guid.Parse(responsePaymentGateway.Id), total, request.PaymentType);
 
         _transactionRepository.Add(transaction);
 
@@ -39,8 +41,8 @@ public class CreatePaymentCommandHandler : ICommandHandler<CreatePaymentCommand,
 
         await _mediator.Publish(request);
 
-        var result = new TransactionCreated(transaction.Id, request.OrderId, response.PaymentUrl);
+        if (request.PaymentType != "credit") await _queue.PublishAsync(new { request.OrderId, Url = responsePaymentGateway.PaymentUrl }, "payment.url");
 
-        return Result.Success(result);
+        return Result.Success();
     }
 }

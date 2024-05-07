@@ -41,7 +41,7 @@ public class OrderPurchasedEventConsumer : BackgroundService
                     var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
                     var command = new CreatePaymentCommand(message);
-                    var commandHandler = new CreatePaymentCommandHandler(paymentGateway, transactionRepository, unitOfWork, mediator);
+                    var commandHandler = new CreatePaymentCommandHandler(paymentGateway, transactionRepository, unitOfWork, mediator, queue);
 
                     await commandHandler.Handle(command, stoppingToken);
                 }

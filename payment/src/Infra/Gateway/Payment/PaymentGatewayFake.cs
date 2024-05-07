@@ -8,7 +8,7 @@ namespace Infra.Gateway.Payment;
 
 public class PaymentGatewayFake : IPaymentGateway
 {
-    public async Task<PagarmeCreateOrderResponse> CreateOrder(OrderPurchasedEvent request)
+    public async Task<PaymentGatewayResponse> CreateOrder(OrderPurchasedEvent request)
     {
         HttpClient client = new HttpClient();
 
@@ -63,7 +63,7 @@ public class PaymentGatewayFake : IPaymentGateway
         var paymentId = Guid.NewGuid();
         var paymentUrl = "https://www.instagram.com/p/C38mWMeMSn7/?utm_source=ig_embed&ig_rid=e61afe49-0878-41c0-9b1e-b17f00f5cf76";
 
-        var result = new PagarmeCreateOrderResponse((paymentId.ToString()), paymentUrl);
+        var result = new PaymentGatewayResponse((paymentId.ToString()), paymentUrl);
 
         return result;
     }

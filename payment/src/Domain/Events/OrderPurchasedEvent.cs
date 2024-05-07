@@ -4,7 +4,7 @@ namespace Domain.Events;
 public class OrderPurchasedEvent : INotification
 {
     public Guid OrderId { get; set; }
-    public double total { get; set; }
+    public double Total { get; set; }
     public IEnumerable<LineItemOrderPurchasedEvent> Items { get; set; }
     public Guid CustomerId { get; set; }
     public string CustomerName { get; set; }
@@ -21,7 +21,7 @@ public class OrderPurchasedEvent : INotification
     public OrderPurchasedEvent(Guid orderId, double total, IEnumerable<LineItemOrderPurchasedEvent> items, Guid customerId, string customerName, string customerEmail, string customerDocument, string customerPhone, string paymentType, string? cardToken, int installment, string addressZipCode, string addressNumber, string? addressLine)
     {
         OrderId = orderId;
-        this.total = total;
+        Total = total;
         Items = items;
         CustomerId = customerId;
         CustomerName = customerName;
