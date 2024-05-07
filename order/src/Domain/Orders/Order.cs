@@ -1,9 +1,11 @@
-﻿using Domain.Products;
+﻿using Domain.Abstractions;
+using Domain.Customers;
+using Domain.Products;
 using Domain.Shared;
 
 namespace Domain.Orders;
 
-public class Order
+public class Order : Observable
 {
     private readonly ICollection<LineItem> _items = new List<LineItem>();
     public Guid Id { get; private set; }
@@ -98,14 +100,25 @@ public class Order
         return Result.Success();
     }
 
-    public Result Checkout(Guid shippingAddressId, Guid billingAddressId)
+    public Result Checkout(Guid shippingAddressId, Guid billingAddressId, string paymentType, string? cardToken, int installments)
     {
-        if(Status != OrderStatus.Created) return Result.Failure(OrderErrors.OrderStatusCouldNotBeProccessed);
+        if(Status != OrderStatus.Created) throw new Exception();
         ShippingAddressId = shippingAddressId;
         BillingAddressId = billingAddressId;
         UpdatedAt = DateTime.UtcNow;
         Status = OrderStatus.WaitingPayment;
 
+        Notify(new OrderPurchased(new OrderPurchasedData(
+                Id,
+                CalculateTotal(),
+                Items.Select(li => new LineItemOrderPurchased(li.Id, li.ProductId, li.Quantity, li.Price.Amount)),
+                CustomerId,
+                paymentType,
+                cardToken,
+                installments,
+                shippingAddressId
+         )));
+           
         return Result.Success();
 
     }

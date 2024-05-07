@@ -52,7 +52,7 @@ public class OrderController : APIBaseController
 
         var result = await _sender.Send(command, cancellationToken);
 
-        return result.IsFailure ? result.ToProblemDetail() : string.IsNullOrEmpty(result.Value.ToString()) ? Results.Ok() : Results.Ok(result.Value);
+        return result.IsFailure ? result.ToProblemDetail() : Results.Ok();
     }
 
     [Authorize]

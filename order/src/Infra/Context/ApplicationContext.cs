@@ -1,4 +1,5 @@
-﻿using Domain.Categories;
+﻿using Domain.Abstractions;
+using Domain.Categories;
 using Domain.Customers;
 using Domain.Orders;
 using Domain.Products;
@@ -19,6 +20,8 @@ public class ApplicationContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Ignore<Observable>();
+        modelBuilder.Ignore<Observer>();
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationContext).Assembly);
     }
 }

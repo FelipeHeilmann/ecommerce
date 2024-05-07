@@ -46,35 +46,17 @@ public class CheckoutOrderCommandHandler : ICommandHandler<CheckoutOrderCommand,
         
         if (shippingAddress == null) return Result.Failure<PaymentSystemTransactionResponse>(AddressErrors.NotFound);
 
-        var checkout = order.Checkout(shippingAddress.Id, billingAddress.Id);
-
-        if(checkout.IsFailure) return Result.Failure<PaymentSystemTransactionResponse>(checkout.Error);
-
-        var customer = await _customerRepository.GetByIdAsync(order.CustomerId, cancellationToken);
+        order.Register("OrderPurchased", async domainEvent =>
+        {
+            await _queue.PublishAsync(domainEvent.Data, "order.purchased");
+        });
+        
+        order.Checkout(shippingAddress.Id, billingAddress.Id, command.PaymentType, command.CardToken, command.Installments);
 
         _orderRepository.Update(order);
 
-        var orderPurchased = new OrderPurchasedEvent(
-            order.Id,
-            order.CalculateTotal(),
-            order.Items.Select(li => new LineItemOrderPurchasedEvent(li.Id, li.ProductId, li.Quantity, li.Price.Amount)),
-            customer!.Id,
-            customer!.Name,
-            customer!.Email,
-            customer!.CPF,
-            customer!.Phone,
-            command.PaymentType,
-            command.CardToken,
-            command.Installments,
-            billingAddress.ZipCode.Value,
-            billingAddress.Number,
-            billingAddress.Complement
-         );
-
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-        await _queue.PublishAsync(orderPurchased, "order.purchased");
-       
+      
         return Result.Success();
     }
 }

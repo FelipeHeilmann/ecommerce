@@ -1,4 +1,5 @@
-﻿using Domain.Addresses;
+﻿using Domain.Abstractions;
+using Domain.Addresses;
 using Domain.Customers;
 using Domain.Orders;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +19,7 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder.Property(o => o.UpdatedAt).HasColumnName("updated_at");
         builder.Property(o => o.BillingAddressId).HasColumnName("billing_address_id");
         builder.Property(o => o.ShippingAddressId).HasColumnName("shipping_address_id");
-
+        
         builder.HasMany(o => o.Items)
             .WithOne()
             .HasForeignKey(li => li.OrderId);

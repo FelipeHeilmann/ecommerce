@@ -212,7 +212,7 @@ public class OrderTest
 
         object emptyString = "";
 
-        paymentGatewayMock.Setup(p => p.ProccessPayment(It.IsAny<OrderPurchasedEvent>())).Returns(Task.FromResult(emptyString));
+        paymentGatewayMock.Setup(p => p.ProccessPayment(It.IsAny<OrderPurchased>())).Returns(Task.FromResult(emptyString));
 
         var commandHandler = new CheckoutOrderCommandHandler(_orderRepository, _customerRepository ,_addressRepository, _unitOfWork, paymentGatewayMock.Object);
 
