@@ -1,5 +1,4 @@
-﻿using Application.Abstractions.Gateway;
-using Application.Abstractions.Queue;
+﻿using Application.Abstractions.Queue;
 using Application.Abstractions.Services;
 using Application.Data;
 using Domain.Addresses;
@@ -10,7 +9,6 @@ using Domain.Products;
 using Infra.Authenication;
 using Infra.Context;
 using Infra.Data;
-using Infra.Gateway;
 using Infra.Implementations;
 using Infra.Queue;
 using Infra.Repositories.Database;
@@ -48,7 +46,6 @@ public static class DependecyInjection
 
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IJwtProvider, JwtProvider>();
-        services.AddScoped<IPaymentGateway, PaymentGateway>();
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
     }

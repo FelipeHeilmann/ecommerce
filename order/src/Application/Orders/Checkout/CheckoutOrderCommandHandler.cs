@@ -5,7 +5,7 @@ using Domain.Customers;
 using Domain.Orders;
 using Domain.Shared;
 using Application.Orders.Model;
-using Application.Abstractions.Gateway;
+using Application.Abstractions.Queue;
 
 namespace Application.Orders.Checkout;
 
@@ -14,7 +14,7 @@ public class CheckoutOrderCommandHandler : ICommandHandler<CheckoutOrderCommand,
     private readonly IOrderRepository _orderRepository;
     private readonly ICustomerRepository _customerRepository;
     private readonly IAddressRepository _addressRepository;
-    private readonly IPaymentGateway _paymentGateway;
+    private readonly IQueue _queue;
     private readonly IUnitOfWork _unitOfWork;
 
     public CheckoutOrderCommandHandler
@@ -22,15 +22,14 @@ public class CheckoutOrderCommandHandler : ICommandHandler<CheckoutOrderCommand,
         IOrderRepository orderRepository,
         ICustomerRepository customerRepository,
         IAddressRepository addressRepository,
-        IUnitOfWork unitOfWork
-,
-        IPaymentGateway paymentGateway)
+        IUnitOfWork unitOfWork,
+        IQueue queue)
     {
         _orderRepository = orderRepository;
         _customerRepository = customerRepository;
         _addressRepository = addressRepository;
         _unitOfWork = unitOfWork;
-        _paymentGateway = paymentGateway;
+        _queue = queue;
     }
 
     public async Task<Result<object>> Handle(CheckoutOrderCommand command, CancellationToken cancellationToken)
@@ -74,6 +73,8 @@ public class CheckoutOrderCommandHandler : ICommandHandler<CheckoutOrderCommand,
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return Result.Success(await _paymentGateway.ProccessPayment(orderPurchased));
+        await _queue.PublishAsync(orderPurchased, "order.purchased");
+       
+        return Result.Success();
     }
 }
