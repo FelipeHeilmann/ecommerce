@@ -21,11 +21,11 @@ public class Customer
         Id = id;
         _name = name;
         _email = email;
+        _cpf = cpf;
+        _phone = phone;
         BirthDate = birthDate;
         CreatedAt = createdAt;
         Password = password;
-        _cpf = cpf;  
-        _phone = phone;
     }
 
     public Customer() { }

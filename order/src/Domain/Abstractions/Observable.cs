@@ -31,9 +31,9 @@ public class Observer
     public string Event { get; set; }
     public Func<IDomainEvent, Task> Callback { get; set; }
 
-    public Observer(string @event, Func<IDomainEvent, Task> callback)
+    public Observer(string eventName, Func<IDomainEvent, Task> callback)
     {
-        Event = @event;
+        Event = eventName;
         Callback = callback;
     }
 }

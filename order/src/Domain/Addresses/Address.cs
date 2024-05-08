@@ -6,7 +6,8 @@ public class Address
 {
     public Guid Id { get; private set; }
     public Guid CustomerId { get; private set; }
-    public ZipCode ZipCode { get; private set; }
+    public string ZipCode { get => _zipCode.Value; private set => _zipCode = Addresses.ZipCode.Create(value).Value; }
+    public ZipCode _zipCode;
     public string Street { get; private set; } 
     public string Neighborhood { get; private set; }
     public string Number { get; private set; }
@@ -15,6 +16,7 @@ public class Address
     public string State { get; private set; }
     public string Country { get; private set; }
 
+    public Address() { }
     public Address(
         Guid id, 
         Guid customerId, 
@@ -30,7 +32,7 @@ public class Address
     {
         Id = id;
         CustomerId = customerId;
-        ZipCode = zipCode;
+        _zipCode = zipCode;
         Street = street;
         Neighborhood = neighborhood;
         Number = number;
@@ -52,7 +54,7 @@ public class Address
         string country
     )
     {
-        var zipCode = ZipCode.Create(zipCodeString);
+        var zipCode = Addresses.ZipCode.Create(zipCodeString);
 
         if (zipCode.IsFailure) return Result.Failure<Address>(zipCode.Error);
 
@@ -81,11 +83,11 @@ public class Address
         string country
     )
     {
-        var zipCode = ZipCode.Create(zipCodeString);
+        var zipCode = Addresses.ZipCode.Create(zipCodeString);
 
         if (zipCode.IsFailure) return Result.Failure<Address>(zipCode.Error);
 
-        ZipCode = zipCode.Value;
+        _zipCode = zipCode.Value;
         Street = street;
         Neighborhood = neighborhood;
         Number = number;

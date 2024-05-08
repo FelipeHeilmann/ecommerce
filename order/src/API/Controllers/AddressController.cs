@@ -40,6 +40,16 @@ public class AddressController : APIBaseController
         return Results.Ok(result.Value);
     }
 
+    [HttpGet("{id}/service")]
+    public async Task<IResult> GetByIdService(Guid id, CancellationToken cancellationToken)
+    {
+        var query = new GetAddressByIdQuery(id);
+
+        var result = await _sender.Send(query, cancellationToken);
+
+        return Results.Ok(result.Value);
+    }
+
     [Authorize]
     [HttpPost]
     public async Task<IResult> Create([FromBody] AddressRequest request, CancellationToken cancellationToken)

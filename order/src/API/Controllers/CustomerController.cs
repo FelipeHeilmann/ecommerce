@@ -1,5 +1,6 @@
 ﻿using API.Extensions;
 using Application.Customers.Create;
+using Application.Customers.GetById;
 using Application.Customers.Login;
 using Application.Customers.Model;
 using MediatR;
@@ -32,5 +33,15 @@ public class CustomerController : APIBaseController
         var result = await _sender.Send(command, cancellationToken);
 
         return result.IsFailure ? result.ToProblemDetail() : Results.Ok(new {Token = result.Value });
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IResult> GetById(Guid id, CancellationToken cancellationToken)
+    {
+        var query = new GetCustomerByIdQuery(id);
+
+        var result = await _sender.Send(query, cancellationToken);
+
+        return result.IsFailure ? result.ToProblemDetail() : Results.Ok(result.Value);
     }
 }
