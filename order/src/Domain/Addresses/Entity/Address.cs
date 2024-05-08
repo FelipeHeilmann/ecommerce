@@ -1,32 +1,33 @@
-﻿using Domain.Shared;
+﻿using Domain.Addresses.VO;
+using Domain.Shared;
 
-namespace Domain.Addresses;
+namespace Domain.Addresses.Entity;
 
 public class Address
 {
     public Guid Id { get; private set; }
     public Guid CustomerId { get; private set; }
-    public string ZipCode { get => _zipCode.Value; private set => _zipCode = Addresses.ZipCode.Create(value).Value; }
+    public string ZipCode { get => _zipCode.Value; private set => _zipCode = VO.ZipCode.Create(value).Value; }
     public ZipCode _zipCode;
-    public string Street { get; private set; } 
+    public string Street { get; private set; }
     public string Neighborhood { get; private set; }
     public string Number { get; private set; }
-    public string? Complement {  get; private set; }
+    public string? Complement { get; private set; }
     public string City { get; private set; }
     public string State { get; private set; }
     public string Country { get; private set; }
 
     public Address() { }
     public Address(
-        Guid id, 
-        Guid customerId, 
-        ZipCode zipCode, 
-        string street, 
+        Guid id,
+        Guid customerId,
+        ZipCode zipCode,
+        string street,
         string neighborhood,
-        string number, 
+        string number,
         string? complement,
-        string city, 
-        string state, 
+        string city,
+        string state,
         string country
     )
     {
@@ -43,18 +44,18 @@ public class Address
     }
 
     public static Result<Address> Create(
-        Guid customerId, 
+        Guid customerId,
         string zipCodeString,
-        string street, 
+        string street,
         string neighborhood,
-        string number, 
-        string? complement, 
-        string city, 
-        string state, 
+        string number,
+        string? complement,
+        string city,
+        string state,
         string country
     )
     {
-        var zipCode = Addresses.ZipCode.Create(zipCodeString);
+        var zipCode = VO.ZipCode.Create(zipCodeString);
 
         if (zipCode.IsFailure) return Result.Failure<Address>(zipCode.Error);
 
@@ -83,7 +84,7 @@ public class Address
         string country
     )
     {
-        var zipCode = Addresses.ZipCode.Create(zipCodeString);
+        var zipCode = VO.ZipCode.Create(zipCodeString);
 
         if (zipCode.IsFailure) return Result.Failure<Address>(zipCode.Error);
 
@@ -97,7 +98,7 @@ public class Address
         Country = country;
 
         return Result.Success();
-       
+
     }
 
 }

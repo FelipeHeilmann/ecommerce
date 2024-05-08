@@ -1,7 +1,8 @@
-﻿using Domain.Shared;
+﻿using Domain.Addresses.Error;
+using Domain.Shared;
 using System.Text.RegularExpressions;
 
-namespace Domain.Addresses;
+namespace Domain.Addresses.VO;
 
 public record ZipCode
 {
@@ -9,7 +10,7 @@ public record ZipCode
 
     private ZipCode(string value) => Value = value;
 
-    public static Result<ZipCode> Create(string value) 
+    public static Result<ZipCode> Create(string value)
     {
         if (string.IsNullOrEmpty(value)) return Result.Failure<ZipCode>(AddressErrors.ZipCodeNull);
 

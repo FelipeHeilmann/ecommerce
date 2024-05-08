@@ -1,5 +1,5 @@
 ﻿using Application.Abstractions.Messaging;
-using Domain.Addresses;
+using Domain.Addresses.Repository;
 using Domain.Shared;
 
 namespace Application.Addresses.GetByCustomerId;

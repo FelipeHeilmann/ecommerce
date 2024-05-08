@@ -1,6 +1,7 @@
-﻿using Domain.Shared;
+﻿using Domain.Addresses.Entity;
+using Domain.Shared;
 
-namespace Domain.Addresses;
+namespace Domain.Addresses.Repository;
 
 public interface IAddressRepository : IRepositoryBase<Address>
 {

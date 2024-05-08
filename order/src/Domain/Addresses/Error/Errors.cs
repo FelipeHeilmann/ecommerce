@@ -1,6 +1,6 @@
 ﻿using Domain.Shared;
 
-namespace Domain.Addresses;
+namespace Domain.Addresses.Error;
 
 public static class AddressErrors
 {

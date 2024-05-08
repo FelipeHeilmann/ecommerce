@@ -1,6 +1,8 @@
 ﻿using Application.Abstractions.Messaging;
 using Application.Data;
-using Domain.Addresses;
+using Domain.Addresses.Entity;
+using Domain.Addresses.Error;
+using Domain.Addresses.Repository;
 using Domain.Shared;
 
 namespace Application.Addresses.Update;

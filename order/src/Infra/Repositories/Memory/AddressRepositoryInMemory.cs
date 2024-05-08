@@ -1,4 +1,5 @@
-﻿using Domain.Addresses;
+﻿using Domain.Addresses.Entity;
+using Domain.Addresses.Repository;
 
 namespace Infra.Repositories.Memory;
 

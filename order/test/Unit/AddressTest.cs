@@ -1,4 +1,4 @@
-﻿using Domain.Addresses;
+﻿using Domain.Addresses.Entity;
 using Xunit;
 
 namespace Unit;
