@@ -1,6 +1,6 @@
 ﻿using Application.Abstractions.Messaging;
-using Domain.Categories;
 
 namespace Application.Categories.GetAll;
 
-public record GetAllCategoriesQuery : IQuery<ICollection<Category>>;
+public record GetAllCategoriesQuery : IQuery<ICollection<Output>>;
+public record Output(Guid Id, string Name, string Descrption);

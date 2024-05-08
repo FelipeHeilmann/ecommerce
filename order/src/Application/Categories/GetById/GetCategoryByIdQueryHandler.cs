@@ -1,29 +1,30 @@
 ﻿using Application.Abstractions.Messaging;
 using Application.Categories.GetById;
-using Application.Data;
 using Domain.Categories;
 using Domain.Shared;
 
 namespace Application.Categories.GetAll;
 
-public class GetCategoryByIdQueryHandler : IQueryHandler<GetCategoryByIdQuery, Category>
+public class GetCategoryByIdQueryHandler : IQueryHandler<GetCategoryByIdQuery, GetById.Output>
 {
-    private ICategoryRepository _categoryRepository;
-    private IUnitOfWork _unitOfWork;
+    private readonly ICategoryRepository _categoryRepository;
 
-    public GetCategoryByIdQueryHandler(ICategoryRepository categoryRepository, IUnitOfWork unitOfWork)
+    public GetCategoryByIdQueryHandler(ICategoryRepository categoryRepository)
     {
         _categoryRepository = categoryRepository;
-        _unitOfWork = unitOfWork;
     }
 
-    public async Task<Result<Category>> Handle(GetCategoryByIdQuery query, CancellationToken cancellationToken)
+    public async Task<Result<GetById.Output>> Handle(GetCategoryByIdQuery query, CancellationToken cancellationToken)
     {
         var category = await _categoryRepository.GetByIdAsync(query.CategoryId, cancellationToken);
 
-        if (category == null) return Result.Failure<Category>(CategoryErrors.CategoryNotFound);
+        if (category == null) return Result.Failure<GetById.Output>(CategoryErrors.CategoryNotFound);
 
-        return category;
+        return new GetById.Output(
+                                category.Id,
+                                category.Name,
+                                category.Description
+                            );
     }
 
 }

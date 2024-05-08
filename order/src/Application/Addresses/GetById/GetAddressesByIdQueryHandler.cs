@@ -4,7 +4,7 @@ using Domain.Shared;
 
 namespace Application.Addresses.GetById;
 
-public class GetAddressByIdQueryHandler : IQueryHandler<GetAddressByIdQuery, Address>
+public class GetAddressByIdQueryHandler : IQueryHandler<GetAddressByIdQuery, Output>
 {
     private readonly IAddressRepository _addressRepository;
 
@@ -13,12 +13,23 @@ public class GetAddressByIdQueryHandler : IQueryHandler<GetAddressByIdQuery, Add
         _addressRepository = addressRepository;
     }
 
-    public async Task<Result<Address>> Handle(GetAddressByIdQuery query, CancellationToken cancellationToken)
+    public async Task<Result<Output>> Handle(GetAddressByIdQuery query, CancellationToken cancellationToken)
     {
         var address = await _addressRepository.GetByIdAsync(query.AddressId, cancellationToken);
 
-        if (address == null) return Result.Failure<Address>(AddressErrors.NotFound);
+        if (address == null) return Result.Failure<Output>(AddressErrors.NotFound);
 
-        return address;
+        return new Output(
+                        address.Id,
+                        address.CustomerId,
+                        address.ZipCode,
+                        address.Street,
+                        address.Neighborhood,
+                        address.Number,
+                        address.Complement,
+                        address.City,
+                        address.State,
+                        address.Country
+                    );
     }
 }
