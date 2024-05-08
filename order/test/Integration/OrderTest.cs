@@ -5,23 +5,22 @@ using Application.Orders.Model;
 using Application.Orders.GetByCustomerId;
 using Application.Orders.GetById;
 using Application.Orders.GetCart;
-using Domain.Orders;
 using Infra.Data;
 using Infra.Repositories.Memory;
 using Xunit;
 using Application.Orders.AddLineItem;
 using Application.Data;
-using Domain.Customers;
-using Domain.Products;
 using Application.Orders.Checkout;
-using Domain.Addresses;
 using Application.Abstractions.Queue;
 using Infra.Queue;
 using Moq;
 using MediatR;
-using Application.Abstractions.Gateway;
-using Domain.Shared;
-using System.Text;
+using Domain.Orders.VO;
+using Domain.Orders.Events;
+using Domain.Orders.Repository;
+using Domain.Addresses.Repository;
+using Domain.Customers.Repository;
+using Domain.Products.Repository;
 
 namespace Integration;
 
@@ -30,7 +29,7 @@ public class OrderTest
     private readonly IOrderRepository _orderRepository = new OrderRepositoryMemory();
     private readonly ICustomerRepository _customerRepository = new CustomerRepositoryMemory();
     private readonly IProductRepository _productRepository = new ProductRepositoryMemory();
-    private readonly IQueue _memoryMQAdapter = new MemoryMQAdapter();
+    private readonly IQueue _queue = new MemoryMQAdapter();
     private readonly IAddressRepository _addressRepository = new AddressRepositoryInMemory();
     private readonly IUnitOfWork _unitOfWork = new UnitOfWorkMemory();
 
@@ -173,7 +172,7 @@ public class OrderTest
 
         Assert.True(result.IsSuccess);
         Assert.False(result.IsFailure);
-        Assert.Equal(OrderStatus.Created, result.Value.Status);
+        Assert.Equal("created", result.Value.Status);
     }
 
     [Fact]
@@ -187,7 +186,7 @@ public class OrderTest
 
         Assert.True(result.IsSuccess);
         Assert.False(result.IsFailure);
-        Assert.Equal(OrderStatus.Canceled, result.Value.Status);
+        Assert.Equal("canceled", result.Value.Status);
     }
 
     [Fact]
@@ -200,21 +199,15 @@ public class OrderTest
         var installments = 5;
 
         var command = new CheckoutOrderCommand(
-                orderId, 
-                Guid.Parse("2b169c76-acee-4ddf-86c4-37af9fbb07ea"), 
-                Guid.Parse("2b169c76-acee-4ddf-86c4-37af9fbb07ea"), 
-                paymentType, 
-                cardToken, 
+                orderId,
+                Guid.Parse("2b169c76-acee-4ddf-86c4-37af9fbb07ea"),
+                Guid.Parse("2b169c76-acee-4ddf-86c4-37af9fbb07ea"),
+                paymentType,
+                cardToken,
                 installments
             );
 
-        var paymentGatewayMock = new Mock<IPaymentGateway>();
-
-        object emptyString = "";
-
-        paymentGatewayMock.Setup(p => p.ProccessPayment(It.IsAny<OrderPurchased>())).Returns(Task.FromResult(emptyString));
-
-        var commandHandler = new CheckoutOrderCommandHandler(_orderRepository, _customerRepository ,_addressRepository, _unitOfWork, paymentGatewayMock.Object);
+        var commandHandler = new CheckoutOrderCommandHandler(_orderRepository, _customerRepository ,_addressRepository, _unitOfWork, _queue);
 
         var result = await commandHandler.Handle(command, CancellationToken.None);
 

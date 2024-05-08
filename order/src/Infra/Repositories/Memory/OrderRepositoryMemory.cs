@@ -1,4 +1,5 @@
-﻿using Domain.Orders;
+﻿using Domain.Orders.Entity;
+using Domain.Orders.Repository;
 
 namespace Infra.Repositories.Memory
 {

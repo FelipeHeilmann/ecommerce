@@ -1,11 +1,11 @@
 ﻿using Application.Abstractions.Queue;
 using Application.Abstractions.Services;
 using Application.Data;
-using Domain.Addresses;
-using Domain.Categories;
-using Domain.Customers;
-using Domain.Orders;
-using Domain.Products;
+using Domain.Addresses.Repository;
+using Domain.Categories.Repository;
+using Domain.Customers.Repository;
+using Domain.Orders.Repository;
+using Domain.Products.Repository;
 using Infra.Authenication;
 using Infra.Context;
 using Infra.Data;

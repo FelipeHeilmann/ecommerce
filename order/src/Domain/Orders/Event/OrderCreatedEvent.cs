@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace Domain.Orders;
+namespace Domain.Orders.Events;
 
 
 public class OrderCreatedEvent : INotification

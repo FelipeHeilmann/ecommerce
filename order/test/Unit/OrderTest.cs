@@ -1,7 +1,8 @@
 ﻿using Domain.Categories;
-using Domain.Customers;
-using Domain.Orders;
-using Domain.Products;
+using Domain.Customers.Entity;
+using Domain.Orders.Entity;
+using Domain.Orders.VO;
+using Domain.Products.Entity;
 using Xunit;
 
 namespace Unit;
@@ -68,8 +69,8 @@ public class OrderTest
         order.AddItem(product2.Id, product2.Price, 1);
         order.AddItem(product3.Id, product3.Price, 3);
 
-        order.Checkout(Guid.NewGuid(), Guid.NewGuid());
+        order.Checkout(Guid.NewGuid(), Guid.NewGuid(), "credit", "token", 10);
 
-        Assert.Equal(OrderStatus.WaitingPayment, order.Status);
+        Assert.Equal("waiting_payment", order.Status);
     }
 }

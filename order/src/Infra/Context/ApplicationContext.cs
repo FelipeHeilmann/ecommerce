@@ -1,8 +1,8 @@
 ﻿using Domain.Abstractions;
-using Domain.Categories;
-using Domain.Customers;
-using Domain.Orders;
-using Domain.Products;
+using Domain.Categories.Entity;
+using Domain.Customers.Entity;
+using Domain.Orders.Entity;
+using Domain.Products.Entity;
 using Infra.Configuration;
 using Microsoft.EntityFrameworkCore;
 

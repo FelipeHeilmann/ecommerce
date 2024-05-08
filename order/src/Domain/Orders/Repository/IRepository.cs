@@ -1,7 +1,8 @@
-﻿using Domain.Products;
+﻿using Domain.Orders.Entity;
+using Domain.Products;
 using Domain.Shared;
 
-namespace Domain.Orders;
+namespace Domain.Orders.Repository;
 
 public interface IOrderRepository : IRepositoryBase<Order>
 {

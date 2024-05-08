@@ -1,6 +1,6 @@
-﻿using Domain.Products;
+﻿using Domain.Products.VO;
 
-namespace Domain.Orders;
+namespace Domain.Orders.Entity;
 
 public class LineItem
 {
@@ -10,13 +10,13 @@ public class LineItem
     public Money Price { get; private set; }
     public int Quantity { get; private set; }
 
-    public LineItem(Guid id, Guid orderId ,Guid productId, Money price, int quantity)
+    public LineItem(Guid id, Guid orderId, Guid productId, Money price, int quantity)
     {
         Id = id;
         OrderId = orderId;
         ProductId = productId;
         Price = price;
-        Quantity = quantity;  
+        Quantity = quantity;
     }
 
     public LineItem()

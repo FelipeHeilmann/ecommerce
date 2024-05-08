@@ -1,19 +1,19 @@
 ﻿using Domain.Abstractions;
 
-namespace Domain.Orders;
+namespace Domain.Orders.Events;
 
 public class OrderPurchased : IDomainEvent
 {
     public string EventName => "OrderPurchased";
 
-    public object Data { get; set ;}
+    public object Data { get; set; }
 
     public OrderPurchased(OrderPurchasedData data)
     {
         Data = data;
     }
-} 
-   
+}
+
 
 public record OrderPurchasedData(
     Guid OrderId,
