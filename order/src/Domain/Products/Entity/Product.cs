@@ -1,9 +1,10 @@
-﻿using Domain.Categories;
+﻿using Domain.Categories.Entity;
+using Domain.Products.VO;
 using Domain.Shared;
 
-namespace Domain.Products;
+namespace Domain.Products.Entity;
 
-public class Product 
+public class Product
 {
     public Guid Id { get; private set; }
     public string Name { get; private set; }
@@ -13,9 +14,9 @@ public class Product
     public Money Price { get; private set; }
     public Sku Sku { get; private set; }
     public Guid CategoryId { get; private set; }
-    public Category Category { get; private set; } 
+    public Category Category { get; private set; }
 
-    public Product(Guid id, string name, string description, string imageUrl, DateTime createdAt ,Money money, Sku sku, Guid categoryId ,Category category)
+    public Product(Guid id, string name, string description, string imageUrl, DateTime createdAt, Money money, Sku sku, Guid categoryId, Category category)
     {
         Id = id;
         Name = name;
@@ -31,7 +32,7 @@ public class Product
     public Product() { }
 
     public static Result<Product> Create(string name, string description, string imageUrl, string currency, double price, string skuString, Category category)
-    {   
+    {
         var money = new Money(currency, price);
         var sku = Sku.Create(skuString);
 
@@ -40,7 +41,7 @@ public class Product
             return Result.Failure<Product>(sku.Error);
         }
 
-        return new Product(Guid.NewGuid(), name, description, imageUrl, DateTime.UtcNow ,money, sku.Value, category.Id ,category);
+        return new Product(Guid.NewGuid(), name, description, imageUrl, DateTime.UtcNow, money, sku.Value, category.Id, category);
     }
 
     public Result<Product> Update(string name, string description, string imageUrl, string currency, double price, string skuString, Category category)
@@ -60,7 +61,7 @@ public class Product
         Category = category;
         Sku = sku.Value;
         Price = money;
-        
+
         return Result.Success(this);
     }
 }

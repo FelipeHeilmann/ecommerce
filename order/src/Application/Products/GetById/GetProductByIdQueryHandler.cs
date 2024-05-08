@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions.Messaging;
-using Domain.Products;
+using Domain.Products.Error;
+using Domain.Products.Repository;
 using Domain.Shared;
 
 namespace Application.Products.GetById

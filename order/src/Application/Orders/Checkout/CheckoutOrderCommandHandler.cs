@@ -1,15 +1,16 @@
 ﻿using Application.Abstractions.Messaging;
 using Application.Data;
-using Domain.Addresses;
-using Domain.Customers;
-using Domain.Orders;
 using Domain.Shared;
-using Application.Orders.Model;
 using Application.Abstractions.Queue;
+using Domain.Orders.Repository;
+using Domain.Orders.Error;
+using Domain.Addresses.Error;
+using Domain.Addresses.Repository;
+using Domain.Customers.Repository;
 
 namespace Application.Orders.Checkout;
 
-public class CheckoutOrderCommandHandler : ICommandHandler<CheckoutOrderCommand, object>
+public class CheckoutOrderCommandHandler : ICommandHandler<CheckoutOrderCommand>
 {
     private readonly IOrderRepository _orderRepository;
     private readonly ICustomerRepository _customerRepository;
@@ -32,19 +33,19 @@ public class CheckoutOrderCommandHandler : ICommandHandler<CheckoutOrderCommand,
         _queue = queue;
     }
 
-    public async Task<Result<object>> Handle(CheckoutOrderCommand command, CancellationToken cancellationToken)
+    public async Task<Result> Handle(CheckoutOrderCommand command, CancellationToken cancellationToken)
     {
         var order = await _orderRepository.GetByIdAsync(command.OrderId, cancellationToken, "Items");
 
-        if (order == null) return Result.Failure<PaymentSystemTransactionResponse>(OrderErrors.OrderNotFound);
+        if (order == null) return Result.Failure(OrderErrors.OrderNotFound);
 
         var billingAddress = await _addressRepository.GetByIdAsync(command.BillingAddressId, cancellationToken);
 
-        if (billingAddress == null) return Result.Failure<PaymentSystemTransactionResponse>(AddressErrors.NotFound);
+        if (billingAddress == null) return Result.Failure(AddressErrors.NotFound);
 
         var shippingAddress = await _addressRepository.GetByIdAsync(command.ShippingAddressId, cancellationToken);
         
-        if (shippingAddress == null) return Result.Failure<PaymentSystemTransactionResponse>(AddressErrors.NotFound);
+        if (shippingAddress == null) return Result.Failure(AddressErrors.NotFound);
 
         order.Register("OrderPurchased", async domainEvent =>
         {

@@ -1,5 +1,5 @@
-﻿using Domain.Orders;
-using Domain.Products;
+﻿using Domain.Orders.Entity;
+using Domain.Products.Entity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

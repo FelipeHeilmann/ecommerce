@@ -1,6 +1,6 @@
 ﻿using Domain.Shared;
 
-namespace Domain.Products;
+namespace Domain.Products.Error;
 
 public static class ProductErrors
 {

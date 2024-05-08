@@ -1,8 +1,12 @@
 ﻿using Application.Abstractions.Messaging;
 using Application.Data;
-using Domain.Customers;
-using Domain.Orders;
-using Domain.Products;
+using Domain.Customers.Error;
+using Domain.Customers.Repository;
+using Domain.Orders.Entity;
+using Domain.Orders.Events;
+using Domain.Orders.Repository;
+using Domain.Products.Error;
+using Domain.Products.Repository;
 using Domain.Shared;
 using MediatR;
 

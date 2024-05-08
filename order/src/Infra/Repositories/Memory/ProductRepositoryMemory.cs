@@ -1,5 +1,6 @@
-﻿using Domain.Categories;
-using Domain.Products;
+﻿using Domain.Categories.Entity;
+using Domain.Products.Entity;
+using Domain.Products.Repository;
 
 namespace Infra.Repositories.Memory
 {

@@ -1,7 +1,9 @@
 ﻿using Application.Abstractions.Messaging;
 using Application.Data;
-using Domain.Orders;
-using Domain.Products;
+using Domain.Orders.Error;
+using Domain.Orders.Repository;
+using Domain.Products.Error;
+using Domain.Products.Repository;
 using Domain.Shared;
 
 namespace Application.Orders.AddLineItem;

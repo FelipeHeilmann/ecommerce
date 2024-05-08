@@ -1,5 +1,8 @@
 ﻿using Application.Abstractions.Messaging;
-using Domain.Orders;
+using Domain.Orders.Entity;
+using Domain.Orders.Error;
+using Domain.Orders.Repository;
+using Domain.Orders.VO;
 using Domain.Shared;
 
 namespace Application.Orders.GetCart;
@@ -17,7 +20,7 @@ public class GetCartQueryHandler : IQueryHandler<GetCartQuery, Order>
     {
         var orders = await _repository.GetAllAsync(cancellationToken);
 
-        var cart = orders.FirstOrDefault(o => o.Status == OrderStatus.Created);
+        var cart = orders.FirstOrDefault(o => o.GetStatus() == "created");
 
         if (cart == null) return Result.Failure<Order>(OrderErrors.CartNotFound);
 

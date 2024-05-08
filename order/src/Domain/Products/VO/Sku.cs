@@ -1,5 +1,6 @@
-﻿using Domain.Shared;
-namespace Domain.Products;
+﻿using Domain.Products.Error;
+using Domain.Shared;
+namespace Domain.Products.VO;
 
 public record Sku
 {

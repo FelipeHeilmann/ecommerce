@@ -1,7 +1,9 @@
 ﻿using Application.Abstractions.Messaging;
 using Application.Data;
-using Domain.Categories;
-using Domain.Products;
+using Domain.Categories.Error;
+using Domain.Categories.Repository;
+using Domain.Products.Entity;
+using Domain.Products.Repository;
 using Domain.Shared;
 
 namespace Application.Products.Create;

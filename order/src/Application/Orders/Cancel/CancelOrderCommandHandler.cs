@@ -1,6 +1,8 @@
 ﻿using Application.Abstractions.Messaging;
 using Application.Data;
-using Domain.Orders;
+using Domain.Orders.Entity;
+using Domain.Orders.Error;
+using Domain.Orders.Repository;
 using Domain.Shared;
 
 namespace Application.Orders.Cancel;

@@ -1,4 +1,5 @@
-﻿using Domain.Products;
+﻿using Domain.Products.Entity;
+using Domain.Products.Repository;
 using Infra.Context;
 using Microsoft.EntityFrameworkCore;
 

@@ -1,5 +1,5 @@
 ﻿using Domain.Categories;
-using Domain.Products;
+using Domain.Products.Entity;
 using Xunit;
 
 namespace Unit;

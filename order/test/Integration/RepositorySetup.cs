@@ -1,8 +1,13 @@
-﻿using Domain.Addresses;
-using Domain.Categories;
-using Domain.Customers;
-using Domain.Orders;
-using Domain.Products;
+﻿using Domain.Addresses.Repository;
+using Domain.Addresses.VO;
+using Domain.Categories.Repository;
+using Domain.Customers.Repository;
+using Domain.Customers.VO;
+using Domain.Orders.Entity;
+using Domain.Orders.Repository;
+using Domain.Orders.VO;
+using Domain.Products.Repository;
+using Domain.Products.VO;
 
 namespace Integration;
 
@@ -159,7 +164,7 @@ public class RepositorySetup
         var order = new Order(
             Guid.Parse("c3a9083c-a259-4516-8842-a80b40f8c39f"), 
             Guid.Parse("f3b205c3-552d-4fd9-b10e-6414086910b0"), 
-            OrderStatus.Created, 
+            "created", 
             DateTime.Now, 
             DateTime.Now,
             null,
@@ -169,7 +174,7 @@ public class RepositorySetup
         var order2 = new Order(
             Guid.Parse("8f34a311-f1cd-40b6-9e5d-1b9f639369e9"),
             Guid.Parse("f3b205c3-552d-4fd9-b10e-6414086910b0"),
-            OrderStatus.Created,
+            "created",
             DateTime.Now,
             DateTime.Now,
             null,

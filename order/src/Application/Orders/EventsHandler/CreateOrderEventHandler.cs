@@ -1,7 +1,8 @@
 ﻿using Application.Abstractions.Queue;
-using Domain.Customers;
-using Domain.Orders;
-using Domain.Products;
+using Domain.Customers.Repository;
+using Domain.Orders.Events;
+using Domain.Orders.Repository;
+using Domain.Products.Repository;
 using MediatR;
 
 namespace Application.Orders.EventsHandler;

@@ -1,5 +1,5 @@
 ﻿using Application.Abstractions.Messaging;
-using Domain.Products;
+using Domain.Products.Repository;
 using Domain.Shared;
 
 namespace Application.Products.GetAll;

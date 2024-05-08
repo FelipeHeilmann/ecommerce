@@ -1,5 +1,5 @@
 ﻿using Application.Abstractions.Messaging;
-using Domain.Orders;
+using Domain.Orders.Repository;
 using Domain.Shared;
 
 namespace Application.Orders.GetByCustomerId;
@@ -24,7 +24,7 @@ public class GetOrdersByCustomerIdQueryHandler : IQueryHandler<GetOrdersByCustom
             output.Add(new Output(
                 order.Id,
                 order.CustomerId,
-                order.Status.ToString(),
+                order.GetStatus(),
                 order.Items.Select(line => new ItemsOutput(line.ProductId, line.Price.Amount, line.Quantity)),
                 order.BillingAddressId,
                 order.ShippingAddressId)
