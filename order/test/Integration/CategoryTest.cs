@@ -4,7 +4,8 @@ using Application.Categories.GetById;
 using Application.Categories.Model;
 using Application.Categories.Update;
 using Application.Data;
-using Domain.Categories;
+using Domain.Categories.Entity;
+using Domain.Categories.Repository;
 using Infra.Data;
 using Infra.Repositories.Memory;
 using Xunit;
@@ -41,7 +42,7 @@ public class CategoryTest
     {
         var query = new GetAllCategoriesQuery();
 
-        var queryHandler = new GetAllCategoriesQueryHandler(_categoryRepository, _unitOfWork);
+        var queryHandler = new GetAllCategoriesQueryHandler(_categoryRepository);
 
         var result = await queryHandler.Handle(query, CancellationToken.None);
 
@@ -57,7 +58,7 @@ public class CategoryTest
 
         var query = new GetCategoryByIdQuery(categoryId);
 
-        var queryHandler = new GetCategoryByIdQueryHandler(_categoryRepository, _unitOfWork);
+        var queryHandler = new GetCategoryByIdQueryHandler(_categoryRepository);
 
         var result = await queryHandler.Handle(query, CancellationToken.None);
 

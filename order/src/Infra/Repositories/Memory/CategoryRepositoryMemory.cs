@@ -1,4 +1,5 @@
-﻿using Domain.Categories;
+﻿using Domain.Categories.Entity;
+using Domain.Categories.Repository;
 
 namespace Infra.Repositories.Memory;
 

@@ -1,6 +1,7 @@
 ﻿using Application.Abstractions.Messaging;
 using Application.Data;
-using Domain.Categories;
+using Domain.Categories.Entity;
+using Domain.Categories.Repository;
 using Domain.Shared;
 
 namespace Application.Categories.Create;

@@ -1,6 +1,7 @@
-﻿using Domain.Shared;
+﻿using Domain.Categories.Error;
+using Domain.Shared;
 
-namespace Domain.Categories;
+namespace Domain.Categories.Entity;
 
 public class Category
 {
@@ -13,15 +14,15 @@ public class Category
         Id = id;
         Name = name;
         Description = description;
-    }   
+    }
 
     public static Result<Category> Create(string name, string description)
     {
-        if(string.IsNullOrEmpty(name)) return Result.Failure<Category>(CategoryErrors.CategoryNameEmpty);
+        if (string.IsNullOrEmpty(name)) return Result.Failure<Category>(CategoryErrors.CategoryNameEmpty);
         if (string.IsNullOrEmpty(description)) return Result.Failure<Category>(CategoryErrors.CategoryDescriptionEmpty);
         return new Category(Guid.NewGuid(), name, description);
     }
-    
+
     public void Update(string name, string description)
     {
         Name = name;

@@ -1,6 +1,7 @@
 ﻿using Application.Abstractions.Messaging;
 using Application.Categories.GetById;
-using Domain.Categories;
+using Domain.Categories.Error;
+using Domain.Categories.Repository;
 using Domain.Shared;
 
 namespace Application.Categories.GetAll;

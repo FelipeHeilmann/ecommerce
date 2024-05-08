@@ -1,6 +1,6 @@
 ﻿using Domain.Shared;
 
-namespace Domain.Categories;
+namespace Domain.Categories.Error;
 
 public static class CategoryErrors
 {

@@ -1,5 +1,5 @@
 ﻿using Application.Abstractions.Messaging;
-using Domain.Categories;
+using Domain.Categories.Repository;
 using Domain.Shared;
 
 namespace Application.Categories.GetAll;
