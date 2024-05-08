@@ -1,7 +1,9 @@
 ﻿using Application.Abstractions.Messaging;
 using Application.Abstractions.Services;
 using Application.Data;
-using Domain.Customers;
+using Domain.Customers.Entity;
+using Domain.Customers.Error;
+using Domain.Customers.Repository;
 using Domain.Shared;
 using MediatR;
 

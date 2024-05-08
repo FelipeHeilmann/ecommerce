@@ -1,7 +1,8 @@
-﻿using Domain.Shared;
+﻿using Domain.Customers.Error;
+using Domain.Shared;
 using System.Text.RegularExpressions;
 
-namespace Domain.Customers;
+namespace Domain.Customers.VO;
 
 public record CPF
 {
@@ -14,12 +15,12 @@ public record CPF
         if (string.IsNullOrWhiteSpace(cpf))
             return Result.Failure<CPF>(CustomerErrors.CPFFormat);
 
-            var cleanedCPF = Regex.Replace(cpf, @"\D", "");
+        var cleanedCPF = Regex.Replace(cpf, @"\D", "");
 
-            if (cleanedCPF.Length != 11)
-                return Result.Failure<CPF>(CustomerErrors.CPFFormat);
+        if (cleanedCPF.Length != 11)
+            return Result.Failure<CPF>(CustomerErrors.CPFFormat);
 
-            return new CPF(cleanedCPF);
+        return new CPF(cleanedCPF);
     }
 
     private static bool ValidateDigit(string cpf)
@@ -37,7 +38,7 @@ public record CPF
         }
 
         int remainder1 = sum1 % 11;
-        int digit1 = (remainder1 < 2) ? 0 : (11 - remainder1);
+        int digit1 = remainder1 < 2 ? 0 : 11 - remainder1;
 
         if (numbers[9] != digit1)
             return false;
@@ -49,7 +50,7 @@ public record CPF
         }
 
         int remainder2 = sum2 % 11;
-        int digit2 = (remainder2 < 2) ? 0 : (11 - remainder2);
+        int digit2 = remainder2 < 2 ? 0 : 11 - remainder2;
 
         if (numbers[10] != digit2)
             return false;

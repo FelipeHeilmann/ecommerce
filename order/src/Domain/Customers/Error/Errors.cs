@@ -1,6 +1,6 @@
 ﻿using Domain.Shared;
 
-namespace Domain.Customers;
+namespace Domain.Customers.Error;
 
 public static class CustomerErrors
 {

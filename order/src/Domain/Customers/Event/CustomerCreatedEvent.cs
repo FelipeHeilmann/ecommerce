@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace Domain.Customers;
+namespace Domain.Customers.Event;
 
 public class CustomerCreatedEvent : INotification
 {

@@ -1,4 +1,6 @@
-﻿using Domain.Customers;
+﻿using Domain.Customers.Entity;
+using Domain.Customers.Error;
+using Domain.Customers.VO;
 using Xunit;
 
 namespace Unit;

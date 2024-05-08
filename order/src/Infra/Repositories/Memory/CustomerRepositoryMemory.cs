@@ -1,4 +1,5 @@
-﻿using Domain.Customers;
+﻿using Domain.Customers.Entity;
+using Domain.Customers.Repository;
 
 namespace Infra.Repositories.Memory
 {

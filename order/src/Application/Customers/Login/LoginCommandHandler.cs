@@ -1,6 +1,7 @@
 ﻿using Application.Abstractions.Messaging;
 using Application.Abstractions.Services;
-using Domain.Customers;
+using Domain.Customers.Error;
+using Domain.Customers.Repository;
 using Domain.Shared;
 
 namespace Application.Customers.Login;

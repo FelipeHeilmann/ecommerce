@@ -2,7 +2,9 @@
 using Application.Customers.Create;
 using Application.Customers.Model;
 using Application.Data;
-using Domain.Customers;
+using Domain.Customers.Error;
+using Domain.Customers.Event;
+using Domain.Customers.Repository;
 using Infra.Data;
 using Infra.Implementations;
 using Infra.Repositories.Memory;

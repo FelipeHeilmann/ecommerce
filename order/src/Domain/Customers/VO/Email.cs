@@ -1,7 +1,8 @@
-﻿using Domain.Shared;
+﻿using Domain.Customers.Error;
+using Domain.Shared;
 using System.Text.RegularExpressions;
 
-namespace Domain.Customers;
+namespace Domain.Customers.VO;
 
 public record Email
 {

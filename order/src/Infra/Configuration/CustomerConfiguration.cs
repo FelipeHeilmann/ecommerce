@@ -1,4 +1,4 @@
-﻿using Domain.Customers;
+﻿using Domain.Customers.Entity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

@@ -1,7 +1,8 @@
-﻿using Domain.Shared;
+﻿using Domain.Customers.Error;
+using Domain.Shared;
 using System.Text.RegularExpressions;
 
-namespace Domain.Customers;
+namespace Domain.Customers.VO;
 
 public record Phone
 {
@@ -13,7 +14,7 @@ public record Phone
     {
         if (string.IsNullOrEmpty(phone))
             return Result.Failure<Phone>(CustomerErrors.PhoneFormat);
-        
+
         string cleanedPhone = Regex.Replace(phone, @"[^\d]", "");
 
         var regex = new Regex(@"^\d{2}\d{4,5}\d{4}$");

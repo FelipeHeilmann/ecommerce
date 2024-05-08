@@ -1,6 +1,7 @@
-﻿using Domain.Shared;
+﻿using Domain.Customers.Error;
+using Domain.Shared;
 
-namespace Domain.Customers;
+namespace Domain.Customers.VO;
 
 public record Name
 {

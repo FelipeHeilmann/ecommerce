@@ -1,5 +1,7 @@
-﻿using Domain.Shared;
-namespace Domain.Customers;
+﻿using Domain.Customers.Error;
+using Domain.Customers.VO;
+using Domain.Shared;
+namespace Domain.Customers.Entity;
 
 public class Customer
 {
@@ -8,15 +10,15 @@ public class Customer
     private Email _email;
     private CPF _cpf;
     private Phone _phone;
-    public string Name { get => _name.Value; private set => _name = Customers.Name.Create(value).Value; }
-    public string Email { get => _email.Value; private set => _email = Customers.Email.Create(value).Value; }
-    public string CPF { get => _cpf.Value; private set => _cpf = Customers.CPF.Create(value).Value; }
-    public string Phone { get => _phone.Value; private set => _phone = Customers.Phone.Create(value).Value; }
+    public string Name { get => _name.Value; private set => _name = VO.Name.Create(value).Value; }
+    public string Email { get => _email.Value; private set => _email = VO.Email.Create(value).Value; }
+    public string CPF { get => _cpf.Value; private set => _cpf = VO.CPF.Create(value).Value; }
+    public string Phone { get => _phone.Value; private set => _phone = VO.Phone.Create(value).Value; }
     public string Password { get; private set; }
     public DateOnly BirthDate { get; private set; }
     public DateTime CreatedAt { get; private set; }
 
-    public Customer(Guid id, Name name, Email email, CPF cpf, Phone phone ,string password, DateOnly birthDate, DateTime createdAt)
+    public Customer(Guid id, Name name, Email email, CPF cpf, Phone phone, string password, DateOnly birthDate, DateTime createdAt)
     {
         Id = id;
         _name = name;
@@ -32,19 +34,19 @@ public class Customer
 
     public static Result<Customer> Create(string nameString, string emailString, string password, DateOnly birthDate, string cpfString, string phoneString)
     {
-        var name = Customers.Name.Create(nameString);
+        var name = VO.Name.Create(nameString);
         if (name.IsFailure) return Result.Failure<Customer>(name.Error);
 
-        var email = Customers.Email.Create(emailString);
+        var email = VO.Email.Create(emailString);
         if (email.IsFailure) return Result.Failure<Customer>(email.Error);
-        
-        var cpf = Customers.CPF.Create(cpfString);
+
+        var cpf = VO.CPF.Create(cpfString);
         if (cpf.IsFailure) return Result.Failure<Customer>(cpf.Error);
 
         if (!IsOldEnough(birthDate))
             return Result.Failure<Customer>(CustomerErrors.InvalidAge);
 
-        var phone = Customers.Phone.Create(phoneString);
+        var phone = VO.Phone.Create(phoneString);
         if (cpf.IsFailure) return Result.Failure<Customer>(phone.Error);
 
 
@@ -55,7 +57,7 @@ public class Customer
     {
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
         var age = today.Year - birthDate.Year;
-        if (today.Month < birthDate.Month || (today.Month == birthDate.Month && today.Day < birthDate.Day))
+        if (today.Month < birthDate.Month || today.Month == birthDate.Month && today.Day < birthDate.Day)
         {
             age--;
         }

@@ -1,5 +1,5 @@
 ﻿using Application.Abstractions.Queue;
-using Domain.Customers;
+using Domain.Customers.Event;
 using MediatR;
 
 namespace Application.Customers.EventHandler;
