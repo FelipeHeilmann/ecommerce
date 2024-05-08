@@ -7,7 +7,6 @@ using Application.Abstractions.Gateway;
 using Application.Data;
 using Domain.Transactions;
 using Microsoft.Extensions.DependencyInjection;
-using Application.Gateway;
 using MediatR;
 
 namespace Application.Transactions.Consumers;
@@ -38,10 +37,10 @@ public class OrderPurchasedEventConsumer : BackgroundService
                     var paymentGateway = scope.ServiceProvider.GetRequiredService<IPaymentGateway>();
                     var transactionRepository = scope.ServiceProvider.GetRequiredService<ITransactionRepository>();
                     var queue = scope.ServiceProvider.GetRequiredService<IQueue>();
-                    var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+                    var orderGateway = scope.ServiceProvider.GetRequiredService<IOrderGateway>();
 
                     var command = new CreatePaymentCommand(message);
-                    var commandHandler = new CreatePaymentCommandHandler(paymentGateway, transactionRepository, unitOfWork, mediator, queue);
+                    var commandHandler = new CreatePaymentCommandHandler(paymentGateway, transactionRepository, unitOfWork, queue, orderGateway);
 
                     await commandHandler.Handle(command, stoppingToken);
                 }

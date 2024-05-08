@@ -1,13 +1,12 @@
 ﻿using Application.Abstractions.Gateway;
 using Application.Abstractions.Queue;
 using Application.Data;
-using Application.Gateway;
 using Application.Transactions.Consumers;
 using Domain.Refunds;
 using Domain.Transactions;
 using Infra.Context;
 using Infra.Data;
-using Infra.Gateway.Nofify;
+using Infra.Gateway.Order;
 using Infra.Gateway.Payment;
 using Infra.Queue;
 using Infra.Repositories.Database;
@@ -40,6 +39,7 @@ public static class DependecyInjection
 
         services.AddSingleton<IPaymentGateway, PaymentGatewayFake>();
         services.AddTransient<ITransactionRepository, TransactionRepository>();
+        services.AddTransient<IOrderGateway, OrderGatewayHttp>();
         services.AddTransient<IRefundRepository, RefundRepository>();
         services.AddTransient<IUnitOfWork, UnitOfWork>();
 

@@ -8,7 +8,7 @@ namespace Infra.Gateway.Payment;
 
 public class PaymentGatewayFake : IPaymentGateway
 {
-    public async Task<PaymentGatewayResponse> CreateOrder(OrderPurchasedEvent request)
+    public async Task<PaymentGatewayResponse> ProccessPayment(ProccessPaymentRequest request)
     {
         HttpClient client = new HttpClient();
 
@@ -67,6 +67,7 @@ public class PaymentGatewayFake : IPaymentGateway
 
         return result;
     }
+
 
     private OrderPaymentType GetPaymentType(string type, int installments, string? cardToken = null)
     {

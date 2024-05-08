@@ -5,5 +5,5 @@ namespace Application.Abstractions.Gateway;
 
 public interface IPaymentGateway
 {
-    Task <PaymentGatewayResponse> ProccessPayment(OrderPurchasedEvent request);
+    Task <PaymentGatewayResponse> ProccessPayment(ProccessPaymentRequest request);
 }

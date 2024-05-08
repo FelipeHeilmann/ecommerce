@@ -19,12 +19,12 @@ public class TransactionTest
     [Fact]
     public async void Should_Recive_Order_Payment_Make_Request_To_Payment_Gateway_Create_Transaction()
     {
-        var lineitems = new List<LineItemOrderPurchasedEvent>()
+        var lineitems = new List<LineItemOrderPurchased>()
         {
-            new LineItemOrderPurchasedEvent(Guid.NewGuid(), Guid.NewGuid(),2, 30.0),
-            new LineItemOrderPurchasedEvent(Guid.NewGuid(), Guid.NewGuid(),3, 50.0),
-            new LineItemOrderPurchasedEvent(Guid.NewGuid(), Guid.NewGuid(),4, 20.0),
-            new LineItemOrderPurchasedEvent(Guid.NewGuid(), Guid.NewGuid(),6, 80.0),
+            new LineItemOrderPurchased(Guid.NewGuid(), Guid.NewGuid(),2, 30.0),
+            new LineItemOrderPurchased(Guid.NewGuid(), Guid.NewGuid(),3, 50.0),
+            new LineItemOrderPurchased(Guid.NewGuid(), Guid.NewGuid(),4, 20.0),
+            new LineItemOrderPurchased(Guid.NewGuid(), Guid.NewGuid(),6, 80.0),
         };
 
         var orderPurchasedEvent = new OrderPurchasedEvent(
