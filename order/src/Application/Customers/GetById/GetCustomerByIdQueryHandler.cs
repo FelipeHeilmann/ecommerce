@@ -22,10 +22,10 @@ public class GetCustomerByIdQueryHandler : IQueryHandler<GetCustomerByIdQuery, O
 
         return new Output(
                         customer.Id,
-                        customer.GetName(),
-                        customer.Email.Value,
-                        customer.GetCPF(),
-                        customer.GetPhone(),
+                        customer.Name,
+                        customer.Email,
+                        customer.CPF,
+                        customer.Phone,
                         customer.BirthDate
                     );  
     }

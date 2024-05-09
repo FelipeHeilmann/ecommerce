@@ -1,45 +1,36 @@
 ﻿using Domain.Customers.Error;
 using Domain.Customers.VO;
+using Domain.Shared;
 namespace Domain.Customers.Entity;
 
 public class Customer
 {
     public Guid Id { get; private set; }
-    public Name Name { get; private set; }
-    public Email Email { get; private set; }
-    public CPF CPF { get; private set; }
-    public Phone Phone { get; private set; }
+    private Name _name;
+    private Email _email;
+    private CPF _cpf;
+    private Phone _phone;
+    public string Name { get => _name.Value; private set => _name = new Name(value); }
+    public string Email { get => _email.Value; private set => _email = new Email(value); }
+    public string CPF { get => _cpf.Value; private set => _cpf = new CPF(value); }
+    public string Phone { get => _phone.Value; private set => _phone = new Phone(value); }
     public string Password { get; private set; }
     public DateOnly BirthDate { get; private set; }
     public DateTime CreatedAt { get; private set; }
-    public Customer() { }
+
     public Customer(Guid id, Name name, Email email, CPF cpf, Phone phone, string password, DateOnly birthDate, DateTime createdAt)
     {
         Id = id;
-        Name = name;
-        Email = email;
-        CPF = cpf;
-        Phone = phone;
+        _name = name;
+        _email = email;
+        _cpf = cpf;
+        _phone = phone;
         BirthDate = birthDate;
         CreatedAt = createdAt;
         Password = password;
     }
 
-    public string GetName()
-    {
-        return Name.Value;
-    }
-
- 
-    public string GetPhone()
-    {
-        return Phone.Value;
-    }
-
-    public string GetCPF()
-    {
-        return CPF.Value;
-    }
+    public Customer() { }
 
     public static Customer Create(string name, string email, string password, DateOnly birthDate, string cpf, string phone)
     {

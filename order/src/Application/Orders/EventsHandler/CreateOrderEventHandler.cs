@@ -36,6 +36,6 @@ public class CreateOrderEventHandler : INotificationHandler<OrderCreatedEvent>
             products.Add(new OrderCreatedItem(product!.Name, product!.Price.Amount, orderItem.Quantity));
         }
 
-        await _queue.PublishAsync(new OrderCreatedMailEvent(order.Id, DateTime.Now, custmer!.GetName(), custmer.Email.Value, products), "order.create");
+        await _queue.PublishAsync(new OrderCreatedMailEvent(order.Id, DateTime.Now, custmer!.Name, custmer.Email, products), "order.create");
     }
 }

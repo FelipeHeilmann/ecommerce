@@ -44,7 +44,7 @@ public class CreateAccountCommandHandler : ICommandHandler<CreateAccountCommand,
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        await _mediator.Publish(new CustomerCreatedEvent(customer.GetName(), customer.Email.Value), cancellationToken);
+        await _mediator.Publish(new CustomerCreatedEvent(customer.Name, customer.Email), cancellationToken);
 
         return Result.Success(customer.Id);
     }
