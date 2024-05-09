@@ -11,11 +11,13 @@ public class CustomerRepository : Repository<Customer>, ICustomerRepository
         : base(context) { }
     public async Task<Customer?> GetByEmailAsync(string email, CancellationToken cancellationToken)
     {
-        return await _context.Set<Customer>().FirstOrDefaultAsync(c => c.Email == email, cancellationToken);
+        var customers = await _context.Set<Customer>().ToListAsync();
+        return customers.FirstOrDefault(c => c.Email.Value == email);
     }
 
     public async Task<bool> IsEmailUsedAsync(string email, CancellationToken cancellationToken)
     {
-        return await _context.Set<Customer>().AnyAsync(c => c.Email == email, cancellationToken);
+        var customers = await _context.Set<Customer>().ToListAsync(cancellationToken);
+        return customers.Any(c => c.Email.Value == email);
     }
 }

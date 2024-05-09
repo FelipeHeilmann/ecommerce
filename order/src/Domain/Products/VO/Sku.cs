@@ -7,14 +7,12 @@ public record Sku
     public const int DefaultLength = 15;
     public string Value { get; init; }
 
-    private Sku(string sku) => Value = sku;
-
-    public static Result<Sku> Create(string sku)
+    public Sku(string sku)
     {
-        if (string.IsNullOrEmpty(sku)) return Result.Failure<Sku>(ProductErrors.SkuNull);
+        if (string.IsNullOrEmpty(sku)) throw new InvalidSku();
 
-        if (sku.Length > DefaultLength) return Result.Failure<Sku>(ProductErrors.SkuLength); ;
+        if (sku.Length > DefaultLength) throw new InvalidSku();
 
-        return new Sku(sku);
+        Value = sku;
     }
 }

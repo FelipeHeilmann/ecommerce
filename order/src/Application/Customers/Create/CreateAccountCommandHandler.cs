@@ -3,6 +3,7 @@ using Application.Abstractions.Services;
 using Application.Data;
 using Domain.Customers.Entity;
 using Domain.Customers.Error;
+using Domain.Customers.Event;
 using Domain.Customers.Repository;
 using Domain.Shared;
 using MediatR;
@@ -36,17 +37,14 @@ public class CreateAccountCommandHandler : ICommandHandler<CreateAccountCommand,
 
         var birthDate = new DateOnly(request.birthDate.Year, request.birthDate.Month, request.birthDate.Day);
 
-        var result = Customer.Create(request.Name, request.Email, hashedPassword, birthDate, request.CPF, request.Phone);
+        var customer = Customer.Create(request.Name, request.Email, hashedPassword, birthDate, request.CPF, request.Phone);
 
-        if(result.IsFailure) return Result.Failure<Guid>(result.Error);
-
-        var customer = result.Value;
-
+ 
         _repository.Add(customer);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        await _mediator.Publish(new CustomerCreatedEvent(customer.Name, customer.Email), cancellationToken);
+        await _mediator.Publish(new CustomerCreatedEvent(customer.GetName(), customer.Email.Value), cancellationToken);
 
         return Result.Success(customer.Id);
     }

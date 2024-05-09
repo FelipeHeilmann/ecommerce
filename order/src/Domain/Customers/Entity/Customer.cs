@@ -1,56 +1,51 @@
 ﻿using Domain.Customers.Error;
 using Domain.Customers.VO;
-using Domain.Shared;
 namespace Domain.Customers.Entity;
 
 public class Customer
 {
     public Guid Id { get; private set; }
-    private Name _name;
-    private Email _email;
-    private CPF _cpf;
-    private Phone _phone;
-    public string Name { get => _name.Value; private set => _name = VO.Name.Create(value).Value; }
-    public string Email { get => _email.Value; private set => _email = VO.Email.Create(value).Value; }
-    public string CPF { get => _cpf.Value; private set => _cpf = VO.CPF.Create(value).Value; }
-    public string Phone { get => _phone.Value; private set => _phone = VO.Phone.Create(value).Value; }
+    public Name Name { get; private set; }
+    public Email Email { get; private set; }
+    public CPF CPF { get; private set; }
+    public Phone Phone { get; private set; }
     public string Password { get; private set; }
     public DateOnly BirthDate { get; private set; }
     public DateTime CreatedAt { get; private set; }
-
+    public Customer() { }
     public Customer(Guid id, Name name, Email email, CPF cpf, Phone phone, string password, DateOnly birthDate, DateTime createdAt)
     {
         Id = id;
-        _name = name;
-        _email = email;
-        _cpf = cpf;
-        _phone = phone;
+        Name = name;
+        Email = email;
+        CPF = cpf;
+        Phone = phone;
         BirthDate = birthDate;
         CreatedAt = createdAt;
         Password = password;
     }
 
-    public Customer() { }
-
-    public static Result<Customer> Create(string nameString, string emailString, string password, DateOnly birthDate, string cpfString, string phoneString)
+    public string GetName()
     {
-        var name = VO.Name.Create(nameString);
-        if (name.IsFailure) return Result.Failure<Customer>(name.Error);
+        return Name.Value;
+    }
 
-        var email = VO.Email.Create(emailString);
-        if (email.IsFailure) return Result.Failure<Customer>(email.Error);
+ 
+    public string GetPhone()
+    {
+        return Phone.Value;
+    }
 
-        var cpf = VO.CPF.Create(cpfString);
-        if (cpf.IsFailure) return Result.Failure<Customer>(cpf.Error);
+    public string GetCPF()
+    {
+        return CPF.Value;
+    }
 
-        if (!IsOldEnough(birthDate))
-            return Result.Failure<Customer>(CustomerErrors.InvalidAge);
+    public static Customer Create(string name, string email, string password, DateOnly birthDate, string cpf, string phone)
+    {
+        if (!IsOldEnough(birthDate)) throw new UnderAge();
 
-        var phone = VO.Phone.Create(phoneString);
-        if (cpf.IsFailure) return Result.Failure<Customer>(phone.Error);
-
-
-        return new Customer(Guid.NewGuid(), name.Value, email.Value, cpf.Value, phone.Value, password, birthDate, DateTime.UtcNow);
+        return new Customer(Guid.NewGuid(), new Name(name), new Email(email), new CPF(cpf), new Phone(phone), password, birthDate, DateTime.UtcNow);
     }
 
     private static bool IsOldEnough(DateOnly birthDate)

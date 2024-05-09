@@ -31,37 +31,22 @@ public class Product
 
     public Product() { }
 
-    public static Result<Product> Create(string name, string description, string imageUrl, string currency, double price, string skuString, Category category)
+    public static Product Create(string name, string description, string imageUrl, string currency, double price, string skuString, Category category)
     {
         var money = new Money(currency, price);
-        var sku = Sku.Create(skuString);
 
-        if (sku.IsFailure)
-        {
-            return Result.Failure<Product>(sku.Error);
-        }
-
-        return new Product(Guid.NewGuid(), name, description, imageUrl, DateTime.UtcNow, money, sku.Value, category.Id, category);
+        return new Product(Guid.NewGuid(), name, description, imageUrl, DateTime.UtcNow, money, new Sku(skuString), category.Id, category);
     }
 
-    public Result<Product> Update(string name, string description, string imageUrl, string currency, double price, string skuString, Category category)
+    public void Update(string name, string description, string imageUrl, string currency, double price, string skuString, Category category)
     {
         var money = new Money(currency, price);
-        var sku = Sku.Create(skuString);
-
-        if (sku.IsFailure)
-        {
-            return Result.Failure<Product>(sku.Error);
-        }
-
         Name = name;
         Description = description;
         ImageUrl = imageUrl;
         CategoryId = Category.Id;
         Category = category;
-        Sku = sku.Value;
+        Sku = new Sku(skuString);
         Price = money;
-
-        return Result.Success(this);
     }
 }

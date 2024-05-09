@@ -30,7 +30,7 @@ public class CreateProductCommandHandler : ICommandHandler<CreateProductCommand,
             return Result.Failure<Guid>(CategoryErrors.CategoryNotFound);
         }
 
-        var result = Product.Create(
+        var product = Product.Create(
             command.request.Name,
             command.request.Description,
             command.request.ImageUrl,
@@ -40,9 +40,6 @@ public class CreateProductCommandHandler : ICommandHandler<CreateProductCommand,
             category
         );
 
-        if (result.IsFailure) return Result.Failure<Guid>(result.Error);
-
-        var product = result.Value;
 
         _productRepository.Add(product);
 

@@ -33,9 +33,7 @@ public class UpdateProductCommandHandler : ICommandHandler<UpdateProductCommand>
 
         if (category == null) return Result.Failure<Product>(CategoryErrors.CategoryNotFound);
 
-        var result = product.Update(request.Name, request.Description, request.ImageUrl, request.Currency, request.Price, request.Sku, category);
-
-        if (result.IsFailure) return Result.Failure<Product>(result.Error);
+        product.Update(request.Name, request.Description, request.ImageUrl, request.Currency, request.Price, request.Sku, category);
 
         _productRepository.Update(product);
 

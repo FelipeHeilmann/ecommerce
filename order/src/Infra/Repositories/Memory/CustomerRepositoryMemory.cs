@@ -19,12 +19,12 @@ namespace Infra.Repositories.Memory
 
         public Task<Customer?> GetByEmailAsync(string email, CancellationToken cancellationToken)
         {
-            return Task.FromResult(_context.ToList().FirstOrDefault(c => c.Email == email));
+            return Task.FromResult(_context.ToList().FirstOrDefault(c => c.Email.Value == email));
         }
 
         public Task<bool> IsEmailUsedAsync(string email, CancellationToken cancellationToken)
         {
-            return Task.FromResult(_context.Any(c => c.Email == email));
+            return Task.FromResult(_context.Any(c => c.Email.Value == email));
         }
 
         public void Add(Customer entity)

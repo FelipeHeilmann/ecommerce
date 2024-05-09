@@ -22,7 +22,7 @@ internal sealed class JwtProvider : IJwtProvider
         var claims = new Claim[]
         {
             new(JwtRegisteredClaimNames.Sub, customer.Id.ToString()),
-            new(JwtRegisteredClaimNames.Email, customer.Email)
+            new(JwtRegisteredClaimNames.Email, customer.Email.Value)
         };
 
         var signingCredentials = new SigningCredentials(

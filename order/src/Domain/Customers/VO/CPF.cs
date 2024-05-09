@@ -1,5 +1,4 @@
 ﻿using Domain.Customers.Error;
-using Domain.Shared;
 using System.Text.RegularExpressions;
 
 namespace Domain.Customers.VO;
@@ -8,22 +7,19 @@ public record CPF
 {
     public string Value { get; init; }
 
-    private CPF(string email) => Value = email;
-
-    public static Result<CPF> Create(string cpf)
+    public CPF(string cpf)
     {
-        if (string.IsNullOrWhiteSpace(cpf))
-            return Result.Failure<CPF>(CustomerErrors.CPFFormat);
+        if (string.IsNullOrWhiteSpace(cpf)) throw new InvalidCPF();
 
         var cleanedCPF = Regex.Replace(cpf, @"\D", "");
 
-        if (cleanedCPF.Length != 11)
-            return Result.Failure<CPF>(CustomerErrors.CPFFormat);
+        if (cleanedCPF.Length != 11) throw new InvalidCPF();
 
-        return new CPF(cleanedCPF);
+        if (!ValidateDigit(cleanedCPF)) throw new InvalidCPF();
+
+        Value = cleanedCPF;
     }
-
-    private static bool ValidateDigit(string cpf)
+    private bool ValidateDigit(string cpf)
     {
         int[] numbers = new int[11];
         for (int i = 0; i < 11; i++)
