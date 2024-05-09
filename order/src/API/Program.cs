@@ -1,3 +1,4 @@
+using API.Middleware;
 using API.OptionSetup;
 using Infra;
 using Infra.Extensions;
@@ -44,5 +45,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseMiddleware<GlobalExceptionMiddleware>();
 
 app.Run();
