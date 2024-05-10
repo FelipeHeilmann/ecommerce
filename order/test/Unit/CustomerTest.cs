@@ -10,101 +10,63 @@ public class CustomerTest
     [Fact]
     public void Should_Create_Valid_Name()
     {
-        var name = Name.Create("Felipe Heilmann");
-        Assert.True(name.IsSuccess);
-        Assert.False(name.IsFailure);
+        var name = new Name("Felipe Heilmann");
+        Assert.Equal("Felipe Heilmann", name.Value);
     }
 
     [Fact]
     public void Should_Not_Create_Valid_Name_Due_Invalid_Format()
     {
-        var name = Name.Create("Felipe");
-        Assert.False(name.IsSuccess);
-        Assert.True(name.IsFailure);
+        Assert.Throws<InvalidName>(() => new Name("Felipe"));
     }
 
     [Fact]
-    public void Should_Not_Create_Valid_Name_Due_Null()
-    {
-        var name = Name.Create(null);
-        Assert.False(name.IsSuccess);
-        Assert.True(name.IsFailure);
-    }
-    [Fact]
     public void Should_Create_Valid_Email()
     {
-        var email = Email.Create("felipeheilmannm@gmail.com");
-        Assert.True(email.IsSuccess);
-        Assert.False(email.IsFailure);
+        var email = new Email("felipeheilmannm@gmail.com");
+        Assert.Equal("felipeheilmannm@gmail.com", email.Value);
     }
 
     [Fact]
     public void Should_Not_Create_Valid_Email_Due_Invalid_Format()
     {
-        var email = Email.Create("felipe.com");
-        Assert.False(email.IsSuccess);
-        Assert.True(email.IsFailure);
-    }
-
-    [Fact]
-    public void Should_Not_Create_Valid_Email_Due_Null()
-    { 
-        var email = Email.Create(null);
-        Assert.False(email.IsSuccess);
-        Assert.True(email.IsFailure);
+        Assert.Throws<InvalidEmail>(() => new Email("felipe.com"));
     }
 
     [Fact]
     public void Should_Create_Valid_CPF()
     {
-        var cpf = CPF.Create("44444444444");
+        var cpf = new CPF("460.200.040-15");
+        Assert.Equal("46020004015", cpf.Value);
+    }
 
-        Assert.True(cpf.IsSuccess );
-        Assert.False(cpf.IsFailure);
+    [Fact]
+    public void Should_Not_Create_Valid_CPF()
+    {
+        Assert.Throws<InvalidCPF>(() => new CPF("44444444444"));
     }
 
     [Fact]
     public void Should_Not_Create_Valid_CPF_Format()
     {
-        var cpf = CPF.Create("873905240068");
-
-        Assert.False(cpf.IsSuccess);
-        Assert.True(cpf.IsFailure);
+  
+        Assert.Throws<InvalidCPF>(() => new CPF("873905240068"));
     }
 
     [Fact]
     public void Should_Create_Valid_Phone()
     {
-        var phone = Phone.Create("11 97414-6507");
+        var phone = new Phone("11 97414-6507");
 
-        Assert.True(phone.IsSuccess);
-        Assert.False(phone.IsFailure);
+        Assert.Equal("11974146507", phone.Value);
     }
 
     [Fact]
     public void Should_Not_Create_Valid_Phone()
     {
-        var phone = Phone.Create("11 9741465070");
-
-        Assert.False(phone.IsSuccess);
-        Assert.True(phone.IsFailure);
+        Assert.Throws<InvalidPhone>(() => new Phone("11 9741465070"));
     }
 
-    [Fact]
-    public void Should_Create_Custumer()
-    {
-        var name = "Felipe Heilmann";
-        var email = "felipeheilmannm@gmail.com";
-        var birthDate = new DateOnly(2004, 6, 2);
-        var cpf = "44444444444";
-        var phone = "11 97414-6507";
-        var password = "senha";
-
-        var custumer = Customer.Create(name, email, password, birthDate, cpf, phone);
-
-        Assert.True(custumer.IsSuccess);
-        Assert.False(custumer.IsFailure);
-    }
 
     [Fact]
     public void Should_Not_Create_Custumer_Due_Invalid_Age()
@@ -116,10 +78,7 @@ public class CustomerTest
         var phone = "11 97414-6507";
         var password = "senha";
 
-        var custumer = Customer.Create(name, email, password ,birthDate, cpf, phone);
+        Assert.Throws<UnderAge>(() => Customer.Create(name, email, password ,birthDate, cpf, phone));
 
-        Assert.False(custumer.IsSuccess);
-        Assert.True(custumer.IsFailure);
-        Assert.Equal(CustomerErrors.InvalidAge, custumer.Error);
     }
 }

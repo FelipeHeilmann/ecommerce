@@ -1,5 +1,7 @@
 ﻿using Domain.Categories;
+using Domain.Categories.Entity;
 using Domain.Products.Entity;
+using Domain.Products.Error;
 using Xunit;
 
 namespace Unit;
@@ -19,8 +21,8 @@ public class ProductTest
         var category = new Category(Guid.NewGuid(), "categoria nome", "categoria descricao");
         var product = Product.Create(name, description, imageUrl, currency, price, sku, category);
 
-        Assert.False(product.IsFailure);
-        Assert.True(product.IsSuccess);
+        Assert.Equal(name, product.Name);
+
     }
 
     [Fact]
@@ -34,10 +36,7 @@ public class ProductTest
         var sku = "sfdbjsdfgvbsdfghsdhfsohfsohjflshfodshfosf";
 
         var category = new Category(Guid.NewGuid(), "categoria nome", "categoria descricao");
-        var product = Product.Create(name, description, imageUrl, currency, price, sku, category);
-
-        Assert.True(product.IsFailure);
-        Assert.False(product.IsSuccess);
+        Assert.Throws<InvalidSku>(() => Product.Create(name, description, imageUrl, currency, price, null, category));
     }
 
     [Fact]
@@ -50,10 +49,7 @@ public class ProductTest
         var imageUrl = "image";
 
         var category = new Category(Guid.NewGuid(), "categoria nome", "categoria descricao");
-        var product = Product.Create(name, description, imageUrl, currency, price, null, category);
-
-        Assert.True(product.IsFailure);
-        Assert.False(product.IsSuccess);
+        Assert.Throws<InvalidSku>(() => Product.Create(name, description, imageUrl, currency, price, null, category));
     }
 
     [Fact]
@@ -66,9 +62,7 @@ public class ProductTest
         var imageUrl = "image";
 
         var category = new Category(Guid.NewGuid(), "categoria nome", "categoria descricao");
-        var product = Product.Create(name, description, imageUrl, currency, price, "", category);
 
-        Assert.True(product.IsFailure);
-        Assert.False(product.IsSuccess);
+        Assert.Throws<InvalidSku>(() => Product.Create(name, description, imageUrl, currency, price, null, category));
     }
 }

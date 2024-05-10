@@ -13,7 +13,7 @@ public class CreatedStatus : OrderStatus
 
     public override void Cancel(Order order)
     {
-        throw new Exception("Invalid Status");
+        order.Status = new CanceledStatus();
     }
 
     public override void Checkout(Order order)

@@ -1,11 +1,15 @@
-﻿using Domain.Addresses.Repository;
+﻿using Domain.Addresses.Entity;
+using Domain.Addresses.Repository;
 using Domain.Addresses.VO;
+using Domain.Categories.Entity;
 using Domain.Categories.Repository;
+using Domain.Customers.Entity;
 using Domain.Customers.Repository;
 using Domain.Customers.VO;
 using Domain.Orders.Entity;
 using Domain.Orders.Repository;
 using Domain.Orders.VO;
+using Domain.Products.Entity;
 using Domain.Products.Repository;
 using Domain.Products.VO;
 
@@ -22,7 +26,7 @@ public class RepositorySetup
                 "Imagem", //Image,
                 DateTime.Now, //CreatedAt
                 new Money("BRL", 50.00), //Price 
-                Sku.Create("0001").Value, //Sku
+                new Sku("0001"), //Sku
                 Guid.Parse("a7efe841-8e19-4fe8-afcd-e3742a3dacf4"),//CategoryId
                 new Category(Guid.Parse("a7efe841-8e19-4fe8-afcd-e3742a3dacf4"), //Category 
                 "categoria nome", 
@@ -35,7 +39,7 @@ public class RepositorySetup
                 "Imagem",
                 DateTime.Now,
                 new Money("BRL", 50.00), 
-                Sku.Create("0001").Value, 
+                new Sku("0001"), 
                 Guid.Parse("a7efe841-8e19-4fe8-afcd-e3742a3dacf4"),
                 new Category(Guid.Parse("a7efe841-8e19-4fe8-afcd-e3742a3dacf4"), 
                 "categoria nome", "categoria descricao")
@@ -47,7 +51,7 @@ public class RepositorySetup
                 "Imagem",
                 DateTime.Now,
                 new Money("BRL", 50.00),
-                Sku.Create("0001").Value, 
+                new Sku("0001"), 
                 Guid.Parse("a7efe841-8e19-4fe8-afcd-e3742a3dacf4"), 
                 new Category(Guid.Parse("a7efe841-8e19-4fe8-afcd-e3742a3dacf4"), 
                 "categoria nome", "categoria descricao")
@@ -59,7 +63,7 @@ public class RepositorySetup
                 "Imagem", 
                 DateTime.Now,
                 new Money("BRL", 50.00),
-                Sku.Create("0001").Value, 
+                new Sku("0001"), 
                 Guid.Parse("a7efe841-8e19-4fe8-afcd-e3742a3dacf4"),
                 new Category(Guid.Parse("a7efe841-8e19-4fe8-afcd-e3742a3dacf4"), 
                 "categoria nome", "categoria descricao")
@@ -72,7 +76,7 @@ public class RepositorySetup
                 "Imagem",
                 DateTime.Now,
                 new Money("BRL", 50.00), 
-                Sku.Create("0001").Value,
+                new Sku("0001"),
                 Guid.Parse("a7efe841-8e19-4fe8-afcd-e3742a3dacf4"), 
                 new Category(Guid.Parse("a7efe841-8e19-4fe8-afcd-e3742a3dacf4"),
                 "categoria nome", "categoria descricao")
@@ -84,7 +88,7 @@ public class RepositorySetup
                 "Imagem", 
                 DateTime.Now,
                 new Money("BRL", 70.00), 
-                Sku.Create("0002").Value,
+                new Sku("0002"),
                 Guid.Parse("538f1d08-9f31-4058-9538-55f388cde724"), 
                 new Category(Guid.Parse("538f1d08-9f31-4058-9538-55f388cde724"), 
                 "categoria nome", "categoria descricao")
@@ -96,7 +100,7 @@ public class RepositorySetup
                 "Imagem",
                 DateTime.Now,
                 new Money("BRL", 60.00), 
-                Sku.Create("0003").Value, 
+                new Sku("0003"), 
                 Guid.Parse("f3b205c3-552d-4fd9-b10e-6414086910b0"), 
                 new Category(Guid.Parse("f3b205c3-552d-4fd9-b10e-6414086910b0"), 
                 "categoria nome", 
@@ -110,7 +114,7 @@ public class RepositorySetup
             "Imagem",
             DateTime.Now,
             new Money("BRL", 60.00), 
-            Sku.Create("0003").Value, 
+            new Sku("0003"), 
             Guid.Parse("f3b205c3-552d-4fd9-b10e-6414086910b0"), 
             new Category(Guid.Parse("f3b205c3-552d-4fd9-b10e-6414086910b0"), 
             "categoria nome", 
@@ -123,7 +127,7 @@ public class RepositorySetup
                 "Imagem", 
                 DateTime.Now,
                 new Money("BRL", 100.00), 
-                Sku.Create("0003").Value, 
+                new Sku("0003"), 
                 Guid.Parse("f3b205c3-552d-4fd9-b10e-6414086910b0"), 
                 new Category(Guid.Parse("f3b205c3-552d-4fd9-b10e-6414086910b0"), 
                 "categoria nome", "categoria descricao")
@@ -149,10 +153,10 @@ public class RepositorySetup
     {
         _repository.Add(new Customer(
                 Guid.Parse("f3b205c3-552d-4fd9-b10e-6414086910b0"),
-                Name.Create("Felipe Heilmann").Value,
-                Email.Create("felipeheilmannm@gmail.com").Value,
-                CPF.Create("97067401046").Value,
-                Phone.Create("11 97414-6507").Value,
+                new Name("Felipe Heilmann"),
+                new Email("felipeheilmannm@gmail.com"),
+                new CPF("97067401046"),
+                new Phone("11 97414-6507"),
                 "senha",
                 new DateOnly(2004, 6, 11),
                 DateTime.Now)
@@ -163,8 +167,8 @@ public class RepositorySetup
     {
         var order = new Order(
             Guid.Parse("c3a9083c-a259-4516-8842-a80b40f8c39f"), 
-            Guid.Parse("f3b205c3-552d-4fd9-b10e-6414086910b0"), 
-            "created", 
+            Guid.Parse("f3b205c3-552d-4fd9-b10e-6414086910b0"),
+            new CreatedStatus(), 
             DateTime.Now, 
             DateTime.Now,
             null,
@@ -174,7 +178,7 @@ public class RepositorySetup
         var order2 = new Order(
             Guid.Parse("8f34a311-f1cd-40b6-9e5d-1b9f639369e9"),
             Guid.Parse("f3b205c3-552d-4fd9-b10e-6414086910b0"),
-            "created",
+            new CreatedStatus(),
             DateTime.Now,
             DateTime.Now,
             null,

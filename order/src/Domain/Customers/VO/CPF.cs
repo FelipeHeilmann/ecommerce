@@ -1,56 +1,62 @@
 ﻿using Domain.Customers.Error;
+using System.Numerics;
 using System.Text.RegularExpressions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Domain.Customers.VO;
 
 public record CPF
 {
+    private const int FACTOR_FIRST_DIGIT = 10;
+    private const int FACTOR_SECOND_DIGIT = 11;
     public string Value { get; init; }
 
     public CPF(string cpf)
     {
-        if (string.IsNullOrWhiteSpace(cpf)) throw new InvalidCPF();
-
-        var cleanedCPF = Regex.Replace(cpf, @"\D", "");
-
-        if (cleanedCPF.Length != 11) throw new InvalidCPF();
-
-        if (!ValidateDigit(cleanedCPF)) throw new InvalidCPF();
-
-        Value = cleanedCPF;
+        if (!Validate(cpf)) throw new InvalidCPF();
+        Value = RemoveNonDigits(cpf);
     }
-    private bool ValidateDigit(string cpf)
+
+    private bool Validate(string rawCpf)
     {
-        int[] numbers = new int[11];
-        for (int i = 0; i < 11; i++)
+        if (string.IsNullOrWhiteSpace(rawCpf)) return false;
+        var cpf = RemoveNonDigits(rawCpf);
+        if(!IsValidLength(cpf)) return false;
+        if(AllDigitsEqual(cpf)) return false;
+        var firstDigit = CalculateDigit(cpf, FACTOR_FIRST_DIGIT);
+        var secondDigit = CalculateDigit(cpf, FACTOR_SECOND_DIGIT);
+        return ExtractDigit(cpf) == $"{firstDigit}{secondDigit}";
+    }
+
+    private string RemoveNonDigits(string cpf)
+    {
+        return Regex.Replace(cpf, @"[^\d]", "");
+    }
+
+    private bool IsValidLength(string cpf)
+    {
+        return cpf.Length == 11;
+    }
+
+    private bool AllDigitsEqual(string cpf)
+    {
+        char firstDigit = cpf[0];
+        return cpf.All(digit => digit == firstDigit);
+    }
+
+    private int CalculateDigit(string cpf, int factor)
+    {
+        var total = 0;
+        foreach (char digit in cpf)
         {
-            numbers[i] = int.Parse(cpf[i].ToString());
+            if (factor > 1) total += int.Parse(digit.ToString()) * factor--;
         }
+        var remainder = total % 11;
+        return (remainder < 2) ? 0 : 11 - remainder;
+    }
 
-        int sum1 = 0;
-        for (int i = 0; i < 9; i++)
-        {
-            sum1 += numbers[i] * (10 - i);
-        }
-
-        int remainder1 = sum1 % 11;
-        int digit1 = remainder1 < 2 ? 0 : 11 - remainder1;
-
-        if (numbers[9] != digit1)
-            return false;
-
-        int sum2 = 0;
-        for (int i = 0; i < 10; i++)
-        {
-            sum2 += numbers[i] * (11 - i);
-        }
-
-        int remainder2 = sum2 % 11;
-        int digit2 = remainder2 < 2 ? 0 : 11 - remainder2;
-
-        if (numbers[10] != digit2)
-            return false;
-
-        return true;
+    private string ExtractDigit(string cpf)
+    {
+        return cpf.Substring(9);
     }
 }

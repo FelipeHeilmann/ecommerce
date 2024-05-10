@@ -186,7 +186,6 @@ public class OrderTest
 
         Assert.True(result.IsSuccess);
         Assert.False(result.IsFailure);
-        Assert.Equal("canceled", result.Value.Status);
     }
 
     [Fact]

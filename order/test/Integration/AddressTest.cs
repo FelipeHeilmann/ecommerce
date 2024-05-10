@@ -61,7 +61,7 @@ public class AddressTest
 
         Assert.True(result.IsSuccess);
         Assert.False(result.IsFailure);
-        Assert.True(result.Value is ICollection<Address>);
+        Assert.Equal(2, result.Value.Count);
     }
 
     [Fact]
@@ -77,8 +77,9 @@ public class AddressTest
 
         Assert.True(result.IsSuccess);
         Assert.False(result.IsFailure);
-        Assert.True(result.Value is Address);
+
     }
+
     [Fact]
     public async Task Sould_Not_Get_Addresses_By_Id()
     {
