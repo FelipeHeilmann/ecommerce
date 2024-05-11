@@ -1,6 +1,5 @@
 ﻿using Domain.Customers.Error;
 using Domain.Customers.VO;
-using Domain.Shared;
 namespace Domain.Customers.Entity;
 
 public class Customer
@@ -10,10 +9,10 @@ public class Customer
     private Email _email;
     private CPF _cpf;
     private Phone _phone;
-    public string Name { get => _name.Value; private set => _name = new Name(value); }
-    public string Email { get => _email.Value; private set => _email = new Email(value); }
-    public string CPF { get => _cpf.Value; private set => _cpf = new CPF(value); }
-    public string Phone { get => _phone.Value; private set => _phone = new Phone(value); }
+    public string Name { get => _name.Value; }
+    public string Email { get => _email.Value; }
+    public string CPF { get => _cpf.Value; }
+    public string Phone { get => _phone.Value; }
     public string Password { get; private set; }
     public DateOnly BirthDate { get; private set; }
     public DateTime CreatedAt { get; private set; }
@@ -30,7 +29,7 @@ public class Customer
         Password = password;
     }
 
-    public Customer() { }
+    protected Customer() { }
 
     public static Customer Create(string name, string email, string password, DateOnly birthDate, string cpf, string phone)
     {

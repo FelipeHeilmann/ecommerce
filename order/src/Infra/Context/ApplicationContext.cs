@@ -12,11 +12,11 @@ public class ApplicationContext : DbContext
 {
     public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options) { }
 
-    DbSet<Customer> Customer {  get; set; }
-    DbSet<Category> Category { get; set; }
-    DbSet<Product> Product { get; set; }
-    DbSet<Order> Order { get; set; }
-    DbSet<LineItem> LineItem { get; set; }
+    public DbSet<Customer> Customers {  get; set; }
+    DbSet<Category> Categories { get; set; }
+    DbSet<Product> Products { get; set; }
+    DbSet<Order> Orders { get; set; }
+    DbSet<LineItem> LineItems { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

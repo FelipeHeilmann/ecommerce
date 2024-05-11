@@ -9,13 +9,17 @@ public class CustomerRepository : Repository<Customer>, ICustomerRepository
 {
     public CustomerRepository(ApplicationContext context)
         : base(context) { }
-    public async Task<Customer?> GetByEmailAsync(string email, CancellationToken cancellationToken)
+    public Task<Customer?> GetByEmailAsync(string email, CancellationToken cancellationToken)
     {
-        return await _context.Set<Customer>().FirstOrDefaultAsync(c => c.Email == email);
+        var customers = _context.Customers.ToListAsync(cancellationToken).Result;
+
+        return Task.FromResult(customers.FirstOrDefault(c => c.Email == email));
     }
 
-    public async Task<bool> IsEmailUsedAsync(string email, CancellationToken cancellationToken)
+    public Task<bool> IsEmailUsedAsync(string email, CancellationToken cancellationToken)
     {
-        return await _context.Set<Customer>().AnyAsync(c => c.Email == email, cancellationToken);
+        var customers = _context.Customers.ToListAsync(cancellationToken).Result;
+
+        return Task.FromResult(customers.Any(c => c.Email == email));
     }
 }
