@@ -16,6 +16,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.Configure<MailtrapSettings>(builder.Configuration.GetSection("MailSettings"));
 builder.Services.AddTransient<IMailerGateway, MailtrapAdapter>();
+builder.Services.AddSingleton<IOrderGateway, OrderGatewayHttp>();
 builder.Services.AddSingleton<IQueue, RabbitMQAdapter>(provider =>
 {
     var rabbitMQAdapter = new RabbitMQAdapter(builder.Configuration);

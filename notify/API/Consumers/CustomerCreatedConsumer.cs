@@ -21,7 +21,7 @@ public class CustomerCreatedConsumer : BackgroundService
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            await _queue.SubscribeAsync<CustomerCreatedEvent>("customer-created", "customers", async message => {
+            await _queue.SubscribeAsync<CustomerCreatedEvent>("customerCreated.notification", "customerCreated", async message => {
                 using (var scope = _serviceProvider.CreateAsyncScope())
                 {
                     var mailerGateway = scope.ServiceProvider.GetRequiredService<IMailerGateway>();

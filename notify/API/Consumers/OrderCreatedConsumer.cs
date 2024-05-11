@@ -20,7 +20,7 @@ namespace API.Consumers
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                await _queue.SubscribeAsync<OrderCreatedEvent>("order-created", "order.create", async message =>
+                await _queue.SubscribeAsync<OrderCreatedEvent>("orderCreated.notification", "order.created", async message =>
                 {
                     using (var scope = _serviceProvider.CreateAsyncScope())
                     {

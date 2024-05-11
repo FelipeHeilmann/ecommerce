@@ -24,7 +24,7 @@ public class OrderPurchasedEventConsumer : BackgroundService
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            await _queue.SubscribeAsync<OrderPurchasedEvent>("order-purchased", "order.purchased", async message => {
+            await _queue.SubscribeAsync<OrderPurchasedEvent>("orderPurchased.proccessPayment", "order.purchased", async message => {
                 using (var scope = _serviceProvider.CreateAsyncScope())
                 {
                     var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();

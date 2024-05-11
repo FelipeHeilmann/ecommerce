@@ -19,7 +19,7 @@ public class OrderPaymentUrlConsumer : BackgroundService
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            await _queue.SubscribeAsync<OrderPaymentUrlEvent>("order-payment-url", "payment.url", async message =>
+            await _queue.SubscribeAsync<OrderPaymentUrlEvent>("orderPurchased.url", "payment.url", async message =>
             {
                 _logger.LogInformation($"The payment from order {message.OrderId} was sent to the gateway and this is the url {message.Url}");
                 _logger.LogInformation("The payment url is sent to the web socket now");

@@ -15,6 +15,6 @@ public class CustomerCreatedEventHandler : INotificationHandler<CustomerCreatedE
 
     public async Task Handle(CustomerCreatedEvent notification, CancellationToken cancellationToken)
     {
-        await _queue.PublishAsync(new { Name = notification.Name, Email = notification.Email }, "customers");
+        await _queue.PublishAsync(new { notification.Name, notification.Email }, "customer");
     }
 }
