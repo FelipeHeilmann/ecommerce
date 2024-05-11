@@ -3,10 +3,7 @@ using Application.Abstractions.Messaging;
 using Domain.Shared;
 using Domain.Transactions;
 using Application.Data;
-using MediatR;
 using Application.Abstractions.Queue;
-using System.Text.Json;
-using System.Text;
 
 namespace Application.Transactions.MakePaymentRequest;
 
@@ -62,8 +59,8 @@ public class CreatePaymentCommandHandler : ICommandHandler<CreatePaymentCommand>
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        if (request.PaymentType != "credit") await _queue.PublishAsync(new { request.OrderId, Url = responsePaymentGateway.PaymentUrl }, "payment.url");
-
+        await _queue.PublishAsync(new { request.OrderId, Url = responsePaymentGateway.PaymentUrl, request.PaymentType }, "payment.url");
+        
         return Result.Success();
     }
 }

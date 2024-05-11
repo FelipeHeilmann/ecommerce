@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Application.Abstractions.Queue;
 using Domain.Events;
 using Application.Transactions.MakePaymentRequest;
@@ -7,23 +6,18 @@ using Application.Abstractions.Gateway;
 using Application.Data;
 using Domain.Transactions;
 using Microsoft.Extensions.DependencyInjection;
-using MediatR;
 
 namespace Application.Transactions.Consumers;
 
 public class OrderPurchasedEventConsumer : BackgroundService
 {
-    private readonly ILogger<OrderPurchasedEventConsumer> _logger;
-    private readonly IMediator _mediator;
     private readonly IServiceProvider _serviceProvider;
     private readonly IQueue _queue;
 
-    public OrderPurchasedEventConsumer(ILogger<OrderPurchasedEventConsumer> logger, IQueue queue, IServiceProvider serviceProvider, IMediator mediator)
+    public OrderPurchasedEventConsumer(IQueue queue, IServiceProvider serviceProvider)
     {
-        _logger = logger;
         _queue = queue;
         _serviceProvider = serviceProvider;
-        _mediator = mediator;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)

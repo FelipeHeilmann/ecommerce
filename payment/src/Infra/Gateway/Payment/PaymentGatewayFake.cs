@@ -63,9 +63,7 @@ public class PaymentGatewayFake : IPaymentGateway
         var paymentId = Guid.NewGuid();
         var paymentUrl = "https://www.instagram.com/p/C38mWMeMSn7/?utm_source=ig_embed&ig_rid=e61afe49-0878-41c0-9b1e-b17f00f5cf76";
 
-        var result = new PaymentGatewayResponse((paymentId.ToString()), paymentUrl);
-
-        return result;
+        return new PaymentGatewayResponse((paymentId.ToString()), paymentUrl);
     }
 
 
