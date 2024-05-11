@@ -1,6 +1,7 @@
 ﻿using Application.Abstractions.Queue;
 using Application.Abstractions.Services;
 using Application.Data;
+using Application.Orders.OrderPaymentUrl;
 using Domain.Addresses.Repository;
 using Domain.Categories.Repository;
 using Domain.Customers.Repository;
@@ -48,5 +49,7 @@ public static class DependecyInjection
         services.AddScoped<IJwtProvider, JwtProvider>();
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+        services.AddHostedService<OrderPaymentUrlConsumer>();
     }
 }
