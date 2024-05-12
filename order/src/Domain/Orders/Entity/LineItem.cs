@@ -23,15 +23,14 @@ public class LineItem
     {
     }
 
-    public void AddQuantity()
+    public void AddQuantity(int quantity)
     {
-        Quantity++;
+        Quantity += quantity;
     }
 
-    public bool DeleteItem()
+    public void DecreaseQuantity()
     {
-        if (Quantity == 1) return true;
-        if (Quantity > 1) Quantity--;
-        return false;
+        Quantity--;
     }
+         
 };

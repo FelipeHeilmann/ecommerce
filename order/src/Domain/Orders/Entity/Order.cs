@@ -1,4 +1,5 @@
 ﻿using Domain.Abstractions;
+using Domain.Customers.Entity;
 using Domain.Orders.Error;
 using Domain.Orders.Events;
 using Domain.Orders.VO;
@@ -30,57 +31,53 @@ public class Order : Observable
         ShippingAddressId = shippingAddressId;
     }
 
-    public Order() { }
+    private Order() { }
 
     public string GetStatus()
     {
         return Status.Value;
     }
 
-    public static Order Create(Guid customerId)
+    public static Order Create(Guid customerId, bool cart = false)
     {
-        return new Order(Guid.NewGuid(), customerId, new CreatedStatus(), DateTime.UtcNow, DateTime.UtcNow, null, null);
+        return new Order(Guid.NewGuid(), customerId, cart ? new CartStatus() : new CreatedStatus(), DateTime.UtcNow, DateTime.UtcNow, null, null);
     }
 
-    public LineItem AddItem(Guid productId, Money price, int quantity)
+    public void AddItem(Guid productId, Money price, int quantity)
     {
         UpdatedAt = DateTime.UtcNow;
 
-        var existLineItemIndex = Items.ToList().FindIndex(li => li.ProductId == productId);
+        var existingLineItem = _items.FirstOrDefault(li => li.ProductId == productId);
 
-        if (existLineItemIndex != -1)
+        if (existingLineItem != null)
         {
-            Items.ToList()[existLineItemIndex].AddQuantity();
-
-            return Items.ToList()[existLineItemIndex];
+            existingLineItem.AddQuantity(quantity);
         }
-
-        var lineItem = new LineItem(Guid.NewGuid(), Id, productId, price, quantity);
-
-        _items.Add(lineItem);
-
-
-        return lineItem;
-
+        else
+        {
+            _items.Add(new LineItem(Guid.NewGuid(), Id, productId, price, quantity));
+        }
     }
 
-    public Result<LineItem> RemoveItem(Guid lineItemId)
+
+    public void RemoveItem(Guid lineItemId)
     {
-        if (HasOneItem()) return Result.Failure<LineItem>(OrderErrors.OrderHasOneLineItem);
+        if (HasOneItem() && Status.Value != "cart") throw new CannotRemoveItem();
 
-        var lineItem = _items.FirstOrDefault(item => item.Id == lineItemId);
+        var lineItem  = _items.FirstOrDefault(li => li.Id == lineItemId);
 
-        if (lineItem == null) return Result.Failure<LineItem>(OrderErrors.LineItemNotFound);
+        if (lineItem == null) throw new LineItemNotFound();
 
         UpdatedAt = DateTime.UtcNow;
 
-        var deleted = lineItem.DeleteItem();
-        if (deleted)
+        if (lineItem.Quantity == 1)
         {
             _items.Remove(lineItem);
         }
-
-        return Result.Success(lineItem);
+        else
+        {
+            lineItem.DecreaseQuantity();
+        }
     }
 
     public double CalculateTotal()

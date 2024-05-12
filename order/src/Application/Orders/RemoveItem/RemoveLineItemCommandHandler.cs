@@ -7,30 +7,30 @@ using Domain.Shared;
 
 namespace Application.Orders.RemoveItem;
 
-public class RemoveLineItemCommandHandler : ICommandHandler<RemoveLineItemCommand, Order>
+public class RemoveLineItemCommandHandler : ICommandHandler<RemoveLineItemCommand>
 {
-    private readonly IOrderRepository _repository;
+    private readonly IOrderRepository _orderRepository;
     private readonly IUnitOfWork _unitOfWork;
 
     public RemoveLineItemCommandHandler(IOrderRepository repository, IUnitOfWork unitOfWork)
     {
-        _repository = repository;
+        _orderRepository = repository;
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<Result<Order>> Handle(RemoveLineItemCommand command, CancellationToken cancellationToken)
+    public async Task<Result> Handle(RemoveLineItemCommand command, CancellationToken cancellationToken)
     {
-        var order = await _repository.GetByIdAsync(command.OrderId, cancellationToken, "Items");
+        var cart = await _orderRepository.GetCart(cancellationToken, "Items");
 
-        if (order == null) return Result.Failure<Order>(OrderErrors.OrderNotFound);
+        if (cart == null) return Result.Failure<Order>(OrderErrors.OrderNotFound);
 
-        var removed = order.RemoveItem(command.LineItemId);
+        cart.RemoveItem(command.LineItemId);
 
-        if (removed.IsFailure) return Result.Failure<Order>(removed.Error);
+        if (cart.Items.Count == 0) _orderRepository.Delete(cart);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return Result.Success(order);
+        return Result.Success();
     }
 
 }
