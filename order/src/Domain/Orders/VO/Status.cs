@@ -18,6 +18,7 @@ public class OrderStatusFactory
 {
     public static OrderStatus Create(string status)
     {
+        if (status == "cart") return new CartStatus();
         if (status == "created") return new CreatedStatus();
         if (status == "waiting_payment") return new WaitingPaymentStatus();
         if (status == "payment_approved") return new ApprovedStatus();
