@@ -53,5 +53,10 @@ namespace Infra.Repositories.Memory
         {
             throw new NotImplementedException();
         }
+
+        public Task<Order?> GetCart(CancellationToken cancellationToken, string? includes = null)
+        {
+            return Task.FromResult(_context.FirstOrDefault(o => o.Status.Value == "cart"));
+        }
     }
 }
