@@ -35,7 +35,7 @@ public class CheckoutOrderCommandHandler : ICommandHandler<CheckoutOrderCommand>
 
     public async Task<Result> Handle(CheckoutOrderCommand command, CancellationToken cancellationToken)
     {
-        var order = await _orderRepository.GetByIdAsync(command.OrderId, cancellationToken, "Items");
+        var order = await _orderRepository.GetByIdAsync(command.OrderId, cancellationToken);
 
         if (order == null) return Result.Failure(OrderErrors.OrderNotFound);
 

@@ -17,34 +17,36 @@ public class ProductRepository : IProductRepository
     public IQueryable<Product> GetQueryable(CancellationToken cancellationToken)
     {
         var products = new List<Product>();
-        foreach(var productModel in _context.Set<ProductsModel>().Include(product => product.Category).ToList()) 
+        foreach(var productModel in _context.Set<ProductsModel>().Include(model => model.Category).ToList()) 
         {
             products.Add(productModel.ToAggregate());
         }
         return products.AsQueryable();
     }
 
-    public async Task<ICollection<Product>> GetAllAsync(CancellationToken cancellationToken, string? include = null)
+    public async Task<ICollection<Product>> GetAllAsync(CancellationToken cancellationToken)
     {
         var products = new List<Product>();
-        foreach (var productModel in await _context.Set<ProductsModel>().Include(product => product.Category).ToListAsync(cancellationToken))
+        foreach (var productModel in await _context.Set<ProductsModel>().Include(model => model.Category)
+                                                                        .ToListAsync(cancellationToken))
         {
             products.Add(productModel.ToAggregate());
         }
         return products.ToList();
     }
 
-    public async Task<Product?> GetByIdAsync(Guid id, CancellationToken cancellationToken, string? include = null)
+    public async Task<Product?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
-        var productModel = await _context.Set<ProductsModel>().Include(product => product.Category).FirstOrDefaultAsync(product => product.Id == id, cancellationToken);
+        var productModel = await _context.Set<ProductsModel>().Include(model => model.Category)
+                                                              .FirstOrDefaultAsync(model => model.Id == id, cancellationToken);
         return productModel?.ToAggregate();
     }
 
     public async Task<ICollection<Product>> GetByIdsAsync(List<Guid> ids, CancellationToken cancellationToken)
     {
-        return await _context.Set<ProductsModel>().Include(product => product.Category)
+        return await _context.Set<ProductsModel>().Include(model => model.Category)
                                                   .Where(p => ids.Contains(p.Id))
-                                                  .Select(product => product.ToAggregate())
+                                                  .Select(model => model.ToAggregate())
                                                   .ToListAsync(cancellationToken);
     }
 

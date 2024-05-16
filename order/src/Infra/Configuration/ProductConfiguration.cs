@@ -19,7 +19,7 @@ public class ProductConfiguration : IEntityTypeConfiguration<ProductsModel>
         builder.Property(m => m.Currency).HasMaxLength(3).HasColumnName("price_currency");
         builder.Property(m => m.Amount).HasColumnName("price_amount");
 
-        builder.HasOne<CategoryModel>()
+        builder.HasOne(p => p.Category)
             .WithMany()
             .HasForeignKey(p => p.CategoryId);
 

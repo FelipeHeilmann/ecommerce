@@ -7,17 +7,17 @@ namespace Infra.Repositories.Memory
     {
         private readonly List<Order> _context = new();
 
-        public Task<ICollection<Order>> GetAllAsync(CancellationToken cancellationToken, string? include = null)
+        public Task<ICollection<Order>> GetAllAsync(CancellationToken cancellationToken)
         { 
             return Task.FromResult<ICollection<Order>>(_context);
         }
 
-        public Task<Order?> GetByIdAsync(Guid id, CancellationToken cancellationToken, string? include = null)
+        public Task<Order?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
             return Task.FromResult(_context.FirstOrDefault(o => o.Id == id));
         }
 
-        public Task<ICollection<Order>> GetOrdersByCustomerId(Guid customerId, CancellationToken cancellationToken, string? include = null)
+        public Task<ICollection<Order>> GetOrdersByCustomerId(Guid customerId, CancellationToken cancellationToken)
         {
             return Task.FromResult<ICollection<Order>>(_context.Where(o => o.CustomerId == customerId).ToList());
         }
@@ -54,7 +54,7 @@ namespace Infra.Repositories.Memory
             throw new NotImplementedException();
         }
 
-        public Task<Order?> GetCart(CancellationToken cancellationToken, string? includes = null)
+        public Task<Order?> GetCart(CancellationToken cancellationToken)
         {
             return Task.FromResult(_context.FirstOrDefault(o => o.Status.Value == "cart"));
         }

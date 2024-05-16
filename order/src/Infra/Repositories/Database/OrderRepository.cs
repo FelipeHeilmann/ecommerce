@@ -17,38 +17,38 @@ public class OrderRepository : IOrderRepository
     public IQueryable<Order> GetQueryable(CancellationToken cancellation)
     {
         var orders = new List<Order>();
-        foreach(var orderModel in _context.Set<OrderModel>().Include("Items").ToList())
+        foreach(var orderModel in _context.Set<OrderModel>().Include(model => model.Items).ToList())
         {
             orders.Add(orderModel.ToAggregate());
         }
         return orders.AsQueryable();
     }
 
-    public async Task<ICollection<Order>> GetAllAsync(CancellationToken cancellationToken, string? include = null)
+    public async Task<ICollection<Order>> GetAllAsync(CancellationToken cancellationToken)
     {
         var orders = new List<Order>();
-        foreach (var orderModel in await _context.Set<OrderModel>().Include(li => li.Items).ToListAsync())
+        foreach (var orderModel in await _context.Set<OrderModel>().Include(model => model.Items).ToListAsync())
         {
             orders.Add(orderModel.ToAggregate());
         }
         return orders.ToList();
     }
 
-    public async Task<Order?> GetByIdAsync(Guid id, CancellationToken cancellationToken, string? include = null)
+    public async Task<Order?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
-        var orderModel = await _context.Set<OrderModel>().Include("Items").FirstOrDefaultAsync(model => model.Id == id);
+        var orderModel = await _context.Set<OrderModel>().Include(model => model.Items).FirstOrDefaultAsync(model => model.Id == id);
         return orderModel?.ToAggregate(); 
     }
 
-    public async Task<Order?> GetCart(CancellationToken cancellationToken, string? includes = null)
+    public async Task<Order?> GetCart(CancellationToken cancellationToken)
     {
-        var orderModel = await _context.Set<OrderModel>().Include(li => li.Items).FirstOrDefaultAsync(model => model.Status == "cart");
+        var orderModel = await _context.Set<OrderModel>().Include(model => model.Items).FirstOrDefaultAsync(model => model.Status == "cart");
         return orderModel?.ToAggregate();
     }
 
-    public async Task<ICollection<Order>> GetOrdersByCustomerId(Guid customerId, CancellationToken cancellationToken, string? includes = null)
+    public async Task<ICollection<Order>> GetOrdersByCustomerId(Guid customerId, CancellationToken cancellationToken)
     {
-        var orderModels = await _context.Set<OrderModel>().Where(model => model.CustomerId ==  customerId).Include("Items").ToListAsync();
+        var orderModels = await _context.Set<OrderModel>().Where(model => model.CustomerId ==  customerId).Include(model => model.Items).ToListAsync();
         var orders = new List<Order>();
         foreach (var orderModel in orderModels)
         {

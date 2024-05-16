@@ -7,7 +7,7 @@ public class AddressRepositoryInMemory : IAddressRepository
 {
     private readonly List<Address> _context = new();
 
-    public Task<ICollection<Address>> GetAllAsync(CancellationToken cancellationToken, string? include = null)
+    public Task<ICollection<Address>> GetAllAsync(CancellationToken cancellationToken)
     {
         return Task.FromResult<ICollection<Address>>(_context);
     }
@@ -16,7 +16,7 @@ public class AddressRepositoryInMemory : IAddressRepository
         throw new NotImplementedException();
     }
 
-    public Task<Address?> GetByIdAsync(Guid id, CancellationToken cancellationToken, string? include = null)
+    public Task<Address?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         return Task.FromResult(_context.FirstOrDefault(a => a.Id == id));
     }

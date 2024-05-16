@@ -24,7 +24,7 @@ public class CategoryRepository : ICategoryRepository
        return categories.AsQueryable();
     }
 
-    public async Task<ICollection<Category>> GetAllAsync(CancellationToken cancellationToken, string? include = null)
+    public async Task<ICollection<Category>> GetAllAsync(CancellationToken cancellationToken)
     {
         var categories = new List<Category>();
         foreach (var categoryModel in await _context.Set<CategoryModel>().ToListAsync(cancellationToken))
@@ -34,9 +34,9 @@ public class CategoryRepository : ICategoryRepository
         return categories.ToList();
     }
 
-    public async Task<Category?> GetByIdAsync(Guid id, CancellationToken cancellationToken, string? include = null)
+    public async Task<Category?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
-        var categoryModel = await _context.Set<CategoryModel>().FirstOrDefaultAsync(category => category.Id == id, cancellationToken);
+        var categoryModel = await _context.Set<CategoryModel>().FirstOrDefaultAsync(model => model.Id == id, cancellationToken);
         return categoryModel?.ToAggregate();
     }
 

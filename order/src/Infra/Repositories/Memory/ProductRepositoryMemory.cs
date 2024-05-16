@@ -9,11 +9,11 @@ namespace Infra.Repositories.Memory
         private readonly List<Product> _context = new();
         private readonly List<Category> _categoryContext = new();
 
-        public Task<ICollection<Product>> GetAllAsync(CancellationToken cancellationToken, string? include = null)
+        public Task<ICollection<Product>> GetAllAsync(CancellationToken cancellationToken)
         {
             return Task.FromResult<ICollection<Product>>(_context);
         }
-        public Task<Product?> GetByIdAsync(Guid id, CancellationToken cancellationToken, string? include = null)
+        public Task<Product?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
             return Task.FromResult(_context.ToList().FirstOrDefault(p => p.Id == id));
         }

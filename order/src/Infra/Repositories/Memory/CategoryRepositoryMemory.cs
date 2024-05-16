@@ -7,12 +7,12 @@ public class CategoryRepositoryMemory : ICategoryRepository
 {
     private readonly List<Category> _context = new();
 
-    public Task<ICollection<Category>> GetAllAsync(CancellationToken cancellationToken, string? include = null)
+    public Task<ICollection<Category>> GetAllAsync(CancellationToken cancellationToken)
     {
         return Task.FromResult<ICollection<Category>>((_context));
     }
 
-    public Task<Category?> GetByIdAsync(Guid id, CancellationToken cancellationToken, string? include = null)
+    public Task<Category?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         return Task.FromResult(_context.FirstOrDefault(c => c.Id == id));
     }

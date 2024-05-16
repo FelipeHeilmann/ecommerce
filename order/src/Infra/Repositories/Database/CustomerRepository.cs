@@ -23,7 +23,7 @@ public class CustomerRepository : ICustomerRepository
         }
         return customers.AsQueryable();
     }
-    public async Task<ICollection<Customer>> GetAllAsync(CancellationToken cancellationToken, string? include = null)
+    public async Task<ICollection<Customer>> GetAllAsync(CancellationToken cancellationToken)
     {
         var customers = new List<Customer>();
         foreach (var customerModel in await _context.Set<CustomerModel>().ToListAsync(cancellationToken))
@@ -33,7 +33,7 @@ public class CustomerRepository : ICustomerRepository
         return customers.ToList();
     }
 
-    public async Task<Customer?> GetByIdAsync(Guid id, CancellationToken cancellationToken, string? include = null)
+    public async Task<Customer?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         var customerModel = await _context.Set<CustomerModel>().FirstOrDefaultAsync(model => model.Id == id, cancellationToken);
         return customerModel?.ToAggregate();

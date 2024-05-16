@@ -24,7 +24,7 @@ public class AddressRepository : IAddressRepository
        return addresses.AsQueryable();
     }
 
-    public async Task<ICollection<Address>> GetAllAsync(CancellationToken cancellationToken, string? include = null)
+    public async Task<ICollection<Address>> GetAllAsync(CancellationToken cancellationToken)
     {
         var addresses = new List<Address>();
         foreach (var addressModel in await _context.Set<AddressModel>().ToListAsync())
@@ -36,14 +36,14 @@ public class AddressRepository : IAddressRepository
 
     public async Task<ICollection<Address>> GetByCustomerIdAsync(Guid customerId, CancellationToken cancellationToken)
     {
-        var addresses = await _context.Set<AddressModel>().Where(address => address.CustomerId == customerId)
-                                                          .Select(address => address.ToAggregate())
+        var addresses = await _context.Set<AddressModel>().Where(model => model.CustomerId == customerId)
+                                                          .Select(model => model.ToAggregate())
                                                           .ToListAsync(cancellationToken);
 
         return addresses;
     }
 
-    public async Task<Address?> GetByIdAsync(Guid id, CancellationToken cancellationToken, string? include = null)
+    public async Task<Address?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         var addressModel = await _context.Set<AddressModel>().FirstOrDefaultAsync(model => model.Id == id);
         return addressModel?.ToAggregate();

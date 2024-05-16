@@ -24,7 +24,7 @@ public class CreateOrderEventHandler : INotificationHandler<OrderCreatedEvent>
 
     public async Task Handle(OrderCreatedEvent notification, CancellationToken cancellationToken)
     {
-        var order = await _orderRepository.GetByIdAsync(notification.OrderId, cancellationToken, "");
+        var order = await _orderRepository.GetByIdAsync(notification.OrderId, cancellationToken);
 
         var custmer = await _customerRepository.GetByIdAsync(order!.CustomerId, cancellationToken);
 
