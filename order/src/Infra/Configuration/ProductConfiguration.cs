@@ -1,5 +1,4 @@
-﻿using Infra.Models.Categories;
-using Infra.Models.Products;
+﻿using Infra.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -20,7 +19,7 @@ public class ProductConfiguration : IEntityTypeConfiguration<ProductsModel>
         builder.Property(m => m.Currency).HasMaxLength(3).HasColumnName("price_currency");
         builder.Property(m => m.Amount).HasColumnName("price_amount");
 
-        builder.HasOne<CategoryModel>(p => p.Category)
+        builder.HasOne<CategoryModel>()
             .WithMany()
             .HasForeignKey(p => p.CategoryId);
 

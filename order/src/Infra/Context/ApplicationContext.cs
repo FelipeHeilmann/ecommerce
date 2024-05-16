@@ -1,8 +1,5 @@
 ﻿using Domain.Customers.Entity;
-using Infra.Models.Addresses;
-using Infra.Models.Categories;
-using Infra.Models.Orders;
-using Infra.Models.Products;
+using Infra.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infra.Context;

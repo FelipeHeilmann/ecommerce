@@ -1,6 +1,6 @@
 ﻿using Domain.Categories.Entity;
 
-namespace Infra.Models.Categories;
+namespace Infra.Models;
 
 public class CategoryModel
 {
@@ -19,7 +19,7 @@ public class CategoryModel
 
     public static CategoryModel FromAggregate(Category category)
     {
-        return new CategoryModel(category.Id, category.Name, category.Description); 
+        return new CategoryModel(category.Id, category.Name, category.Description);
     }
 
     public Category ToAggregate()

@@ -1,7 +1,7 @@
 ﻿using Domain.Orders.Entity;
 using Domain.Products.VO;
 
-namespace Infra.Models.Orders;
+namespace Infra.Models;
 
 public class OrderModel
 {
@@ -14,7 +14,7 @@ public class OrderModel
     public Guid? BillingAddressId { get; set; }
     public Guid? ShippingAddressId { get; set; }
 
-    public OrderModel(Guid id, Guid custmerId, string status, ICollection<LineItemModel> items,DateTime createdAt, DateTime updatedAt, Guid? billingAddressId, Guid? shippingAddressId)
+    public OrderModel(Guid id, Guid custmerId, string status, ICollection<LineItemModel> items, DateTime createdAt, DateTime updatedAt, Guid? billingAddressId, Guid? shippingAddressId)
     {
         Id = id;
         CustomerId = custmerId;
@@ -31,12 +31,12 @@ public class OrderModel
     public Order ToAggregate()
     {
         var lineItems = Items.Select(li => li.ToAggregate()).ToList();
-        return new Order(Id, CustomerId, Status, lineItems, CreatedAt, UpdatedAt, BillingAddressId, ShippingAddressId); 
+        return new Order(Id, CustomerId, Status, lineItems, CreatedAt, UpdatedAt, BillingAddressId, ShippingAddressId);
     }
 
     public static OrderModel FromAggreate(Order order)
     {
-        var items = order.Items.Select(li => LineItemModel.FromAggregate(li)).ToList();    
-        return new OrderModel(order.Id, order.CustomerId ,order.GetStatus(), items ,order.CreatedAt, order.UpdatedAt, order.BillingAddressId, order.ShippingAddressId);
+        var items = order.Items.Select(li => LineItemModel.FromAggregate(li)).ToList();
+        return new OrderModel(order.Id, order.CustomerId, order.GetStatus(), items, order.CreatedAt, order.UpdatedAt, order.BillingAddressId, order.ShippingAddressId);
     }
 }

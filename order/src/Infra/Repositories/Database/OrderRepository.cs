@@ -1,7 +1,7 @@
 ﻿using Domain.Orders.Entity;
 using Domain.Orders.Repository;
 using Infra.Context;
-using Infra.Models.Orders;
+using Infra.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infra.Repositories.Database;

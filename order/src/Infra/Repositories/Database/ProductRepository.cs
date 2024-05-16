@@ -1,7 +1,7 @@
 ﻿using Domain.Products.Entity;
 using Domain.Products.Repository;
 using Infra.Context;
-using Infra.Models.Products;
+using Infra.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infra.Repositories.Database;

@@ -1,7 +1,7 @@
 ﻿using Domain.Orders.Entity;
 using Domain.Products.VO;
 
-namespace Infra.Models.Orders;
+namespace Infra.Models;
 
 public class LineItemModel
 {

@@ -1,5 +1,4 @@
-﻿using Infra.Models.Orders;
-using Infra.Models.Products;
+﻿using Infra.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

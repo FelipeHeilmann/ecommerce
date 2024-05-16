@@ -1,8 +1,7 @@
 ﻿using Domain.Products.Entity;
 using Domain.Products.VO;
-using Infra.Models.Categories;
 
-namespace Infra.Models.Products;
+namespace Infra.Models;
 
 public class ProductsModel
 {
