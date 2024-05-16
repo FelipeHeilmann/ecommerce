@@ -1,5 +1,5 @@
-﻿using Domain.Addresses.Entity;
-using Domain.Customers.Entity;
+﻿using Domain.Customers.Entity;
+using Infra.Models.Addresses;
 using Infra.Models.Orders;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -27,11 +27,11 @@ public class OrderConfiguration : IEntityTypeConfiguration<OrderModel>
             .WithMany()
             .HasForeignKey(o => o.CustomerId);
 
-        builder.HasOne<Address>()
+        builder.HasOne<AddressModel>()
             .WithMany()
             .HasForeignKey(o => o.BillingAddressId);
 
-        builder.HasOne<Address>()
+        builder.HasOne<AddressModel>()
             .WithMany()
             .HasForeignKey(o => o.ShippingAddressId);
 

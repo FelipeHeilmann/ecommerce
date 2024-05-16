@@ -34,12 +34,10 @@ public class CreateAddressCommandHandler : ICommandHandler<CreateAddressCommand,
                 request.Country
             );
 
-        if (address.IsFailure) return Result.Failure<Guid>(address.Error);
-
-        _addressRepository.Add(address.Value);
+        _addressRepository.Add(address);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return address.Value.Id;
+        return address.Id;
     }
 }

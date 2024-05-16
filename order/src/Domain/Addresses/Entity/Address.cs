@@ -5,10 +5,10 @@ namespace Domain.Addresses.Entity;
 
 public class Address
 {
+    private ZipCode _zipCode;
     public Guid Id { get; private set; }
     public Guid CustomerId { get; private set; }
-    public string ZipCode { get => _zipCode.Value; private set => _zipCode = VO.ZipCode.Create(value).Value; }
-    public ZipCode _zipCode;
+    public string ZipCode { get => _zipCode.Value; }
     public string Street { get; private set; }
     public string Neighborhood { get; private set; }
     public string Number { get; private set; }
@@ -43,9 +43,9 @@ public class Address
         Country = country;
     }
 
-    public static Result<Address> Create(
+    public static Address Create(
         Guid customerId,
-        string zipCodeString,
+        string zipCode,
         string street,
         string neighborhood,
         string number,
@@ -55,14 +55,11 @@ public class Address
         string country
     )
     {
-        var zipCode = VO.ZipCode.Create(zipCodeString);
-
-        if (zipCode.IsFailure) return Result.Failure<Address>(zipCode.Error);
-
+ 
         return new Address(
             Guid.NewGuid(),
             customerId,
-            zipCode.Value,
+            new ZipCode(zipCode),
             street,
             neighborhood,
             number,
@@ -73,8 +70,8 @@ public class Address
         );
     }
 
-    public Result Update(
-        string zipCodeString,
+    public void Update(
+        string zipCode,
         string street,
         string neighborhood,
         string number,
@@ -84,11 +81,8 @@ public class Address
         string country
     )
     {
-        var zipCode = VO.ZipCode.Create(zipCodeString);
-
-        if (zipCode.IsFailure) return Result.Failure<Address>(zipCode.Error);
-
-        _zipCode = zipCode.Value;
+      
+        _zipCode = new ZipCode(zipCode);
         Street = street;
         Neighborhood = neighborhood;
         Number = number;
@@ -96,9 +90,6 @@ public class Address
         City = city;
         State = state;
         Country = country;
-
-        return Result.Success();
-
     }
 
 }

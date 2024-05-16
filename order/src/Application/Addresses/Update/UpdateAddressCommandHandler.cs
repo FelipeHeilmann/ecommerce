@@ -26,7 +26,7 @@ public class UpdateAddressCommandHandler : ICommandHandler<UpdateAddressCommand>
 
         if (address == null) return Result.Failure<Address>(AddressErrors.NotFound);
 
-        var updatedAddress = address.Update(
+        address.Update(
             request.Zipcode,
             request.Street,
             request.Neighborhood,
@@ -36,8 +36,6 @@ public class UpdateAddressCommandHandler : ICommandHandler<UpdateAddressCommand>
             request.State,
             request.Country
          );
-
-        if (updatedAddress.IsFailure) return Result.Failure(updatedAddress.Error);
 
         _addressRepository.Update(address);
 

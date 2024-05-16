@@ -1,13 +1,13 @@
-﻿using Domain.Addresses.Entity;
-using Domain.Customers.Entity;
+﻿using Domain.Customers.Entity;
+using Infra.Models.Addresses;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infra.Configuration;
 
-public class AddressConfiguration : IEntityTypeConfiguration<Address>
+public class AddressConfiguration : IEntityTypeConfiguration<AddressModel>
 {
-    public void Configure(EntityTypeBuilder<Address> builder)
+    public void Configure(EntityTypeBuilder<AddressModel> builder)
     {
         builder.HasKey(a => a.Id);
         builder.Property(a => a.Id).HasColumnName("id");

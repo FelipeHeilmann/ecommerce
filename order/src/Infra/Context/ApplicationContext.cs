@@ -1,6 +1,5 @@
-﻿using Domain.Categories.Entity;
-using Domain.Customers.Entity;
-using Domain.Products.Entity;
+﻿using Domain.Customers.Entity;
+using Infra.Models.Addresses;
 using Infra.Models.Categories;
 using Infra.Models.Orders;
 using Infra.Models.Products;
@@ -17,6 +16,7 @@ public class ApplicationContext : DbContext
     DbSet<ProductsModel> Products { get; set; }
     DbSet<OrderModel> Orders { get; set; }
     DbSet<LineItemModel> LineItems { get; set; }
+    DbSet<AddressModel> Addresses { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

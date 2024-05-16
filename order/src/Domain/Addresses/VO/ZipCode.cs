@@ -6,18 +6,16 @@ namespace Domain.Addresses.VO;
 
 public record ZipCode
 {
-    public string Value { get; set; }
+    public string Value { get; private set; }
 
-    private ZipCode(string value) => Value = value;
-
-    public static Result<ZipCode> Create(string value)
+    public ZipCode(string zipCode) 
     {
-        if (string.IsNullOrEmpty(value)) return Result.Failure<ZipCode>(AddressErrors.ZipCodeNull);
+        if (string.IsNullOrEmpty(zipCode)) throw new InvalidZipCode();
 
         var Rgx = new Regex(@"^\d{5}-\d{3}$");
 
-        if (!Rgx.IsMatch(value)) return Result.Failure<ZipCode>(AddressErrors.InvalidFormat);
+        if (!Rgx.IsMatch(zipCode)) throw new InvalidZipCode(); ;
 
-        return new ZipCode(value);
+        Value = zipCode;
     }
 }
