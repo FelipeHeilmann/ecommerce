@@ -43,11 +43,9 @@ public class OrderTest
 
         var order = Order.Create(customer.Id);
 
-        var lineItem1 = order.AddItem(product1.Id, product1.Price ,2);
-        var lineItem2 = order.AddItem(product2.Id, product2.Price, 1);
-        var lineItem3 = order.AddItem(product3.Id, product3.Price, 3);
-
-        order.RemoveItem(lineItem3.Id);
+        order.AddItem(product1.Id, product1.Price ,2);
+        order.AddItem(product2.Id, product2.Price, 1);
+        order.AddItem(product3.Id, product3.Price, 3);
 
         Assert.Equal(300, order.CalculateTotal());
         Assert.Equal(3, order.Items.Count());

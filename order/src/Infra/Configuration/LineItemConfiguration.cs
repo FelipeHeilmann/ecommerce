@@ -1,13 +1,13 @@
-﻿using Domain.Orders.Entity;
-using Domain.Products.Entity;
+﻿using Domain.Products.Entity;
+using Infra.Models.Orders;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infra.Configuration;
 
-public class LineItemConfiguration : IEntityTypeConfiguration<LineItem>
+public class LineItemConfiguration : IEntityTypeConfiguration<LineItemModel>
 {
-    public void Configure(EntityTypeBuilder<LineItem> builder)
+    public void Configure(EntityTypeBuilder<LineItemModel> builder)
     {
         builder.HasKey(li => li.Id);
         builder.Property(li => li.Id).HasColumnName("id");
@@ -19,11 +19,8 @@ public class LineItemConfiguration : IEntityTypeConfiguration<LineItem>
             .WithMany()
             .HasForeignKey(p => p.ProductId);
 
-        builder.OwnsOne(li => li.Price, priceBuilder =>
-        {
-            priceBuilder.Property(m => m.Currency).HasMaxLength(3).HasColumnName("price_currency");
-            priceBuilder.Property(m => m.Amount).HasColumnName("price_amount");
-        });
+        builder.Property(m => m.Currency).HasMaxLength(3).HasColumnName("price_currency");
+        builder.Property(m => m.Amount).HasColumnName("price_amount");
 
         builder.ToTable("line_items");
     }

@@ -6,38 +6,38 @@ public class ApprovedStatus : OrderStatus
 {
     public override string Value { get ; set ; }
 
-    public ApprovedStatus() : base()
+    public ApprovedStatus(Order order) : base(order)
     {
         Value = "payment_approved";
     }
 
-    public override void Checkout(Order order)
+    public override void Checkout()
     {
         throw new NotImplementedException();
     }
 
-    public override void Approve(Order order)
+    public override void Approve()
     {
         throw new NotImplementedException();
     }
 
-    public override void Refuse(Order order)
+    public override void Refuse()
     {
         throw new NotImplementedException();
     }
 
-    public override void Ship(Order order)
+    public override void Ship()
     {
-        order.Status = new ShippedStatus();
+        Order.Status = new ShippedStatus(Order);
     }
 
-    public override void Delivery(Order order)
+    public override void Delivery()
     {
         throw new NotImplementedException();
     }
 
-    public override void Cancel(Order order)
+    public override void Cancel()
     {
-        order.Status = new CanceledStatus();
+        Order.Status = new CanceledStatus(Order);
     }
 }

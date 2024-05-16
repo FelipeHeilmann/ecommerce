@@ -6,37 +6,37 @@ public class WaitingPaymentStatus : OrderStatus
 {
     public override string Value { get; set; }
 
-    public WaitingPaymentStatus()
+    public WaitingPaymentStatus(Order order): base(order)
     {
         Value = "waiting_payment";
     }
 
-    public override void Cancel(Order order)
+    public override void Cancel()
     {
-        order.Status = new CanceledStatus();
+        Order.Status = new CanceledStatus(Order);
     }
 
-    public override void Checkout(Order order)
-    {
-        throw new Exception("Invalid Status");
-    }
-
-    public override void Approve(Order order)
-    {
-        order.Status = new ApprovedStatus();
-    }
-
-    public override void Refuse(Order order)
-    {
-        order.Status = new RefusedStatus();
-    }
-
-    public override void Ship(Order order)
+    public override void Checkout()
     {
         throw new Exception("Invalid Status");
     }
 
-    public override void Delivery(Order order)
+    public override void Approve()
+    {
+        Order.Status = new ApprovedStatus(Order);
+    }
+
+    public override void Refuse()
+    {
+        Order.Status = new RefusedStatus(Order);
+    }
+
+    public override void Ship()
+    {
+        throw new Exception("Invalid Status");
+    }
+
+    public override void Delivery()
     {
         throw new Exception("Invalid Status");
     }

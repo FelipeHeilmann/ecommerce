@@ -10,7 +10,7 @@ namespace Domain.Orders.Entity;
 
 public class Order : Observable
 {
-    private readonly ICollection<LineItem> _items = new List<LineItem>();
+    private ICollection<LineItem> _items;
     public Guid Id { get; private set; }
     public Guid CustomerId { get; private set; }
     public OrderStatus Status { get;  set; }
@@ -20,15 +20,16 @@ public class Order : Observable
     public Guid? BillingAddressId { get; private set; }
     public Guid? ShippingAddressId { get; private set; }
 
-    public Order(Guid id, Guid customerId, OrderStatus status, DateTime createdAt, DateTime updatedAt, Guid? billingAddressId, Guid? shippingAddressId)
+    public Order(Guid id, Guid customerId, string status, ICollection<LineItem> items, DateTime createdAt, DateTime updatedAt, Guid? billingAddressId, Guid? shippingAddressId)
     {
         Id = id;
         CustomerId = customerId;
-        Status = status;
+        Status =  OrderStatusFactory.Create(this,status);
         CreatedAt = createdAt;
         UpdatedAt = updatedAt;
         BillingAddressId = billingAddressId;
         ShippingAddressId = shippingAddressId;
+        _items = items;
     }
 
     private Order() { }
@@ -40,14 +41,14 @@ public class Order : Observable
 
     public static Order Create(Guid customerId, bool cart = false)
     {
-        return new Order(Guid.NewGuid(), customerId, cart ? new CartStatus() : new CreatedStatus(), DateTime.UtcNow, DateTime.UtcNow, null, null);
+        return new Order(Guid.NewGuid(), customerId, cart ? "cart" : "created", new List<LineItem>(), DateTime.UtcNow, DateTime.UtcNow, null, null);
     }
 
     public void AddItem(Guid productId, Money price, int quantity)
     {
         UpdatedAt = DateTime.UtcNow;
 
-        var existingLineItem = _items.FirstOrDefault(li => li.ProductId == productId);
+        var existingLineItem = Items.FirstOrDefault(li => li.ProductId == productId);
 
         if (existingLineItem != null)
         {
@@ -55,7 +56,7 @@ public class Order : Observable
         }
         else
         {
-            _items.Add(new LineItem(Guid.NewGuid(), Id, productId, price, quantity));
+            _items.Add(new LineItem(Guid.NewGuid(), Id, productId, price, quantity));  
         }
     }
 
@@ -101,7 +102,7 @@ public class Order : Observable
 
     public Result Cancel()
     {
-        Status.Cancel(this);
+        Status.Cancel();
         UpdatedAt = DateTime.UtcNow;
 
         return Result.Success();
@@ -112,7 +113,7 @@ public class Order : Observable
         ShippingAddressId = shippingAddressId;
         BillingAddressId = billingAddressId;
         UpdatedAt = DateTime.UtcNow;
-        Status.Checkout(this);
+        Status.Checkout();
 
         Notify(new OrderPurchased(new OrderPurchasedData(
                 Id,

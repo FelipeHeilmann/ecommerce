@@ -6,45 +6,40 @@ public class CreatedStatus : OrderStatus
 {
     public override string Value { get; set; }
 
-    public CreatedStatus()
+    public CreatedStatus(Order order): base(order)
     {
         Value = "created";
     }
 
-    public override void Cancel(Order order)
+    public override void Cancel()
     {
-        order.Status = new CanceledStatus();
+        Order.Status = new CanceledStatus(Order);
     }
 
-    public override void Checkout(Order order)
+    public override void Checkout()
     {
-        order.Status = new WaitingPaymentStatus();
+        Order.Status = new WaitingPaymentStatus(Order);
     }
 
-    public override void Approve(Order order)
+    public override void Approve()
     {
         throw new NotImplementedException();
     }
 
 
-    public override void Refuse(Order order)
+    public override void Refuse()
     {
         throw new Exception("Invalid Status");
     }
 
-    public override void Ship(Order order)
+    public override void Ship()
     {
         throw new Exception("Invalid Status");
     }
 
-    public override void Delivery(Order order)
+    public override void Delivery()
     {
         throw new Exception("Invalid Status");
-    }
-
-    public override string ToString()
-    {
-        return "created";
     }
 }
 

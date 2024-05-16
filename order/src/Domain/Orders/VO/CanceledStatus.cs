@@ -6,37 +6,37 @@ public class CanceledStatus : OrderStatus
 {
     public override string Value { get; set; }
 
-    public CanceledStatus() : base()
+    public CanceledStatus(Order order) : base(order)
     {
         Value = "canceled";
     }
 
-    public override void Cancel(Order order)
+    public override void Cancel()
     {
         throw new Exception("Invalid Status");
     }
 
-    public override void Checkout(Order order)
+    public override void Checkout()
     {
         throw new Exception("Invalid Status");
     }
 
-    public override void Approve(Order order)
+    public override void Approve(   )
     {
         throw new NotImplementedException();
     }
 
-    public override void Refuse(Order order)
+    public override void Refuse()
     {
         throw new Exception("Invalid Status");
     }
 
-    public override void Delivery(Order order)
+    public override void Delivery()
     {
         throw new Exception("Invalid Status");
     }
 
-    public override void Ship(Order order)
+    public override void Ship()
     {
         throw new Exception("Invalid Status");
     }
