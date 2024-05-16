@@ -30,13 +30,13 @@ public class OrderModel
 
     public Order ToAggregate()
     {
-        var lineItems = Items.Select(li => new LineItem(li.Id, li.OrderId, li.ProductId, new Money(li.Currency, li.Amount), li.Quantity)).ToList();
+        var lineItems = Items.Select(li => li.ToAggregate()).ToList();
         return new Order(Id, CustomerId, Status, lineItems, CreatedAt, UpdatedAt, BillingAddressId, ShippingAddressId); 
     }
 
     public static OrderModel FromAggreate(Order order)
     {
-        var items = order.Items.Select(li => new LineItemModel(li.Id, li.OrderId, li.ProductId, li.Price.Currency, li.Price.Amount, li.Quantity)).ToList();    
+        var items = order.Items.Select(li => LineItemModel.FromAggregate(li)).ToList();    
         return new OrderModel(order.Id, order.CustomerId ,order.GetStatus(), items ,order.CreatedAt, order.UpdatedAt, order.BillingAddressId, order.ShippingAddressId);
     }
 }

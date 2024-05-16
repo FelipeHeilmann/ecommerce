@@ -29,7 +29,7 @@ public class LineItemModel
         return new LineItemModel(lineItem.Id, lineItem.OrderId, lineItem.ProductId, lineItem.Price.Currency, lineItem.Price.Amount, lineItem.Quantity);
     }
 
-    public LineItem ToModel()
+    public LineItem ToAggregate()
     {
         return new LineItem(Id, OrderId, ProductId, new Money(Currency, Amount), Quantity);
     }
