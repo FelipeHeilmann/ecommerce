@@ -1,12 +1,13 @@
 ﻿using Domain.Categories.Entity;
+using Infra.Models.Categories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infra.Configuration;
 
-public class CategoryConfiguration : IEntityTypeConfiguration<Category>
+public class CategoryConfiguration : IEntityTypeConfiguration<CategoryModel>
 {
-    public void Configure(EntityTypeBuilder<Category> builder)
+    public void Configure(EntityTypeBuilder<CategoryModel> builder)
     {
         builder.HasKey(c => c.Id);
         builder.Property(c => c.Id).HasColumnName("id");

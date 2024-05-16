@@ -1,5 +1,5 @@
-﻿using Domain.Products.Entity;
-using Infra.Models.Orders;
+﻿using Infra.Models.Orders;
+using Infra.Models.Products;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -15,7 +15,7 @@ public class LineItemConfiguration : IEntityTypeConfiguration<LineItemModel>
         builder.Property(li => li.ProductId).HasColumnName("product_id");
         builder.Property(li => li.Quantity).HasColumnName("quantity");
 
-        builder.HasOne<Product>()
+        builder.HasOne<ProductsModel>()
             .WithMany()
             .HasForeignKey(p => p.ProductId);
 

@@ -1,7 +1,5 @@
 ﻿using Domain.Addresses.Entity;
 using Domain.Customers.Entity;
-using Domain.Orders.Entity;
-using Domain.Orders.VO;
 using Infra.Models.Orders;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
