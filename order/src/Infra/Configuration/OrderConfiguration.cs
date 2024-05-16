@@ -1,5 +1,4 @@
-﻿using Domain.Customers.Entity;
-using Infra.Models;
+﻿using Infra.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -22,7 +21,7 @@ public class OrderConfiguration : IEntityTypeConfiguration<OrderModel>
              .WithOne()
              .HasForeignKey(li => li.OrderId);
 
-        builder.HasOne<Customer>()
+        builder.HasOne<CustomerModel>()
             .WithMany()
             .HasForeignKey(o => o.CustomerId);
 

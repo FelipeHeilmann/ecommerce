@@ -4,11 +4,11 @@ namespace Domain.Customers.Entity;
 
 public class Customer
 {
-    public Guid Id { get; private set; }
     private Name _name;
     private Email _email;
     private CPF _cpf;
     private Phone _phone;
+    public Guid Id { get; private set; }
     public string Name { get => _name.Value; }
     public string Email { get => _email.Value; }
     public string CPF { get => _cpf.Value; }

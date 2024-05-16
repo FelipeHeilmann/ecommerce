@@ -8,7 +8,7 @@ public class ApplicationContext : DbContext
 {
     public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options) { }
 
-    public DbSet<Customer> Customers {  get; set; }
+    DbSet<Customer> Customers {  get; set; }
     DbSet<CategoryModel> Categories { get; set; }
     DbSet<ProductsModel> Products { get; set; }
     DbSet<OrderModel> Orders { get; set; }

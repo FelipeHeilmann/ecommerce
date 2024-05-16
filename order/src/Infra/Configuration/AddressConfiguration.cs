@@ -1,5 +1,4 @@
-﻿using Domain.Customers.Entity;
-using Infra.Models;
+﻿using Infra.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -21,7 +20,7 @@ public class AddressConfiguration : IEntityTypeConfiguration<AddressModel>
         builder.Property(a => a.City).HasColumnName("city");
         builder.Property(a => a.Country).HasColumnName("country");
 
-        builder.HasOne<Customer>()
+        builder.HasOne<CustomerModel>()
             .WithMany()
             .HasForeignKey(a => a.CustomerId);
 
