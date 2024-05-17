@@ -1,5 +1,4 @@
 ﻿using Domain.Abstractions;
-using Domain.Customers.Entity;
 using Domain.Orders.Error;
 using Domain.Orders.Events;
 using Domain.Orders.VO;

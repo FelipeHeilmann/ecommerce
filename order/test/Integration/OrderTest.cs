@@ -83,9 +83,9 @@ public class OrderTest
     public async Task Should_Add_One_Item_To_Order()
     {
    
-        var command = new AddLineItemCommand( Guid.NewGuid() ,Guid.Parse("cb67d960-af04-40c8-92da-9d4ff28da6f8"), 4);
+        var command = new AddItemToCartCommand( Guid.NewGuid() ,Guid.Parse("cb67d960-af04-40c8-92da-9d4ff28da6f8"), 4);
 
-        var commandHandler = new AddLineItemCommandHandler(_orderRepository, _productRepository, _unitOfWork);
+        var commandHandler = new AddItemToCartCommandHandler(_orderRepository, _productRepository, _unitOfWork);
 
         var result = await commandHandler.Handle(command, CancellationToken.None);
 
@@ -132,9 +132,9 @@ public class OrderTest
         var orderId = Guid.Parse("c3a9083c-a259-4516-8842-a80b40f8c39f");
         var lineItemId = Guid.Parse("efd7d188-b573-46ba-aa2f-6fd139d1813a");
 
-        var command = new RemoveLineItemCommand(lineItemId);
+        var command = new RemoveItemFromCartCommand(lineItemId);
 
-        var commandHandler = new RemoveLineItemCommandHandler(_orderRepository, _unitOfWork);
+        var commandHandler = new RemoveItemFromCartCommandHandler(_orderRepository, _unitOfWork);
 
         var result = await commandHandler.Handle(command, CancellationToken.None);
 

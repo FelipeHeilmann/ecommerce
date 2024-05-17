@@ -4,8 +4,10 @@ using Application.Orders.Checkout;
 using Application.Orders.Create;
 using Application.Orders.GetByCustomerId;
 using Application.Orders.GetById;
+using Application.Orders.GetCart;
 using Application.Orders.Model;
 using Application.Orders.RemoveItem;
+using Domain.Orders.Entity;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -71,10 +73,10 @@ public class OrderController : APIBaseController
     }
 
     [Authorize]
-    [HttpPatch("{orderId}/remove/{lineItemId}")]
-    public async Task<IResult> RemoveLineItem(Guid orderId, Guid lineItemId ,CancellationToken cancellationToken)
+    [HttpPatch("cart/remove-item/{lineItemId}")]
+    public async Task<IResult> RemoveLineItem(Guid lineItemId ,CancellationToken cancellationToken)
     {
-        var command = new RemoveLineItemCommand(orderId, lineItemId);
+        var command = new RemoveItemFromCartCommand(lineItemId);
 
         var result = await _sender.Send(command, cancellationToken);
 
@@ -82,14 +84,25 @@ public class OrderController : APIBaseController
     }
 
     [Authorize]
-    [HttpPatch("{orderId}/add/{lineItemId}")]
-    public async Task<IResult> AddLineItem(Guid orderId, Guid lineItemId, [FromBody] AddItemRequest request, CancellationToken cancellationToken)
+    [HttpPatch("cart/add-item")]
+    public async Task<IResult> AddLineItem( [FromBody] AddItemRequest request, CancellationToken cancellationToken)
     {
-        var command = new AddLineItemCommand(orderId, lineItemId, request.Quantity);
+        var customerId = GetCustomerId();
+        
+        var command = new AddItemToCartCommand(customerId.GetValueOrDefault(), request.ProductId, request.Quantity);
 
         var result = await _sender.Send(command, cancellationToken);
 
         return result.IsFailure ? result.ToProblemDetail() : Results.NoContent();
+    }
+
+    [Authorize]
+    [HttpGet("cart")]
+    public async Task<IResult> GetCart(CancellationToken cancellationToken)
+    {
+        var result = await _sender.Send(new GetCartQuery(), cancellationToken);
+
+        return result.IsFailure ? result.ToProblemDetail() : result.Value.Id is null ? Results.Ok(new {}) : Results.Ok(result.Value);
     }
 }
 

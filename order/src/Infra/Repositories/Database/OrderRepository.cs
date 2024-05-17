@@ -59,17 +59,55 @@ public class OrderRepository : IOrderRepository
 
     public void Add(Order entity)
     {
-        _context.Add(OrderModel.FromAggreate(entity));
+        _context.Add(OrderModel.FromAggregate(entity));
     }
 
 
     public void Update(Order entity)
     {
-        _context.Update(OrderModel.FromAggreate(entity));
+        var existingOrderModel = _context.Set<OrderModel>()
+                                         .Include(o => o.Items)
+                                         .FirstOrDefault(o => o.Id == entity.Id);
+
+        if (existingOrderModel != null)
+        {
+            _context.Entry(existingOrderModel).State = EntityState.Detached;
+
+            _context.Entry(OrderModel.FromAggregate(entity)).State = EntityState.Modified;
+
+            foreach (var lineItem in entity.Items)
+            {
+                var lineItemModel = LineItemModel.FromAggregate(lineItem);
+                var existingLineItemModel = _context.Set<LineItemModel>().FirstOrDefault(li => li.Id == lineItemModel.Id);
+
+                if (existingLineItemModel != null)
+                {
+
+                    _context.Entry(existingLineItemModel).State = EntityState.Detached;
+
+                    _context.Entry(lineItemModel).State = EntityState.Modified;
+                }
+                else
+                {
+                    _context.Entry(lineItemModel).State = EntityState.Added;
+                }
+            }
+
+            var itemsToRemove = existingOrderModel.Items.Where(e => !entity.Items.Any(i => i.Id == e.Id)).ToList();
+            foreach (var item in itemsToRemove)
+            {
+                existingOrderModel.Items.Remove(item);
+                _context.Set<LineItemModel>().Remove(item);
+            }
+        }
+        else
+        {
+            _context.Update(OrderModel.FromAggregate(entity));
+        }
     }
 
-    public void Delete(Order entity)
+        public void Delete(Order entity)
     {
-       _context.Remove(OrderModel.FromAggreate(entity));
+       _context.Remove(OrderModel.FromAggregate(entity));
     }
 }

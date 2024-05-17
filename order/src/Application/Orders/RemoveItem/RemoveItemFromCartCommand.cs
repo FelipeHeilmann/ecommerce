@@ -2,4 +2,4 @@
 
 namespace Application.Orders.RemoveItem;
 
-public record RemoveLineItemCommand(Guid LineItemId) : ICommand;
+public record RemoveItemFromCartCommand(Guid LineItemId) : ICommand;
