@@ -39,7 +39,7 @@ public class ProductController : APIBaseController
     [HttpPost]
     public async Task<IResult> Create([FromBody] CreateProductRequest request, CancellationToken cancellationToken)
     {
-        var command = new CreateProductCommand(request);
+        var command = new CreateProductCommand(request.Name, request.Description, request.Currency, request.Price, request.ImageUrl, request.Sku, request.CategoryId);
 
         var result = await _sender.Send(command, cancellationToken);
 
@@ -50,7 +50,6 @@ public class ProductController : APIBaseController
     public async Task<IResult> Update(Guid id, [FromBody] CreateProductRequest request, CancellationToken cancellationToken)
     {
         var command = new UpdateProductCommand(
-            new UpdateProductRequest(
                 id, 
                 request.Name, 
                 request.Description, 
@@ -58,7 +57,7 @@ public class ProductController : APIBaseController
                 request.Price, 
                 request.ImageUrl, 
                 request.Sku, 
-                request.CategoryId)
+                request.CategoryId
             );
 
         var result = await _sender.Send(command, cancellationToken);

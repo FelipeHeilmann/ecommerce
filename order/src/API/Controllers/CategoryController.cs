@@ -38,7 +38,7 @@ public class CategoryController : APIBaseController
     [HttpPost]
     public async Task<IResult> Create([FromBody] CreateCategoryRequest request, CancellationToken cancellationToken)
     {
-        var command = new CreateCategoryCommand(request);
+        var command = new CreateCategoryCommand(request.Name, request.Description);
 
         var result = await _sender.Send(command, cancellationToken);
 
@@ -48,7 +48,7 @@ public class CategoryController : APIBaseController
     [HttpPut("{id}")]
     public async Task<IResult> Update(Guid id, [FromBody] CreateCategoryRequest request, CancellationToken cancellationToken)
     {
-        var command = new UpdateCategoryCommand(new UpdateCategoryRequest(request.Name, request.Description, id));
+        var command = new UpdateCategoryCommand(request.Name, request.Description, id);
 
         var result = await _sender.Send(command, cancellationToken);
 

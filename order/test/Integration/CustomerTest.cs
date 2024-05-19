@@ -1,7 +1,6 @@
 ﻿using Application.Abstractions.Services;
 using Application.Customers.Create;
 using Application.Customers.GetById;
-using Application.Customers.Model;
 using Application.Data;
 using Domain.Customers.Error;
 using Domain.Customers.Event;
@@ -28,11 +27,11 @@ public class CustomerTest
 
         mediatorMock.Setup(m => m.Publish(It.IsAny<CustomerCreatedEvent>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
 
-        var inputCreateCustomer = new CreateCustomerRequest("Felipe Heilmann", "felipeheilmannm@gmail.com", "senha", new DateTime(2004, 6, 2), "97067401046", "11 97414-6507");
+        var inputCreateCustomer = new CreateCustomerCommand("Felipe Heilmann", "felipeheilmannm@gmail.com", "senha", new DateTime(2004, 6, 2), "97067401046", "11 97414-6507");
 
-        var createAccountCommandHandler = new CreateAccountCommandHandler(customerRepository, unitOfWork, passwordHasher, mediatorMock.Object);
+        var createAccountCommandHandler = new CreateCustomerCommandHandler(customerRepository, unitOfWork, passwordHasher, mediatorMock.Object);
 
-        var outputCreateCustomer = await createAccountCommandHandler.Handle(new CreateAccountCommand(inputCreateCustomer), CancellationToken.None);
+        var outputCreateCustomer = await createAccountCommandHandler.Handle(inputCreateCustomer, CancellationToken.None);
 
         var getCustomerById = new GetCustomerByIdQueryHandler(customerRepository);
 
@@ -49,13 +48,13 @@ public class CustomerTest
 
         mediator.Setup(m => m.Publish(It.IsAny<CustomerCreatedEvent>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
 
-        await new CreateAccountCommandHandler(customerRepository, unitOfWork, passwordHasher, mediator.Object).Handle(new CreateAccountCommand(new CreateCustomerRequest("Felipe Heilmann", "felipeheilmannm@gmail.com", "senha", new DateTime(2004, 6, 2), "97067401046", "11 97414-6507")), CancellationToken.None);
+        await new CreateCustomerCommandHandler(customerRepository, unitOfWork, passwordHasher, mediator.Object).Handle(new CreateCustomerCommand("Felipe Heilmann", "felipeheilmannm@gmail.com", "senha", new DateTime(2004, 6, 2), "97067401046", "11 97414-6507"), CancellationToken.None);
 
-        var inputCreateAccount = new CreateCustomerRequest("Felipe Heilmann", "felipeheilmannm@gmail.com", "senha", new DateTime(2004, 11, 6), "97067401046", "11 97414-6507");
+        var inputCreateAccount = new CreateCustomerCommand("Felipe Heilmann", "felipeheilmannm@gmail.com", "senha", new DateTime(2004, 11, 6), "97067401046", "11 97414-6507");
 
-        var commandHandler = new CreateAccountCommandHandler(customerRepository, unitOfWork, passwordHasher, mediator.Object);
+        var commandHandler = new CreateCustomerCommandHandler(customerRepository, unitOfWork, passwordHasher, mediator.Object);
 
-        var outputCreateAccount = await commandHandler.Handle(new CreateAccountCommand(inputCreateAccount), CancellationToken.None);
+        var outputCreateAccount = await commandHandler.Handle(inputCreateAccount, CancellationToken.None);
 
         Assert.True(outputCreateAccount.IsFailure);
         Assert.False(outputCreateAccount.IsSuccess);

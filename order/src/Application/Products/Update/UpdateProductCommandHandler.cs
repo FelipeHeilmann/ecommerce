@@ -24,16 +24,15 @@ public class UpdateProductCommandHandler : ICommandHandler<UpdateProductCommand>
 
     public async Task<Result> Handle(UpdateProductCommand command, CancellationToken cancellationToken)
     {
-        var request = command.request;
-        var product = await _productRepository.GetByIdAsync(request.ProductId, cancellationToken);
+        var product = await _productRepository.GetByIdAsync(command.ProductId, cancellationToken);
 
         if (product == null) return Result.Failure<Product>(ProductErrors.ProductNotFound);
 
-        var category = await _categoryRepository.GetByIdAsync(request.CategoryId, cancellationToken);
+        var category = await _categoryRepository.GetByIdAsync(command.CategoryId, cancellationToken);
 
         if (category == null) return Result.Failure<Product>(CategoryErrors.CategoryNotFound);
 
-        product.Update(request.Name, request.Description, request.ImageUrl, request.Currency, request.Price, request.Sku, category);
+        product.Update(command.Name, command.Description, command.ImageUrl, command.Currency, command.Price, command.Sku, category);
 
         _productRepository.Update(product);
 

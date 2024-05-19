@@ -1,6 +1,5 @@
 ﻿using Application.Abstractions.Messaging;
-using Application.Products.Model;
 
 namespace Application.Products.Update;
 
-public record UpdateProductCommand(UpdateProductRequest request) : ICommand;
+public record UpdateProductCommand(Guid ProductId, string Name, string Description, string Currency, double Price, string ImageUrl, string Sku, Guid CategoryId) : ICommand;

@@ -19,19 +19,18 @@ public class CreateAddressCommandHandler : ICommandHandler<CreateAddressCommand,
 
     public async Task<Result<Guid>> Handle(CreateAddressCommand command, CancellationToken cancellationToken)
     {
-        var request = command.request;
 
         var address = Address.Create
             (
-                request.CustomerId,
-                request.Zipcode,
-                request.Street,
-                request.Neighborhood,
-                request.Number,
-                request.Complement,
-                request.City,
-                request.State,
-                request.Country
+                command.CustomerId,
+                command.Zipcode,
+                command.Street,
+                command.Neighborhood,
+                command.Number,
+                command.Complement,
+                command.City,
+                command.State,
+                command.Country
             );
 
         _addressRepository.Add(address);

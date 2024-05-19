@@ -5,7 +5,7 @@ using Domain.Orders.Error;
 using Domain.Orders.Repository;
 using Domain.Shared;
 
-namespace Application.Orders.RemoveItem;
+namespace Application.Orders.RemoveItemRemoveItemFromCart;
 
 public class RemoveItemFromCartCommandHandler : ICommandHandler<RemoveItemFromCartCommand>
 {

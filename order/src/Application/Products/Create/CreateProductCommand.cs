@@ -1,6 +1,5 @@
 ﻿using Application.Abstractions.Messaging;
-using Application.Products.Model;
 
 namespace Application.Products.Create;
 
-public record CreateProductCommand(CreateProductRequest request) : ICommand<Guid>;
+public record CreateProductCommand(string Name, string Description, string Currency, double Price, string ImageUrl, string Sku, Guid CategoryId) : ICommand<Guid>;

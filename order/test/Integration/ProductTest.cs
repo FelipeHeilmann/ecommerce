@@ -29,17 +29,17 @@ public class ProductTest
     [Fact]
     public async Task Should_Create_Product()
     {
-        var inputCreateCategory = new CreateCategoryRequest("Category", "Category Description");
+        var inputCreateCategory = new CreateCategoryCommand("Category", "Category Description");
 
         var createCategoryCommandHandler = new CreateCatagoryCommandHandler(categoryRepository, unitOfWork);
 
-        var outputCreateCategory = await createCategoryCommandHandler.Handle(new CreateCategoryCommand(inputCreateCategory), CancellationToken.None);
+        var outputCreateCategory = await createCategoryCommandHandler.Handle(inputCreateCategory, CancellationToken.None);
 
-        var inputCreateProduct = new CreateProductRequest("Product 1", "Description Product 1", "BRL", 50.00, "Image", "0001", outputCreateCategory.Value);
+        var inputCreateProduct = new CreateProductCommand("Product 1", "Description Product 1", "BRL", 50.00, "Image", "0001", outputCreateCategory.Value);
        
         var createProductCommandHandler = new CreateProductCommandHandler(productRepository, categoryRepository, unitOfWork);
 
-        var outputCreateProduct = await createProductCommandHandler.Handle(new CreateProductCommand(inputCreateProduct), CancellationToken.None);
+        var outputCreateProduct = await createProductCommandHandler.Handle(inputCreateProduct, CancellationToken.None);
 
         var getProductQueryHandler = new GetProductByIdQueryHandler(productRepository);
 
@@ -53,21 +53,21 @@ public class ProductTest
     [Fact]
     public async Task Should_List_All_Products()
     {
-        var inputCreateCategory = new CreateCategoryRequest("Category", "Category Description");
+        var inputCreateCategory = new CreateCategoryCommand("Category", "Category Description");
 
         var createCategoryCommandHandler = new CreateCatagoryCommandHandler(categoryRepository, unitOfWork);
 
-        var outputCreateCategory = await createCategoryCommandHandler.Handle(new CreateCategoryCommand(inputCreateCategory), CancellationToken.None);
+        var outputCreateCategory = await createCategoryCommandHandler.Handle(inputCreateCategory, CancellationToken.None);
 
-        var inputCreateProduct1 = new CreateProductRequest("Product 1", "Description Product 1", "BRL", 50.00, "Image", "0001", outputCreateCategory.Value);
-        var inputCreateProduct2 = new CreateProductRequest("Product 2", "Description Product 2", "BRL", 60.00, "Image", "0002", outputCreateCategory.Value);
-        var inputCreateProduct3 = new CreateProductRequest("Product 3", "Description Product 3", "BRL", 70.00, "Image", "0003", outputCreateCategory.Value);
+        var inputCreateProduct1 = new CreateProductCommand("Product 1", "Description Product 1", "BRL", 50.00, "Image", "0001", outputCreateCategory.Value);
+        var inputCreateProduct2 = new CreateProductCommand("Product 2", "Description Product 2", "BRL", 60.00, "Image", "0002", outputCreateCategory.Value);
+        var inputCreateProduct3 = new CreateProductCommand("Product 3", "Description Product 3", "BRL", 70.00, "Image", "0003", outputCreateCategory.Value);
 
         var createProductCommandHandler = new CreateProductCommandHandler(productRepository, categoryRepository, unitOfWork);
 
-        await createProductCommandHandler.Handle(new CreateProductCommand(inputCreateProduct1), CancellationToken.None);
-        await createProductCommandHandler.Handle(new CreateProductCommand(inputCreateProduct2), CancellationToken.None);
-        await createProductCommandHandler.Handle(new CreateProductCommand(inputCreateProduct3), CancellationToken.None);
+        await createProductCommandHandler.Handle(inputCreateProduct1, CancellationToken.None);
+        await createProductCommandHandler.Handle(inputCreateProduct2, CancellationToken.None);
+        await createProductCommandHandler.Handle(inputCreateProduct3, CancellationToken.None);
 
         var getProductsQueryHandler = new GetAllProductsQueryHandler(productRepository);
 
@@ -90,23 +90,23 @@ public class ProductTest
     [Fact]
     public async Task Should_Update_Product() 
     {
-        var inputCreateCategory = new CreateCategoryRequest("Category", "Category Description");
+        var inputCreateCategory = new CreateCategoryCommand("Category", "Category Description");
 
         var createCategoryCommandHandler = new CreateCatagoryCommandHandler(categoryRepository, unitOfWork);
 
-        var outputCreateCategory = await createCategoryCommandHandler.Handle(new CreateCategoryCommand(inputCreateCategory), CancellationToken.None);
+        var outputCreateCategory = await createCategoryCommandHandler.Handle(inputCreateCategory, CancellationToken.None);
 
-        var inputCreateProduct = new CreateProductRequest("Product 1", "Description Product 1", "BRL", 50, "Image", "0001", outputCreateCategory.Value);
+        var inputCreateProduct = new CreateProductCommand("Product 1", "Description Product 1", "BRL", 50, "Image", "0001", outputCreateCategory.Value);
 
         var createProductCommandHandler = new CreateProductCommandHandler(productRepository, categoryRepository, unitOfWork);
 
-        var outputCreateProduct = await createProductCommandHandler.Handle(new CreateProductCommand(inputCreateProduct), CancellationToken.None);
+        var outputCreateProduct = await createProductCommandHandler.Handle(inputCreateProduct, CancellationToken.None);
 
-        var inputUpdateProduct = new UpdateProductRequest(outputCreateProduct.Value, "Nome Atualizado", "Descricao atualizando", "BRL", 90.0, "path", "sku", outputCreateCategory.Value);
+        var inputUpdateProduct = new UpdateProductCommand(outputCreateProduct.Value, "Nome Atualizado", "Descricao atualizando", "BRL", 90.0, "path", "sku", outputCreateCategory.Value);
 
         var updateProductCommandHandler = new UpdateProductCommandHandler(productRepository, categoryRepository ,unitOfWork);
 
-        await updateProductCommandHandler.Handle(new UpdateProductCommand(inputUpdateProduct), CancellationToken.None);
+        await updateProductCommandHandler.Handle(inputUpdateProduct, CancellationToken.None);
 
         var getProductQueryHandler = new GetProductByIdQueryHandler(productRepository);
 
@@ -121,17 +121,17 @@ public class ProductTest
     [Fact]
     public async Task Should_Delete_Product() 
     {
-        var inputCreateCategory = new CreateCategoryRequest("Category", "Category Description");
+        var inputCreateCategory = new CreateCategoryCommand("Category", "Category Description");
 
         var createCategoryCommandHandler = new CreateCatagoryCommandHandler(categoryRepository, unitOfWork);
 
-        var outputCreateCategory = await createCategoryCommandHandler.Handle(new CreateCategoryCommand(inputCreateCategory), CancellationToken.None);
+        var outputCreateCategory = await createCategoryCommandHandler.Handle(inputCreateCategory, CancellationToken.None);
 
-        var inputCreateProduct = new CreateProductRequest("Product 1", "Description Product 1", "BRL", 50.00, "Image", "0001", outputCreateCategory.Value);
+        var inputCreateProduct = new CreateProductCommand("Product 1", "Description Product 1", "BRL", 50.00, "Image", "0001", outputCreateCategory.Value);
 
         var createProductCommandHandler = new CreateProductCommandHandler(productRepository, categoryRepository, unitOfWork);
 
-        var outputCreateProduct = await createProductCommandHandler.Handle(new CreateProductCommand(inputCreateProduct), CancellationToken.None);
+        var outputCreateProduct = await createProductCommandHandler.Handle(inputCreateProduct, CancellationToken.None);
       
         var deleteOrderCommandHandler = new DeleteProductCommandHandler(productRepository, unitOfWork);
 

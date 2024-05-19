@@ -1,13 +1,12 @@
 ﻿using API.Extensions;
-using Application.Orders.AddLineItem;
+using Application.Orders.AddItemToCart;
 using Application.Orders.Checkout;
 using Application.Orders.Create;
 using Application.Orders.GetByCustomerId;
 using Application.Orders.GetById;
 using Application.Orders.GetCart;
 using Application.Orders.Model;
-using Application.Orders.RemoveItem;
-using Domain.Orders.Entity;
+using Application.Orders.RemoveItemRemoveItemFromCart;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -65,7 +64,7 @@ public class OrderController : APIBaseController
 
         if (customerId == null) return Results.Unauthorized();
 
-        var command = new CreateOrderCommand(new OrderRequest(request, customerId.Value));
+        var command = new CreateOrderCommand(request, customerId.Value);
 
         var result = await _sender.Send(command, cancellationToken);
 

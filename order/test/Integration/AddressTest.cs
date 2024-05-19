@@ -2,10 +2,8 @@
 using Application.Addresses.Create;
 using Application.Addresses.GetByCustomerId;
 using Application.Addresses.GetById;
-using Application.Addresses.Model;
 using Application.Addresses.Update;
 using Application.Customers.Create;
-using Application.Customers.Model;
 using Application.Data;
 using Domain.Addresses.Repository;
 using Domain.Customers.Event;
@@ -33,17 +31,17 @@ public class AddressTest
 
         mediatorMock.Setup(m => m.Publish(It.IsAny<CustomerCreatedEvent>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
 
-        var inputCreateCustomer = new CreateCustomerRequest("Felipe Heilmann", "felipeheilmannm@gmail.com", "senha", new DateTime(2004, 6, 2), "97067401046", "11 97414-6507");
+        var inputCreateCustomer = new CreateCustomerCommand("Felipe Heilmann", "felipeheilmannm@gmail.com", "senha", new DateTime(2004, 6, 2), "97067401046", "11 97414-6507");
 
-        var createAccountCommandHandler = new CreateAccountCommandHandler(customerRepository, unitOfWork, passwordHasher, mediatorMock.Object);
+        var createAccountCommandHandler = new CreateCustomerCommandHandler(customerRepository, unitOfWork, passwordHasher, mediatorMock.Object);
 
-        var outputCreateCustomer = await createAccountCommandHandler.Handle(new CreateAccountCommand(inputCreateCustomer), CancellationToken.None);
+        var outputCreateCustomer = await createAccountCommandHandler.Handle(inputCreateCustomer, CancellationToken.None);
 
-        var inputCreateAddress = new CreateAddressRequest(outputCreateCustomer.Value, "04182-123", "Rua C", "Jardim Sacoma", "112", "apt 43", "São Paulo", "São Paulo", "Brasil");
+        var inputCreateAddress = new CreateAddressCommand(outputCreateCustomer.Value, "04182-123", "Rua C", "Jardim Sacoma", "112", "apt 43", "São Paulo", "São Paulo", "Brasil");
 
         var createAddressCommandHandler = new CreateAddressCommandHandler(addressRepository, unitOfWork);
 
-        var outputCreateAddress = await createAddressCommandHandler.Handle(new CreateAddressCommand(inputCreateAddress), CancellationToken.None);
+        var outputCreateAddress = await createAddressCommandHandler.Handle(inputCreateAddress, CancellationToken.None);
 
         var getAddressQueryHandler = new GetAddressByIdQueryHandler(addressRepository);
 
@@ -61,21 +59,21 @@ public class AddressTest
 
         mediatorMock.Setup(m => m.Publish(It.IsAny<CustomerCreatedEvent>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
 
-        var inputCreateCustomer = new CreateCustomerRequest("Felipe Heilmann", "felipeheilmannm@gmail.com", "senha", new DateTime(2004, 6, 2), "97067401046", "11 97414-6507");
+        var inputCreateCustomer = new CreateCustomerCommand("Felipe Heilmann", "felipeheilmannm@gmail.com", "senha", new DateTime(2004, 6, 2), "97067401046", "11 97414-6507");
 
-        var createAccountCommandHandler = new CreateAccountCommandHandler(customerRepository, unitOfWork, passwordHasher, mediatorMock.Object);
+        var createAccountCommandHandler = new CreateCustomerCommandHandler(customerRepository, unitOfWork, passwordHasher, mediatorMock.Object);
 
-        var outputCreateCustomer = await createAccountCommandHandler.Handle(new CreateAccountCommand(inputCreateCustomer), CancellationToken.None);
+        var outputCreateCustomer = await createAccountCommandHandler.Handle(inputCreateCustomer, CancellationToken.None);
 
-        var inputCreateAddress1 = new CreateAddressRequest(outputCreateCustomer.Value, "04182-123", "Rua C", "Jardim Sacoma", "112", "apt 43", "São Paulo", "São Paulo", "Brasil");
-        var inputCreateAddress2 = new CreateAddressRequest(outputCreateCustomer.Value, "03246-435", "Rua A", "Jardim Sacoma", "115", null, "São Paulo", "São Paulo", "Brasil");
-        var inputCreateAddress3= new CreateAddressRequest(outputCreateCustomer.Value, "04082-168", "Rua B", "Jardim Sacoma2", "116", "apt 49", "São Paulo", "São Paulo", "Brasil");
+        var inputCreateAddress1 = new CreateAddressCommand(outputCreateCustomer.Value, "04182-123", "Rua C", "Jardim Sacoma", "112", "apt 43", "São Paulo", "São Paulo", "Brasil");
+        var inputCreateAddress2 = new CreateAddressCommand(outputCreateCustomer.Value, "03246-435", "Rua A", "Jardim Sacoma", "115", null, "São Paulo", "São Paulo", "Brasil");
+        var inputCreateAddress3= new CreateAddressCommand(outputCreateCustomer.Value, "04082-168", "Rua B", "Jardim Sacoma2", "116", "apt 49", "São Paulo", "São Paulo", "Brasil");
 
         var createAddressCommandHandler = new CreateAddressCommandHandler(addressRepository, unitOfWork);
 
-        await createAddressCommandHandler.Handle(new CreateAddressCommand(inputCreateAddress1), CancellationToken.None);
-        await createAddressCommandHandler.Handle(new CreateAddressCommand(inputCreateAddress2), CancellationToken.None);
-        await createAddressCommandHandler.Handle(new CreateAddressCommand(inputCreateAddress3), CancellationToken.None);
+        await createAddressCommandHandler.Handle(inputCreateAddress1, CancellationToken.None);
+        await createAddressCommandHandler.Handle(inputCreateAddress2, CancellationToken.None);
+        await createAddressCommandHandler.Handle(inputCreateAddress3, CancellationToken.None);
 
         var getAddressesByCustomerIdQueryHandler = new GetAddressesByCustomerIdQueryHandler(addressRepository);
 
@@ -106,23 +104,23 @@ public class AddressTest
 
         mediatorMock.Setup(m => m.Publish(It.IsAny<CustomerCreatedEvent>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
 
-        var inputCreateCustomer = new CreateCustomerRequest("Felipe Heilmann", "felipeheilmannm@gmail.com", "senha", new DateTime(2004, 6, 2), "97067401046", "11 97414-6507");
+        var inputCreateCustomer = new CreateCustomerCommand("Felipe Heilmann", "felipeheilmannm@gmail.com", "senha", new DateTime(2004, 6, 2), "97067401046", "11 97414-6507");
 
-        var createAccountCommandHandler = new CreateAccountCommandHandler(customerRepository, unitOfWork, passwordHasher, mediatorMock.Object);
+        var createAccountCommandHandler = new CreateCustomerCommandHandler(customerRepository, unitOfWork, passwordHasher, mediatorMock.Object);
 
-        var outputCreateCustomer = await createAccountCommandHandler.Handle(new CreateAccountCommand(inputCreateCustomer), CancellationToken.None);
+        var outputCreateCustomer = await createAccountCommandHandler.Handle(inputCreateCustomer, CancellationToken.None);
 
-        var inputCreateAddress = new CreateAddressRequest(outputCreateCustomer.Value, "03246-435", "Rua A", "Jardim Sacoma", "115", null, "São Paulo", "São Paulo", "Brasil");
+        var inputCreateAddress = new CreateAddressCommand(outputCreateCustomer.Value, "03246-435", "Rua A", "Jardim Sacoma", "115", null, "São Paulo", "São Paulo", "Brasil");
 
         var createAddressCommandHandler = new CreateAddressCommandHandler(addressRepository, unitOfWork);
 
-        var outputCreateAddress = await createAddressCommandHandler.Handle(new CreateAddressCommand(inputCreateAddress), CancellationToken.None);
+        var outputCreateAddress = await createAddressCommandHandler.Handle(inputCreateAddress, CancellationToken.None);
 
-        var inputUpdateAddress = new UpdateAddressRequest(outputCreateAddress.Value, outputCreateCustomer.Value, "04182-123", "Rua C", "Jardim Sacoma", "112", "apt 43", "São Paulo", "São Paulo", "Brasil");
+        var inputUpdateAddress = new UpdateAddressCommand(outputCreateAddress.Value, outputCreateCustomer.Value, "04182-123", "Rua C", "Jardim Sacoma", "112", "apt 43", "São Paulo", "São Paulo", "Brasil");
 
         var updateAddressCommandHandler = new UpdateAddressCommandHandler(addressRepository, unitOfWork);
 
-        await updateAddressCommandHandler.Handle(new UpdateAddressCommand(inputUpdateAddress), CancellationToken.None);
+        await updateAddressCommandHandler.Handle(inputUpdateAddress, CancellationToken.None);
 
         var getAddressQueryHandler = new GetAddressByIdQueryHandler(addressRepository);
 

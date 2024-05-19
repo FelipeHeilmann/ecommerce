@@ -21,12 +21,11 @@ public class LoginCommandHandler : ICommandHandler<LoginCommand, string>
 
     public async Task<Result<string>> Handle(LoginCommand command, CancellationToken cancellationToken)
     {
-
-        var customer = await _customerRepository.GetByEmailAsync(command.request.Email, cancellationToken);
+        var customer = await _customerRepository.GetByEmailAsync(command.Email, cancellationToken);
 
         if (customer == null) return Result.Failure<string>(CustomerErrors.CustomerInvalidCredencials);
 
-        var verifiedPassword = _passwordHasher.Verify(command.request.Password, customer!.Password);
+        var verifiedPassword = _passwordHasher.Verify(command.Password, customer!.Password);
 
         if(!verifiedPassword) return Result.Failure<string>(CustomerErrors.CustomerInvalidCredencials);
 

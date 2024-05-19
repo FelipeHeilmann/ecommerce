@@ -1,6 +1,5 @@
 ﻿using Application.Orders.Create;
 using Application.Orders.Cancel;
-using Application.Orders.RemoveItem;
 using Application.Orders.Model;
 using Application.Orders.GetByCustomerId;
 using Application.Orders.GetById;
@@ -8,31 +7,27 @@ using Application.Orders.GetCart;
 using Infra.Data;
 using Infra.Repositories.Memory;
 using Xunit;
-using Application.Orders.AddLineItem;
 using Application.Data;
 using Application.Orders.Checkout;
 using Application.Abstractions.Queue;
 using Infra.Queue;
 using Moq;
 using MediatR;
-using Domain.Orders.VO;
 using Domain.Orders.Events;
 using Domain.Orders.Repository;
 using Domain.Addresses.Repository;
 using Domain.Customers.Repository;
 using Domain.Products.Repository;
 using Application.Customers.Create;
-using Application.Customers.Model;
 using Domain.Customers.Event;
 using Infra.Implementations;
 using Application.Abstractions.Services;
 using Application.Products.Create;
-using Application.Products.Model;
 using Domain.Categories.Repository;
-using Application.Categories.Model;
 using Application.Categories.Create;
-using Application.Addresses.Model;
 using Application.Addresses.Create;
+using Application.Orders.AddItemToCart;
+using Application.Orders.RemoveItemRemoveItemFromCart;
 
 namespace Integration;
 
@@ -57,29 +52,29 @@ public class OrderTest
         mediator.Setup(m => m.Publish(It.IsAny<CustomerCreatedEvent>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
         mediator.Setup(m => m.Publish(It.IsAny<OrderCreatedEvent>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
 
-        var inputCreateCustomer = new CreateCustomerRequest("John Doe", "john.doe@gmail.com", "abc123", new DateTime(2004, 11, 06), "659.232.850-96", "(11) 97414-6507"); 
+        var inputCreateCustomer = new CreateCustomerCommand("John Doe", "john.doe@gmail.com", "abc123", new DateTime(2004, 11, 06), "659.232.850-96", "(11) 97414-6507"); 
 
-        var createCustomerCommandHandler = new CreateAccountCommandHandler(customerRepository, unitOfWork, passwordHasher, mediator.Object);
+        var createCustomerCommandHandler = new CreateCustomerCommandHandler(customerRepository, unitOfWork, passwordHasher, mediator.Object);
 
-        var outputCreateCustomer = await createCustomerCommandHandler.Handle(new CreateAccountCommand(inputCreateCustomer), CancellationToken.None);
+        var outputCreateCustomer = await createCustomerCommandHandler.Handle(inputCreateCustomer, CancellationToken.None);
 
-        var inputCreateCategory = new CreateCategoryRequest("Category", "Category Description");
+        var inputCreateCategory = new CreateCategoryCommand("Category", "Category Description");
 
         var createCategoryCommandHandler = new CreateCatagoryCommandHandler(categoryRepository, unitOfWork);
 
-        var outputCreateCategory = await createCategoryCommandHandler.Handle(new CreateCategoryCommand(inputCreateCategory), CancellationToken.None);
+        var outputCreateCategory = await createCategoryCommandHandler.Handle(inputCreateCategory, CancellationToken.None);
        
-        var inputCreateProduct1 = new CreateProductRequest("Product 1", "Product 1", "BRL", 50, "Image", "0001", outputCreateCategory.Value);
-        var inputCreateProduct2 = new CreateProductRequest("Product 2", "Product 2", "BRL", 60, "Image", "0002", outputCreateCategory.Value);
-        var inputCreateProduct3 = new CreateProductRequest("Product 3", "Product 3", "BRL", 70, "Image", "0003", outputCreateCategory.Value);
+        var inputCreateProduct1 = new CreateProductCommand("Product 1", "Product 1", "BRL", 50, "Image", "0001", outputCreateCategory.Value);
+        var inputCreateProduct2 = new CreateProductCommand("Product 2", "Product 2", "BRL", 60, "Image", "0002", outputCreateCategory.Value);
+        var inputCreateProduct3 = new CreateProductCommand("Product 3", "Product 3", "BRL", 70, "Image", "0003", outputCreateCategory.Value);
 
         var createProductCommandHandler = new CreateProductCommandHandler(productRepository, categoryRepository, unitOfWork);
 
-        var outputCreateProduct1 = await createProductCommandHandler.Handle(new CreateProductCommand(inputCreateProduct1), CancellationToken.None);
-        var outputCreateProduct2 = await createProductCommandHandler.Handle(new CreateProductCommand(inputCreateProduct2), CancellationToken.None);
-        var outputCreateProduct3 = await createProductCommandHandler.Handle(new CreateProductCommand(inputCreateProduct3), CancellationToken.None);
+        var outputCreateProduct1 = await createProductCommandHandler.Handle(inputCreateProduct1, CancellationToken.None);
+        var outputCreateProduct2 = await createProductCommandHandler.Handle(inputCreateProduct2, CancellationToken.None);
+        var outputCreateProduct3 = await createProductCommandHandler.Handle(inputCreateProduct3, CancellationToken.None);
 
-        var inputCreateOrder = new OrderRequest(new List<OrderItemRequest>()
+        var inputCreateOrder = new CreateOrderCommand(new List<OrderItemRequest>()
         {
             new OrderItemRequest(outputCreateProduct1.Value, 2),
             new OrderItemRequest(outputCreateProduct2.Value, 3),
@@ -89,7 +84,7 @@ public class OrderTest
         var createOrdercommandHandler = new CreateOrderCommandHandler(orderRepository, productRepository, unitOfWork, mediator.Object, customerRepository);
 
         //WHEN
-        var outputCreateOrder = await createOrdercommandHandler.Handle(new CreateOrderCommand(inputCreateOrder), CancellationToken.None);
+        var outputCreateOrder = await createOrdercommandHandler.Handle(inputCreateOrder, CancellationToken.None);
 
         var getOrderQuery = new GetOrderByIdQuery(outputCreateOrder.Value);
 
@@ -114,25 +109,23 @@ public class OrderTest
 
         mediator.Setup(m => m.Publish(It.IsAny<CustomerCreatedEvent>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
 
-        var inputCreateCustomer = new CreateCustomerRequest("John Doe", "john.doe@gmail.com", "abc123", new DateTime(2004, 11, 06), "659.232.850-96", "(11) 97414-6507");
+        var inputCreateCustomer = new CreateCustomerCommand("John Doe", "john.doe@gmail.com", "abc123", new DateTime(2004, 11, 06), "659.232.850-96", "(11) 97414-6507");
 
-        var createCustomerCommandHandler = new CreateAccountCommandHandler(customerRepository, unitOfWork, passwordHasher, mediator.Object);
+        var createCustomerCommandHandler = new CreateCustomerCommandHandler(customerRepository, unitOfWork, passwordHasher, mediator.Object);
 
-        var outputCreateCustomer = await createCustomerCommandHandler.Handle(new CreateAccountCommand(inputCreateCustomer), CancellationToken.None);
+        var outputCreateCustomer = await createCustomerCommandHandler.Handle(inputCreateCustomer, CancellationToken.None);
 
-        var inputCreateCategory = new CreateCategoryRequest("Category", "Category Description");
+        var inputCreateCategory = new CreateCategoryCommand("Category", "Category Description");
 
         var createCategoryCommandHandler = new CreateCatagoryCommandHandler(categoryRepository, unitOfWork);
 
-        var outputCreateCategory = await createCategoryCommandHandler.Handle(new CreateCategoryCommand(inputCreateCategory), CancellationToken.None);
+        var outputCreateCategory = await createCategoryCommandHandler.Handle(inputCreateCategory, CancellationToken.None);
 
-        var inputCreateProduct1 = new CreateProductRequest("Product 1", "Product 1", "BRL", 50, "Image", "0001", outputCreateCategory.Value);
-        var inputCreateProduct2 = new CreateProductRequest("Product 2", "Product 2", "BRL", 60, "Image", "0002", outputCreateCategory.Value);
-        var inputCreateProduct3 = new CreateProductRequest("Product 3", "Product 3", "BRL", 70, "Image", "0003", outputCreateCategory.Value);
+        var inputCreateProduct1 = new CreateProductCommand("Product 1", "Product 1", "BRL", 50, "Image", "0001", outputCreateCategory.Value);
 
         var createProductCommandHandler = new CreateProductCommandHandler(productRepository, categoryRepository, unitOfWork);
 
-        var outputCreateProduct1 = await createProductCommandHandler.Handle(new CreateProductCommand(inputCreateProduct1), CancellationToken.None);
+        var outputCreateProduct1 = await createProductCommandHandler.Handle(inputCreateProduct1, CancellationToken.None);
 
         var addItemToCartCommandHandler = new AddItemToCartCommandHandler(orderRepository, productRepository, unitOfWork);
 
@@ -154,27 +147,27 @@ public class OrderTest
 
         mediator.Setup(m => m.Publish(It.IsAny<CustomerCreatedEvent>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
 
-        var inputCreateCustomer = new CreateCustomerRequest("John Doe", "john.doe@gmail.com", "abc123", new DateTime(2004, 11, 06), "659.232.850-96", "(11) 97414-6507");
+        var inputCreateCustomer = new CreateCustomerCommand("John Doe", "john.doe@gmail.com", "abc123", new DateTime(2004, 11, 06), "659.232.850-96", "(11) 97414-6507");
 
-        var createCustomerCommandHandler = new CreateAccountCommandHandler(customerRepository, unitOfWork, passwordHasher, mediator.Object);
+        var createCustomerCommandHandler = new CreateCustomerCommandHandler(customerRepository, unitOfWork, passwordHasher, mediator.Object);
 
-        var outputCreateCustomer = await createCustomerCommandHandler.Handle(new CreateAccountCommand(inputCreateCustomer), CancellationToken.None);
+        var outputCreateCustomer = await createCustomerCommandHandler.Handle(inputCreateCustomer, CancellationToken.None);
 
-        var inputCreateCategory = new CreateCategoryRequest("Category", "Category Description");
+        var inputCreateCategory = new CreateCategoryCommand("Category", "Category Description");
 
         var createCategoryCommandHandler = new CreateCatagoryCommandHandler(categoryRepository, unitOfWork);
 
-        var outputCreateCategory = await createCategoryCommandHandler.Handle(new CreateCategoryCommand(inputCreateCategory), CancellationToken.None);
+        var outputCreateCategory = await createCategoryCommandHandler.Handle(inputCreateCategory, CancellationToken.None);
 
-        var inputCreateProduct1 = new CreateProductRequest("Product 1", "Product 1", "BRL", 50, "Image", "0001", outputCreateCategory.Value);
-        var inputCreateProduct2 = new CreateProductRequest("Product 2", "Product 2", "BRL", 60, "Image", "0002", outputCreateCategory.Value);
-        var inputCreateProduct3 = new CreateProductRequest("Product 3", "Product 3", "BRL", 70, "Image", "0003", outputCreateCategory.Value);
+        var inputCreateProduct1 = new CreateProductCommand("Product 1", "Product 1", "BRL", 50, "Image", "0001", outputCreateCategory.Value);
+        var inputCreateProduct2 = new CreateProductCommand("Product 2", "Product 2", "BRL", 60, "Image", "0002", outputCreateCategory.Value);
+        var inputCreateProduct3 = new CreateProductCommand("Product 3", "Product 3", "BRL", 70, "Image", "0003", outputCreateCategory.Value);
 
         var createProductCommandHandler = new CreateProductCommandHandler(productRepository, categoryRepository, unitOfWork);
 
-        var outputCreateProduct1 = await createProductCommandHandler.Handle(new CreateProductCommand(inputCreateProduct1), CancellationToken.None);
-        var outputCreateProduct2 = await createProductCommandHandler.Handle(new CreateProductCommand(inputCreateProduct2), CancellationToken.None);
-        var outputCreateProduct3 = await createProductCommandHandler.Handle(new CreateProductCommand(inputCreateProduct3), CancellationToken.None);
+        var outputCreateProduct1 = await createProductCommandHandler.Handle(inputCreateProduct1, CancellationToken.None);
+        var outputCreateProduct2 = await createProductCommandHandler.Handle(inputCreateProduct2, CancellationToken.None);
+        var outputCreateProduct3 = await createProductCommandHandler.Handle(inputCreateProduct3, CancellationToken.None);
 
         var addItemToCartCommandHandler = new AddItemToCartCommandHandler(orderRepository, productRepository, unitOfWork);
 
@@ -206,29 +199,29 @@ public class OrderTest
         mediator.Setup(m => m.Publish(It.IsAny<CustomerCreatedEvent>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
         mediator.Setup(m => m.Publish(It.IsAny<OrderCreatedEvent>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
 
-        var inputCreateCustomer = new CreateCustomerRequest("John Doe", "john.doe@gmail.com", "abc123", new DateTime(2004, 11, 06), "659.232.850-96", "(11) 97414-6507");
+        var inputCreateCustomer = new CreateCustomerCommand("John Doe", "john.doe@gmail.com", "abc123", new DateTime(2004, 11, 06), "659.232.850-96", "(11) 97414-6507");
 
-        var createCustomerCommandHandler = new CreateAccountCommandHandler(customerRepository, unitOfWork, passwordHasher, mediator.Object);
+        var createCustomerCommandHandler = new CreateCustomerCommandHandler(customerRepository, unitOfWork, passwordHasher, mediator.Object);
 
-        var outputCreateCustomer = await createCustomerCommandHandler.Handle(new CreateAccountCommand(inputCreateCustomer), CancellationToken.None);
+        var outputCreateCustomer = await createCustomerCommandHandler.Handle(inputCreateCustomer, CancellationToken.None);
 
-        var inputCreateCategory = new CreateCategoryRequest("Category", "Category Description");
+        var inputCreateCategory = new CreateCategoryCommand("Category", "Category Description");
 
         var createCategoryCommandHandler = new CreateCatagoryCommandHandler(categoryRepository, unitOfWork);
 
-        var outputCreateCategory = await createCategoryCommandHandler.Handle(new CreateCategoryCommand(inputCreateCategory), CancellationToken.None);
+        var outputCreateCategory = await createCategoryCommandHandler.Handle(inputCreateCategory, CancellationToken.None);
 
-        var inputCreateProduct1 = new CreateProductRequest("Product 1", "Product 1", "BRL", 50, "Image", "0001", outputCreateCategory.Value);
-        var inputCreateProduct2 = new CreateProductRequest("Product 2", "Product 2", "BRL", 60, "Image", "0002", outputCreateCategory.Value);
-        var inputCreateProduct3 = new CreateProductRequest("Product 3", "Product 3", "BRL", 70, "Image", "0003", outputCreateCategory.Value);
+        var inputCreateProduct1 = new CreateProductCommand("Product 1", "Product 1", "BRL", 50, "Image", "0001", outputCreateCategory.Value);
+        var inputCreateProduct2 = new CreateProductCommand("Product 2", "Product 2", "BRL", 60, "Image", "0002", outputCreateCategory.Value);
+        var inputCreateProduct3 = new CreateProductCommand("Product 3", "Product 3", "BRL", 70, "Image", "0003", outputCreateCategory.Value);
 
         var createProductCommandHandler = new CreateProductCommandHandler(productRepository, categoryRepository, unitOfWork);
 
-        var outputCreateProduct1 = await createProductCommandHandler.Handle(new CreateProductCommand(inputCreateProduct1), CancellationToken.None);
-        var outputCreateProduct2 = await createProductCommandHandler.Handle(new CreateProductCommand(inputCreateProduct2), CancellationToken.None);
-        var outputCreateProduct3 = await createProductCommandHandler.Handle(new CreateProductCommand(inputCreateProduct3), CancellationToken.None);
+        var outputCreateProduct1 = await createProductCommandHandler.Handle(inputCreateProduct1, CancellationToken.None);
+        var outputCreateProduct2 = await createProductCommandHandler.Handle(inputCreateProduct2, CancellationToken.None);
+        var outputCreateProduct3 = await createProductCommandHandler.Handle(inputCreateProduct3, CancellationToken.None);
 
-        var inputCreateOrder = new OrderRequest(new List<OrderItemRequest>()
+        var inputCreateOrder = new CreateOrderCommand(new List<OrderItemRequest>()
         {
             new OrderItemRequest(outputCreateProduct1.Value, 2),
             new OrderItemRequest(outputCreateProduct2.Value, 3),
@@ -238,9 +231,9 @@ public class OrderTest
         var createOrdercommandHandler = new CreateOrderCommandHandler(orderRepository, productRepository, unitOfWork, mediator.Object, customerRepository);
 
         //WHEN
-        await createOrdercommandHandler.Handle(new CreateOrderCommand(inputCreateOrder), CancellationToken.None);
-        await createOrdercommandHandler.Handle(new CreateOrderCommand(inputCreateOrder), CancellationToken.None);
-        await createOrdercommandHandler.Handle(new CreateOrderCommand(inputCreateOrder), CancellationToken.None);
+        await createOrdercommandHandler.Handle(inputCreateOrder, CancellationToken.None);
+        await createOrdercommandHandler.Handle(inputCreateOrder, CancellationToken.None);
+        await createOrdercommandHandler.Handle(inputCreateOrder, CancellationToken.None);
 
         var getOrdersByCustomerIdQueryHandler = new GetOrdersByCustomerIdQueryHandler(orderRepository);
 
@@ -258,29 +251,29 @@ public class OrderTest
         mediator.Setup(m => m.Publish(It.IsAny<CustomerCreatedEvent>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
         mediator.Setup(m => m.Publish(It.IsAny<OrderCreatedEvent>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
 
-        var inputCreateCustomer = new CreateCustomerRequest("John Doe", "john.doe@gmail.com", "abc123", new DateTime(2004, 11, 06), "659.232.850-96", "(11) 97414-6507");
+        var inputCreateCustomer = new CreateCustomerCommand("John Doe", "john.doe@gmail.com", "abc123", new DateTime(2004, 11, 06), "659.232.850-96", "(11) 97414-6507");
 
-        var createCustomerCommandHandler = new CreateAccountCommandHandler(customerRepository, unitOfWork, passwordHasher, mediator.Object);
+        var createCustomerCommandHandler = new CreateCustomerCommandHandler(customerRepository, unitOfWork, passwordHasher, mediator.Object);
 
-        var outputCreateCustomer = await createCustomerCommandHandler.Handle(new CreateAccountCommand(inputCreateCustomer), CancellationToken.None);
+        var outputCreateCustomer = await createCustomerCommandHandler.Handle(inputCreateCustomer, CancellationToken.None);
 
-        var inputCreateCategory = new CreateCategoryRequest("Category", "Category Description");
+        var inputCreateCategory = new CreateCategoryCommand("Category", "Category Description");
 
         var createCategoryCommandHandler = new CreateCatagoryCommandHandler(categoryRepository, unitOfWork);
 
-        var outputCreateCategory = await createCategoryCommandHandler.Handle(new CreateCategoryCommand(inputCreateCategory), CancellationToken.None);
+        var outputCreateCategory = await createCategoryCommandHandler.Handle(inputCreateCategory, CancellationToken.None);
 
-        var inputCreateProduct1 = new CreateProductRequest("Product 1", "Product 1", "BRL", 50, "Image", "0001", outputCreateCategory.Value);
-        var inputCreateProduct2 = new CreateProductRequest("Product 2", "Product 2", "BRL", 60, "Image", "0002", outputCreateCategory.Value);
-        var inputCreateProduct3 = new CreateProductRequest("Product 3", "Product 3", "BRL", 70, "Image", "0003", outputCreateCategory.Value);
+        var inputCreateProduct1 = new CreateProductCommand("Product 1", "Product 1", "BRL", 50, "Image", "0001", outputCreateCategory.Value);
+        var inputCreateProduct2 = new CreateProductCommand("Product 2", "Product 2", "BRL", 60, "Image", "0002", outputCreateCategory.Value);
+        var inputCreateProduct3 = new CreateProductCommand("Product 3", "Product 3", "BRL", 70, "Image", "0003", outputCreateCategory.Value);
 
         var createProductCommandHandler = new CreateProductCommandHandler(productRepository, categoryRepository, unitOfWork);
 
-        var outputCreateProduct1 = await createProductCommandHandler.Handle(new CreateProductCommand(inputCreateProduct1), CancellationToken.None);
-        var outputCreateProduct2 = await createProductCommandHandler.Handle(new CreateProductCommand(inputCreateProduct2), CancellationToken.None);
-        var outputCreateProduct3 = await createProductCommandHandler.Handle(new CreateProductCommand(inputCreateProduct3), CancellationToken.None);
+        var outputCreateProduct1 = await createProductCommandHandler.Handle(inputCreateProduct1, CancellationToken.None);
+        var outputCreateProduct2 = await createProductCommandHandler.Handle(inputCreateProduct2, CancellationToken.None);
+        var outputCreateProduct3 = await createProductCommandHandler.Handle(inputCreateProduct3, CancellationToken.None);
 
-        var inputCreateOrder = new OrderRequest(new List<OrderItemRequest>()
+        var inputCreateOrder = new CreateOrderCommand(new List<OrderItemRequest>()
         {
             new OrderItemRequest(outputCreateProduct1.Value, 2),
             new OrderItemRequest(outputCreateProduct2.Value, 3),
@@ -290,7 +283,7 @@ public class OrderTest
         var createOrderCommandHandler = new CreateOrderCommandHandler(orderRepository, productRepository, unitOfWork, mediator.Object, customerRepository);
 
         //WHEN
-        var outputCreateOrder = await createOrderCommandHandler.Handle(new CreateOrderCommand(inputCreateOrder), CancellationToken.None);
+        var outputCreateOrder = await createOrderCommandHandler.Handle(inputCreateOrder, CancellationToken.None);
 
         var cancelOrderCommandHandler = new CancelOrderCommandHandler(orderRepository, unitOfWork);
 
@@ -311,29 +304,29 @@ public class OrderTest
         mediator.Setup(m => m.Publish(It.IsAny<CustomerCreatedEvent>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
         mediator.Setup(m => m.Publish(It.IsAny<OrderCreatedEvent>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
 
-        var inputCreateCustomer = new CreateCustomerRequest("John Doe", "john.doe@gmail.com", "abc123", new DateTime(2004, 11, 06), "659.232.850-96", "(11) 97414-6507");
+        var inputCreateCustomer = new CreateCustomerCommand("John Doe", "john.doe@gmail.com", "abc123", new DateTime(2004, 11, 06), "659.232.850-96", "(11) 97414-6507");
 
-        var createCustomerCommandHandler = new CreateAccountCommandHandler(customerRepository, unitOfWork, passwordHasher, mediator.Object);
+        var createCustomerCommandHandler = new CreateCustomerCommandHandler(customerRepository, unitOfWork, passwordHasher, mediator.Object);
 
-        var outputCreateCustomer = await createCustomerCommandHandler.Handle(new CreateAccountCommand(inputCreateCustomer), CancellationToken.None);
+        var outputCreateCustomer = await createCustomerCommandHandler.Handle(inputCreateCustomer, CancellationToken.None);
 
-        var inputCreateCategory = new CreateCategoryRequest("Category", "Category Description");
+        var inputCreateCategory = new CreateCategoryCommand("Category", "Category Description");
 
         var createCategoryCommandHandler = new CreateCatagoryCommandHandler(categoryRepository, unitOfWork);
 
-        var outputCreateCategory = await createCategoryCommandHandler.Handle(new CreateCategoryCommand(inputCreateCategory), CancellationToken.None);
+        var outputCreateCategory = await createCategoryCommandHandler.Handle(inputCreateCategory, CancellationToken.None);
 
-        var inputCreateProduct1 = new CreateProductRequest("Product 1", "Product 1", "BRL", 50, "Image", "0001", outputCreateCategory.Value);
-        var inputCreateProduct2 = new CreateProductRequest("Product 2", "Product 2", "BRL", 60, "Image", "0002", outputCreateCategory.Value);
-        var inputCreateProduct3 = new CreateProductRequest("Product 3", "Product 3", "BRL", 70, "Image", "0003", outputCreateCategory.Value);
+        var inputCreateProduct1 = new CreateProductCommand("Product 1", "Product 1", "BRL", 50, "Image", "0001", outputCreateCategory.Value);
+        var inputCreateProduct2 = new CreateProductCommand("Product 2", "Product 2", "BRL", 60, "Image", "0002", outputCreateCategory.Value);
+        var inputCreateProduct3 = new CreateProductCommand("Product 3", "Product 3", "BRL", 70, "Image", "0003", outputCreateCategory.Value);
 
         var createProductCommandHandler = new CreateProductCommandHandler(productRepository, categoryRepository, unitOfWork);
 
-        var outputCreateProduct1 = await createProductCommandHandler.Handle(new CreateProductCommand(inputCreateProduct1), CancellationToken.None);
-        var outputCreateProduct2 = await createProductCommandHandler.Handle(new CreateProductCommand(inputCreateProduct2), CancellationToken.None);
-        var outputCreateProduct3 = await createProductCommandHandler.Handle(new CreateProductCommand(inputCreateProduct3), CancellationToken.None);
+        var outputCreateProduct1 = await createProductCommandHandler.Handle(inputCreateProduct1, CancellationToken.None);
+        var outputCreateProduct2 = await createProductCommandHandler.Handle(inputCreateProduct2, CancellationToken.None);
+        var outputCreateProduct3 = await createProductCommandHandler.Handle(inputCreateProduct3, CancellationToken.None);
 
-        var inputCreateOrder = new OrderRequest(new List<OrderItemRequest>()
+        var inputCreateOrder = new CreateOrderCommand(new List<OrderItemRequest>()
         {
             new OrderItemRequest(outputCreateProduct1.Value, 2),
             new OrderItemRequest(outputCreateProduct2.Value, 3),
@@ -343,13 +336,13 @@ public class OrderTest
         var createOrderCommandHandler = new CreateOrderCommandHandler(orderRepository, productRepository, unitOfWork, mediator.Object, customerRepository);
 
         //WHEN
-        var outputCreateOrder = await createOrderCommandHandler.Handle(new CreateOrderCommand(inputCreateOrder), CancellationToken.None);
+        var outputCreateOrder = await createOrderCommandHandler.Handle(inputCreateOrder, CancellationToken.None);
 
-        var inputCreateAddress = new CreateAddressRequest(outputCreateCustomer.Value, "12909-062", "Rua a", "Bairro", "100", null, "São Paulo", "SP", "Brazil");
+        var inputCreateAddress = new CreateAddressCommand(outputCreateCustomer.Value, "12909-062", "Rua a", "Bairro", "100", null, "São Paulo", "SP", "Brazil");
 
         var createAddressCommandHandler = new CreateAddressCommandHandler(addressRepository, unitOfWork);
 
-        var outputCreateAddress = await createAddressCommandHandler.Handle(new CreateAddressCommand(inputCreateAddress), CancellationToken.None);
+        var outputCreateAddress = await createAddressCommandHandler.Handle(inputCreateAddress, CancellationToken.None);
 
         var paymentType = "credit";
         var cardToken = "my-token-card";

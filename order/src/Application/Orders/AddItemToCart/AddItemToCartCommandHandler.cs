@@ -7,7 +7,7 @@ using Domain.Products.Error;
 using Domain.Products.Repository;
 using Domain.Shared;
 
-namespace Application.Orders.AddLineItem;
+namespace Application.Orders.AddItemToCart;
 
 public class AddItemToCartCommandHandler : ICommandHandler<AddItemToCartCommand>
 {

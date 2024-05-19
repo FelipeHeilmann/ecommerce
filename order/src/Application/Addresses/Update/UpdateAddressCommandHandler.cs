@@ -20,21 +20,20 @@ public class UpdateAddressCommandHandler : ICommandHandler<UpdateAddressCommand>
 
     public async Task<Result> Handle(UpdateAddressCommand command, CancellationToken cancellationToken)
     {
-        var request = command.request;
 
-        var address = await _addressRepository.GetByIdAsync(request.Id, cancellationToken);
+        var address = await _addressRepository.GetByIdAsync(command.Id, cancellationToken);
 
         if (address == null) return Result.Failure<Address>(AddressErrors.NotFound);
 
         address.Update(
-            request.Zipcode,
-            request.Street,
-            request.Neighborhood,
-            request.Number,
-            request.Complement,
-            request.City,
-            request.State,
-            request.Country
+            command.Zipcode,
+            command.Street,
+            command.Neighborhood,
+            command.Number,
+            command.Complement,
+            command.City,
+            command.State,
+            command.Country
          );
 
         _addressRepository.Update(address);

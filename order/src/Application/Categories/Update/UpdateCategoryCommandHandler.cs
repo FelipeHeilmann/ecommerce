@@ -20,12 +20,11 @@ public class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategoryComman
 
     public async Task<Result> Handle(UpdateCategoryCommand command, CancellationToken cancellationToken)
     {
-        var request = command.request;
-        var category = await _categoryRepository.GetByIdAsync(request.CustomerId, cancellationToken);
+        var category = await _categoryRepository.GetByIdAsync(command.CategoryId, cancellationToken);
 
         if (category == null) return Result.Failure<Category>(CategoryErrors.CategoryNotFound);
 
-        category.Update(request.Name, request.Description);
+        category.Update(command.Name, command.Description);
 
         _categoryRepository.Update(category);
 

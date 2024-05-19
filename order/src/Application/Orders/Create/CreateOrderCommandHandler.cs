@@ -31,11 +31,11 @@ public class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, Gui
 
     public async Task<Result<Guid>> Handle(CreateOrderCommand command, CancellationToken cancellationToken)
     {
-        var orderItemList = command.request.OrderItens;
+        var orderItemList = command.OrderItens;
 
-        var order = Order.Create(command.request.CustomerId);
+        var order = Order.Create(command.CustomerId);
 
-        var customer = await _customerRepository.GetByIdAsync(command.request.CustomerId, cancellationToken);
+        var customer = await _customerRepository.GetByIdAsync(command.CustomerId, cancellationToken);
 
         if (customer == null)
         {

@@ -19,8 +19,7 @@ public class CreateCatagoryCommandHandler : ICommandHandler<CreateCategoryComman
 
     public async Task<Result<Guid>> Handle(CreateCategoryCommand command, CancellationToken cancellationToken)
     {
-        var request = command.request;
-        var category = Category.Create(request.Name, request.Description);
+        var category = Category.Create(command.Name, command.Description);
 
         if (category.IsFailure) return Result.Failure<Guid>(category.Error);
 

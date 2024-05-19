@@ -3,4 +3,4 @@ using Application.Orders.Model;
 
 namespace Application.Orders.Create;
 
-public record class CreateOrderCommand(OrderRequest request) : ICommand<Guid>;
+public record class CreateOrderCommand(List<OrderItemRequest> OrderItens, Guid CustomerId) : ICommand<Guid>;

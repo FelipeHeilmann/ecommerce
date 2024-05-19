@@ -1,6 +1,14 @@
 ﻿using Application.Abstractions.Messaging;
-using Application.Addresses.Model;
 
 namespace Application.Addresses.Create;
 
-public record CreateAddressCommand(CreateAddressRequest request) : ICommand<Guid>;
+public record CreateAddressCommand(Guid CustomerId,
+        string Zipcode,
+        string Street,
+        string Neighborhood,
+        string Number,
+        string? Complement,
+        string City,
+        string State,
+        string Country) 
+    : ICommand<Guid>;

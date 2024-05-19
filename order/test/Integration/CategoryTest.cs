@@ -1,10 +1,8 @@
 ﻿using Application.Categories.Create;
 using Application.Categories.GetAll;
 using Application.Categories.GetById;
-using Application.Categories.Model;
 using Application.Categories.Update;
 using Application.Data;
-using Domain.Categories.Entity;
 using Domain.Categories.Repository;
 using Infra.Data;
 using Infra.Repositories.Memory;
@@ -24,11 +22,11 @@ public class CategoryTest
     [Fact]
     public async Task Should_Create_Category() 
     {
-        var inputCreateCategory = new CreateCategoryRequest("minha categoria", "descricao da minha categoria");
+        var inputCreateCategory = new CreateCategoryCommand("minha categoria", "descricao da minha categoria");
 
         var createCategoryCommandHandler = new CreateCatagoryCommandHandler(categoryRepository, unitOfWork);
 
-        var outputCreateCategory = await createCategoryCommandHandler.Handle(new CreateCategoryCommand(inputCreateCategory), CancellationToken.None);
+        var outputCreateCategory = await createCategoryCommandHandler.Handle(inputCreateCategory, CancellationToken.None);
 
         var getCategoryByIdQueryHandler = new GetCategoryByIdQueryHandler(categoryRepository);
 
@@ -41,13 +39,13 @@ public class CategoryTest
     [Fact]
     public async Task Should_Get_All_Categories()
     {
-        var inputCreateCategory = new CreateCategoryRequest("minha categoria", "descricao da minha categoria");
+        var inputCreateCategory = new CreateCategoryCommand("minha categoria", "descricao da minha categoria");
 
         var commandHandler = new CreateCatagoryCommandHandler(categoryRepository, unitOfWork);
 
-        await commandHandler.Handle(new CreateCategoryCommand(inputCreateCategory), CancellationToken.None);
-        await commandHandler.Handle(new CreateCategoryCommand(inputCreateCategory), CancellationToken.None);
-        await commandHandler.Handle(new CreateCategoryCommand(inputCreateCategory), CancellationToken.None);
+        await commandHandler.Handle(inputCreateCategory, CancellationToken.None);
+        await commandHandler.Handle(inputCreateCategory, CancellationToken.None);
+        await commandHandler.Handle(inputCreateCategory, CancellationToken.None);
 
         var query = new GetAllCategoriesQuery();
 
@@ -64,17 +62,17 @@ public class CategoryTest
     [Fact]
     public async Task Should_Update_Category()
     {
-        var inputCreateCategory = new CreateCategoryRequest("minha categoria", "descricao da minha categoria");
+        var inputCreateCategory = new CreateCategoryCommand("minha categoria", "descricao da minha categoria");
 
         var commandHandler = new CreateCatagoryCommandHandler(categoryRepository, unitOfWork);
 
-        var outputCreateCategory = await commandHandler.Handle(new CreateCategoryCommand(inputCreateCategory), CancellationToken.None);
+        var outputCreateCategory = await commandHandler.Handle(inputCreateCategory, CancellationToken.None);
 
-        var inputUpdateCategory = new UpdateCategoryRequest("nome editado", "descricao editada", outputCreateCategory.Value);
+        var inputUpdateCategory = new UpdateCategoryCommand("nome editado", "descricao editada", outputCreateCategory.Value);
 
         var updateCategoryCommandHandler = new UpdateCategoryCommandHandler(categoryRepository, unitOfWork);
 
-        await updateCategoryCommandHandler.Handle(new UpdateCategoryCommand(inputUpdateCategory), CancellationToken.None);
+        await updateCategoryCommandHandler.Handle(inputUpdateCategory, CancellationToken.None);
 
         var getCategoryByIdQueryHandler = new GetCategoryByIdQueryHandler(categoryRepository);
 

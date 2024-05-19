@@ -23,7 +23,7 @@ public class CreateProductCommandHandler : ICommandHandler<CreateProductCommand,
 
     public async Task<Result<Guid>> Handle(CreateProductCommand command, CancellationToken cancellationToken)
     {
-        var category = await _categoryRepository.GetByIdAsync(command.request.CategoryId, cancellationToken);
+        var category = await _categoryRepository.GetByIdAsync(command.CategoryId, cancellationToken);
 
         if (category == null)
         {
@@ -31,12 +31,12 @@ public class CreateProductCommandHandler : ICommandHandler<CreateProductCommand,
         }
 
         var product = Product.Create(
-            command.request.Name,
-            command.request.Description,
-            command.request.ImageUrl,
-            command.request.Currency,
-            command.request.Price,
-            command.request.Sku,
+            command.Name,
+            command.Description,
+            command.ImageUrl,
+            command.Currency,
+            command.Price,
+            command.Sku,
             category
         );
 

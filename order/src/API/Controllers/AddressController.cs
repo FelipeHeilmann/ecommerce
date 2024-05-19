@@ -56,7 +56,7 @@ public class AddressController : APIBaseController
     {
         var customerId = GetCustomerId();
 
-        var createAddressRequest = new CreateAddressRequest(
+        var command = new CreateAddressCommand(
                 customerId!.Value,
                 request.Zipcode,
                 request.Street,
@@ -67,8 +67,6 @@ public class AddressController : APIBaseController
                 request.State,
                 request.Country
         );
-
-        var command = new CreateAddressCommand(createAddressRequest);
 
         var result = await _sender.Send(command, cancellationToken);
 
@@ -81,7 +79,7 @@ public class AddressController : APIBaseController
     {
         var customerId = GetCustomerId();
 
-        var updateAddressRequest = new UpdateAddressRequest(
+        var command = new UpdateAddressCommand(
                 id,
                 customerId!.Value,
                 request.Zipcode,
@@ -93,8 +91,6 @@ public class AddressController : APIBaseController
                 request.State,
                 request.Country
             );
-
-        var command = new UpdateAddressCommand(updateAddressRequest);
 
         var result = await _sender.Send(command, cancellationToken);
 
