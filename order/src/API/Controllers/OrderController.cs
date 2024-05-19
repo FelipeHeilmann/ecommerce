@@ -28,7 +28,7 @@ public class OrderController : APIBaseController
 
         if (customerId == null) return Results.Unauthorized();
 
-        var query = new GetOrdersByCustomerQuery(customerId.Value);
+        var query = new GetOrdersByCustomerIdQuery(customerId.Value);
 
         var result = await _sender.Send(query, cancellation);
 

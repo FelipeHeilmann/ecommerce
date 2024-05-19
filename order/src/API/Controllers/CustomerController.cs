@@ -16,7 +16,7 @@ public class CustomerController : APIBaseController
     : base(sender) { }
 
     [HttpPost]
-    public async Task<IResult> CreateAccount([FromBody] CreateAccountRequest request, CancellationToken cancellationToken)
+    public async Task<IResult> CreateAccount([FromBody] CreateCustomerRequest request, CancellationToken cancellationToken)
     {
         var command = new CreateAccountCommand(request);
 

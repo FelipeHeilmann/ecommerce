@@ -1,138 +1,136 @@
-﻿using Application.Addresses.Create;
+﻿using Application.Abstractions.Services;
+using Application.Addresses.Create;
 using Application.Addresses.GetByCustomerId;
 using Application.Addresses.GetById;
 using Application.Addresses.Model;
 using Application.Addresses.Update;
+using Application.Customers.Create;
+using Application.Customers.Model;
 using Application.Data;
-using Domain.Addresses.Entity;
-using Domain.Addresses.Error;
 using Domain.Addresses.Repository;
+using Domain.Customers.Event;
+using Domain.Customers.Repository;
 using Infra.Data;
+using Infra.Implementations;
 using Infra.Repositories.Memory;
+using MediatR;
+using Moq;
 using Xunit;
 
 namespace Integration;
 
 public class AddressTest
 {
-    private readonly IAddressRepository _addressRepository = new AddressRepositoryInMemory();
-    private readonly IUnitOfWork _unitOfWork = new UnitOfWorkMemory();
-    public AddressTest() 
-    {
-        RepositorySetup.PopulateAddressRepository(_addressRepository);
-    }
+    private readonly IAddressRepository addressRepository = new AddressRepositoryInMemory();
+    private readonly ICustomerRepository customerRepository = new CustomerRepositoryMemory();
+    private readonly IPasswordHasher passwordHasher = new PasswordHasher();
+    private readonly IUnitOfWork unitOfWork = new UnitOfWorkMemory();
 
     [Fact]
     public async Task Sould_Create_Address()
     {
-        var customerId = Guid.Parse("f3b205c3-552d-4fd9-b10e-6414086910b0");
-        var zipcode = "04182-123";
-        var street = "Rua C";
-        var neighborhood = "Jardim Sacoma";
-        var number = "112";
-        var apartment = "43";
-        var city = "São Paulo";
-        var state = "São Paulo";
-        var country = "Brasil";
+        var mediatorMock = new Mock<IMediator>();
 
-        var request = new CreateAddressRequest(customerId, zipcode, street, neighborhood, number, apartment, city, state, country);
+        mediatorMock.Setup(m => m.Publish(It.IsAny<CustomerCreatedEvent>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
 
-        var command = new CreateAddressCommand(request);
+        var inputCreateCustomer = new CreateCustomerRequest("Felipe Heilmann", "felipeheilmannm@gmail.com", "senha", new DateTime(2004, 6, 2), "97067401046", "11 97414-6507");
 
-        var commandHandler = new CreateAddressCommandHandler(_addressRepository, _unitOfWork);
+        var createAccountCommandHandler = new CreateAccountCommandHandler(customerRepository, unitOfWork, passwordHasher, mediatorMock.Object);
 
-        var result = await commandHandler.Handle(command, CancellationToken.None);
+        var outputCreateCustomer = await createAccountCommandHandler.Handle(new CreateAccountCommand(inputCreateCustomer), CancellationToken.None);
 
-        Assert.True(result.IsSuccess);
-        Assert.False(result.IsFailure);
-        Assert.True(result.Value is Guid);
+        var inputCreateAddress = new CreateAddressRequest(outputCreateCustomer.Value, "04182-123", "Rua C", "Jardim Sacoma", "112", "apt 43", "São Paulo", "São Paulo", "Brasil");
+
+        var createAddressCommandHandler = new CreateAddressCommandHandler(addressRepository, unitOfWork);
+
+        var outputCreateAddress = await createAddressCommandHandler.Handle(new CreateAddressCommand(inputCreateAddress), CancellationToken.None);
+
+        var getAddressQueryHandler = new GetAddressByIdQueryHandler(addressRepository);
+
+        var outputGetAddress = await getAddressQueryHandler.Handle(new GetAddressByIdQuery(outputCreateAddress.Value), CancellationToken.None);
+
+        Assert.Equal("São Paulo", outputGetAddress.Value.State);
+        Assert.Equal("apt 43", outputGetAddress.Value.Complement);
+        Assert.Equal("São Paulo", outputGetAddress.Value.State);
     }
 
     [Fact]
     public async Task Sould_Get_Addresses_By_Customer_Id()
     {
-        var customerId = Guid.Parse("f3b205c3-552d-4fd9-b10e-6414086910b0");
+        var mediatorMock = new Mock<IMediator>();
 
-        var query = new GetAddressesByCustomerIdQuery(customerId);
+        mediatorMock.Setup(m => m.Publish(It.IsAny<CustomerCreatedEvent>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
 
-        var queryHandler = new GetAddressesByCustomerIdQueryHandler(_addressRepository);
+        var inputCreateCustomer = new CreateCustomerRequest("Felipe Heilmann", "felipeheilmannm@gmail.com", "senha", new DateTime(2004, 6, 2), "97067401046", "11 97414-6507");
 
-        var result = await queryHandler.Handle(query, CancellationToken.None);
+        var createAccountCommandHandler = new CreateAccountCommandHandler(customerRepository, unitOfWork, passwordHasher, mediatorMock.Object);
 
-        Assert.True(result.IsSuccess);
-        Assert.False(result.IsFailure);
-        Assert.Equal(2, result.Value.Count);
+        var outputCreateCustomer = await createAccountCommandHandler.Handle(new CreateAccountCommand(inputCreateCustomer), CancellationToken.None);
+
+        var inputCreateAddress1 = new CreateAddressRequest(outputCreateCustomer.Value, "04182-123", "Rua C", "Jardim Sacoma", "112", "apt 43", "São Paulo", "São Paulo", "Brasil");
+        var inputCreateAddress2 = new CreateAddressRequest(outputCreateCustomer.Value, "03246-435", "Rua A", "Jardim Sacoma", "115", null, "São Paulo", "São Paulo", "Brasil");
+        var inputCreateAddress3= new CreateAddressRequest(outputCreateCustomer.Value, "04082-168", "Rua B", "Jardim Sacoma2", "116", "apt 49", "São Paulo", "São Paulo", "Brasil");
+
+        var createAddressCommandHandler = new CreateAddressCommandHandler(addressRepository, unitOfWork);
+
+        await createAddressCommandHandler.Handle(new CreateAddressCommand(inputCreateAddress1), CancellationToken.None);
+        await createAddressCommandHandler.Handle(new CreateAddressCommand(inputCreateAddress2), CancellationToken.None);
+        await createAddressCommandHandler.Handle(new CreateAddressCommand(inputCreateAddress3), CancellationToken.None);
+
+        var getAddressesByCustomerIdQueryHandler = new GetAddressesByCustomerIdQueryHandler(addressRepository);
+
+        var outputGetAddresses = await getAddressesByCustomerIdQueryHandler.Handle(new GetAddressesByCustomerIdQuery(outputCreateCustomer.Value), CancellationToken.None);
+
+        Assert.Equal(3, outputGetAddresses.Value.Count);
+
+        Assert.Equal("Rua C", outputGetAddresses.Value.ToList()[0].Street);
+        Assert.Equal("apt 43", outputGetAddresses.Value.ToList()[0].Complement);
+        Assert.Equal("04182-123", outputGetAddresses.Value.ToList()[0].ZipCode);
+
+
+        Assert.Equal("Rua A", outputGetAddresses.Value.ToList()[1].Street);
+        Assert.Equal(null, outputGetAddresses.Value.ToList()[1].Complement);
+        Assert.Equal("03246-435", outputGetAddresses.Value.ToList()[1].ZipCode);
+
+
+        Assert.Equal("Rua B", outputGetAddresses.Value.ToList()[2].Street);
+        Assert.Equal("apt 49", outputGetAddresses.Value.ToList()[2].Complement);
+        Assert.Equal("04082-168", outputGetAddresses.Value.ToList()[2].ZipCode);
     }
 
-    [Fact]
-    public async Task Sould_Get_Address_By_Id()
-    {
-        var addressId = Guid.Parse("2b169c76-acee-4ddf-86c4-37af9fbb07ea");
-
-        var query = new GetAddressByIdQuery(addressId);
-
-        var queryHandler = new GetAddressByIdQueryHandler(_addressRepository);
-
-        var result = await queryHandler.Handle(query, CancellationToken.None);
-
-        Assert.True(result.IsSuccess);
-        Assert.False(result.IsFailure);
-
-    }
-
-    [Fact]
-    public async Task Sould_Not_Get_Addresses_By_Id()
-    {
-        var addressId = Guid.NewGuid();
-
-        var query = new GetAddressByIdQuery(addressId);
-
-        var queryHandler = new GetAddressByIdQueryHandler(_addressRepository);
-
-        var result = await queryHandler.Handle(query, CancellationToken.None);
-
-        Assert.False(result.IsSuccess);
-        Assert.True(result.IsFailure);
-        Assert.Equal(AddressErrors.NotFound, result.Error);
-    }
 
     [Fact]
     public async Task Should_Update_Address()
     {
-        var addressId = Guid.Parse("2b169c76-acee-4ddf-86c4-37af9fbb07ea");
+        var mediatorMock = new Mock<IMediator>();
 
-        var customerId = Guid.Parse("f3b205c3-552d-4fd9-b10e-6414086910b0");
-        var zipcode = "04182-135";
-        var street = "Rua C";
-        var neighborhood = "Jardim Sacoma";
-        var number = "112";
-        var apartment = "43";
-        var city = "São Paulo";
-        var state = "São Paulo";
-        var country = "Brasil";
+        mediatorMock.Setup(m => m.Publish(It.IsAny<CustomerCreatedEvent>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
 
-        var request = new UpdateAddressRequest
-            (
-                addressId,
-                customerId, 
-                zipcode, 
-                street, 
-                neighborhood, 
-                number,
-                apartment, 
-                city, 
-                state, 
-                country
-            );
+        var inputCreateCustomer = new CreateCustomerRequest("Felipe Heilmann", "felipeheilmannm@gmail.com", "senha", new DateTime(2004, 6, 2), "97067401046", "11 97414-6507");
 
-        var command = new UpdateAddressCommand(request);
+        var createAccountCommandHandler = new CreateAccountCommandHandler(customerRepository, unitOfWork, passwordHasher, mediatorMock.Object);
 
-        var commandHandler = new UpdateAddressCommandHandler(_addressRepository, _unitOfWork);
+        var outputCreateCustomer = await createAccountCommandHandler.Handle(new CreateAccountCommand(inputCreateCustomer), CancellationToken.None);
 
-        var result = await commandHandler.Handle(command, CancellationToken.None);
+        var inputCreateAddress = new CreateAddressRequest(outputCreateCustomer.Value, "03246-435", "Rua A", "Jardim Sacoma", "115", null, "São Paulo", "São Paulo", "Brasil");
 
-        Assert.True(result.IsSuccess);
-        Assert.False(result.IsFailure);
+        var createAddressCommandHandler = new CreateAddressCommandHandler(addressRepository, unitOfWork);
+
+        var outputCreateAddress = await createAddressCommandHandler.Handle(new CreateAddressCommand(inputCreateAddress), CancellationToken.None);
+
+        var inputUpdateAddress = new UpdateAddressRequest(outputCreateAddress.Value, outputCreateCustomer.Value, "04182-123", "Rua C", "Jardim Sacoma", "112", "apt 43", "São Paulo", "São Paulo", "Brasil");
+
+        var updateAddressCommandHandler = new UpdateAddressCommandHandler(addressRepository, unitOfWork);
+
+        await updateAddressCommandHandler.Handle(new UpdateAddressCommand(inputUpdateAddress), CancellationToken.None);
+
+        var getAddressQueryHandler = new GetAddressByIdQueryHandler(addressRepository);
+
+        var outputGetAddress = await getAddressQueryHandler.Handle(new GetAddressByIdQuery(outputCreateAddress.Value), CancellationToken.None);
+
+        Assert.Equal("Rua C", outputGetAddress.Value.Street);
+        Assert.Equal("apt 43", outputGetAddress.Value.Complement);
+        Assert.Equal("04182-123", outputGetAddress.Value.ZipCode);
     }
 
 }

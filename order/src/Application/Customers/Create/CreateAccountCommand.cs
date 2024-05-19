@@ -3,5 +3,5 @@ using Application.Customers.Model;
 
 namespace Application.Customers.Create;
 
-public record CreateAccountCommand(CreateAccountRequest request) : ICommand<Guid>;
+public record CreateAccountCommand(CreateCustomerRequest request) : ICommand<Guid>;
 

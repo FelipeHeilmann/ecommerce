@@ -1,4 +1,6 @@
 ﻿using Domain.Addresses.Entity;
+using Domain.Addresses.Error;
+using NuGet.Frameworks;
 using Xunit;
 
 namespace Unit;
@@ -20,8 +22,8 @@ public class AddressTest
 
         var address = Address.Create(customerId, zicode, street, neighborhood, number, apartment, city, state, country);
 
-        Assert.True(address.IsSuccess);
-        Assert.False(address.IsFailure);
+        Assert.Equal(street,address.Street);
+        Assert.Equal(neighborhood, address.Neighborhood);
     }
 
     [Fact]
@@ -37,10 +39,7 @@ public class AddressTest
         var state = "São Paulo";
         var country = "Brasil";
 
-        var address = Address.Create(customerId, zicode, street, neighborhood, number, apartment, city, state, country);
-
-        Assert.False(address.IsSuccess);
-        Assert.True(address.IsFailure);
+        Assert.Throws<InvalidZipCode>(() => Address.Create(customerId, zicode, street, neighborhood, number, apartment, city, state, country));
     }
 
 }

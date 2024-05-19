@@ -4,7 +4,7 @@ using Domain.Shared;
 
 namespace Application.Orders.GetByCustomerId;
 
-public class GetOrdersByCustomerIdQueryHandler : IQueryHandler<GetOrdersByCustomerQuery, ICollection<Output>>
+public class GetOrdersByCustomerIdQueryHandler : IQueryHandler<GetOrdersByCustomerIdQuery, ICollection<Output>>
 {
     private readonly IOrderRepository _repository;
 
@@ -13,7 +13,7 @@ public class GetOrdersByCustomerIdQueryHandler : IQueryHandler<GetOrdersByCustom
         _repository = repository;
     }
 
-    public async Task<Result<ICollection<Output>>> Handle(GetOrdersByCustomerQuery query, CancellationToken cancellationToken)
+    public async Task<Result<ICollection<Output>>> Handle(GetOrdersByCustomerIdQuery query, CancellationToken cancellationToken)
     {
         var orders = await _repository.GetOrdersByCustomerId(query.CustomerId, cancellationToken);
 

@@ -14,72 +14,73 @@ namespace Integration;
 
 public class CategoryTest
 {
-    private ICategoryRepository _categoryRepository = new CategoryRepositoryMemory();
-    private IUnitOfWork _unitOfWork = new UnitOfWorkMemory();
+    private ICategoryRepository categoryRepository = new CategoryRepositoryMemory();
+    private IUnitOfWork unitOfWork = new UnitOfWorkMemory();
 
     public CategoryTest() 
     {
-        RepositorySetup.PopulateCategoryRepository(_categoryRepository);
     }
 
     [Fact]
     public async Task Should_Create_Category() 
     {
-        var request = new CreateCategoryRequest("minha categoria", "descricao da minha categoria");
+        var inputCreateCategory = new CreateCategoryRequest("minha categoria", "descricao da minha categoria");
 
-        var command = new CreateCategoryCommand(request);
+        var createCategoryCommandHandler = new CreateCatagoryCommandHandler(categoryRepository, unitOfWork);
 
-        var commandHandler = new CreateCatagoryCommandHandler(_categoryRepository, _unitOfWork);
+        var outputCreateCategory = await createCategoryCommandHandler.Handle(new CreateCategoryCommand(inputCreateCategory), CancellationToken.None);
 
-        var result = await commandHandler.Handle(command, CancellationToken.None);
+        var getCategoryByIdQueryHandler = new GetCategoryByIdQueryHandler(categoryRepository);
 
-        Assert.True(result.IsSuccess);
-        Assert.False(result.IsFailure);
+        var outputGetCategory = await getCategoryByIdQueryHandler.Handle(new GetCategoryByIdQuery(outputCreateCategory.Value), CancellationToken.None);
+
+        Assert.Equal("minha categoria", outputGetCategory.Value.Name);
+        Assert.Equal("descricao da minha categoria", outputGetCategory.Value.Descrption);
     }
 
     [Fact]
     public async Task Should_Get_All_Categories()
     {
+        var inputCreateCategory = new CreateCategoryRequest("minha categoria", "descricao da minha categoria");
+
+        var commandHandler = new CreateCatagoryCommandHandler(categoryRepository, unitOfWork);
+
+        await commandHandler.Handle(new CreateCategoryCommand(inputCreateCategory), CancellationToken.None);
+        await commandHandler.Handle(new CreateCategoryCommand(inputCreateCategory), CancellationToken.None);
+        await commandHandler.Handle(new CreateCategoryCommand(inputCreateCategory), CancellationToken.None);
+
         var query = new GetAllCategoriesQuery();
 
-        var queryHandler = new GetAllCategoriesQueryHandler(_categoryRepository);
+        var queryHandler = new GetAllCategoriesQueryHandler(categoryRepository);
 
         var result = await queryHandler.Handle(query, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
         Assert.False(result.IsFailure);
-        Assert.Equal(2, result.Value.Count());
+        Assert.Equal(3, result.Value.Count());
     }
 
-    [Fact]
-    public async Task Should_Get_Category_By_Id()
-    {
-        var categoryId = Guid.Parse("de1ab44a-ef05-42da-a0e8-6137368018fc");
-
-        var query = new GetCategoryByIdQuery(categoryId);
-
-        var queryHandler = new GetCategoryByIdQueryHandler(_categoryRepository);
-
-        var result = await queryHandler.Handle(query, CancellationToken.None);
-
-        Assert.True(result.IsSuccess);
-        Assert.False(result.IsFailure);
-    }
 
     [Fact]
     public async Task Should_Update_Category()
     {
-        var categoryId = Guid.Parse("de1ab44a-ef05-42da-a0e8-6137368018fc");
+        var inputCreateCategory = new CreateCategoryRequest("minha categoria", "descricao da minha categoria");
 
-        var request = new UpdateCategoryRequest("nome editado", "descricao editada", categoryId);
+        var commandHandler = new CreateCatagoryCommandHandler(categoryRepository, unitOfWork);
 
-        var command = new UpdateCategoryCommand(request);
+        var outputCreateCategory = await commandHandler.Handle(new CreateCategoryCommand(inputCreateCategory), CancellationToken.None);
 
-        var commandHandler = new UpdateCategoryCommandHandler(_categoryRepository, _unitOfWork);
+        var inputUpdateCategory = new UpdateCategoryRequest("nome editado", "descricao editada", outputCreateCategory.Value);
 
-        var result = await commandHandler.Handle(command, CancellationToken.None);
+        var updateCategoryCommandHandler = new UpdateCategoryCommandHandler(categoryRepository, unitOfWork);
 
-        Assert.True(result.IsSuccess);
-        Assert.False(result.IsFailure);
+        await updateCategoryCommandHandler.Handle(new UpdateCategoryCommand(inputUpdateCategory), CancellationToken.None);
+
+        var getCategoryByIdQueryHandler = new GetCategoryByIdQueryHandler(categoryRepository);
+
+        var outputGetCategory = await getCategoryByIdQueryHandler.Handle(new GetCategoryByIdQuery(outputCreateCategory.Value), CancellationToken.None);
+
+        Assert.Equal("nome editado", outputGetCategory.Value.Name);
+        Assert.Equal("descricao editada", outputGetCategory.Value.Descrption);
     }
 }

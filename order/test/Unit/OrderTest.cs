@@ -47,6 +47,10 @@ public class OrderTest
         order.AddItem(product2.Id, product2.Price, 1);
         order.AddItem(product3.Id, product3.Price, 3);
 
+        var lineItemToRemove = order.Items.FirstOrDefault(li => li.ProductId == product3.Id);
+
+        order.RemoveItem(lineItemToRemove.Id);
+
         Assert.Equal(300, order.CalculateTotal());
         Assert.Equal(3, order.Items.Count());
         Assert.Equal(5, order.CountItens());
