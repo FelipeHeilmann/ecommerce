@@ -1,36 +1,21 @@
 ﻿using Application.Abstractions.Messaging;
-using Domain.Orders.Repository;
+using Application.Abstractions.Query;
 using Domain.Shared;
 
 namespace Application.Orders.GetByCustomerId;
 
-public class GetOrdersByCustomerIdQueryHandler : IQueryHandler<GetOrdersByCustomerIdQuery, ICollection<Output>>
+public class GetOrdersByCustomerIdQueryHandler : IQueryHandler<GetOrdersByCustomerIdQuery, ICollection<OrderQueryModel>>
 {
-    private readonly IOrderRepository _repository;
+    private readonly IOrderQueryContext _context;
 
-    public GetOrdersByCustomerIdQueryHandler(IOrderRepository repository)
+    public GetOrdersByCustomerIdQueryHandler(IOrderQueryContext context)
     {
-        _repository = repository;
+        _context = context;
     }
 
-    public async Task<Result<ICollection<Output>>> Handle(GetOrdersByCustomerIdQuery query, CancellationToken cancellationToken)
+    public async Task<Result<ICollection<OrderQueryModel>>> Handle(GetOrdersByCustomerIdQuery query, CancellationToken cancellationToken)
     {
-        var orders = await _repository.GetOrdersByCustomerId(query.CustomerId, cancellationToken);
-
-        var output = new List<Output>();
-
-        foreach (var order in orders) 
-        {
-            output.Add(new Output(
-                order.Id,
-                order.CustomerId,
-                order.GetStatus(),
-                order.Items.Select(line => new ItemsOutput(line.ProductId, line.Price.Amount, line.Quantity)),
-                order.BillingAddressId,
-                order.ShippingAddressId)
-            );
-        }
-
-        return output;
+        var orders = await _context.GetByCustomerId(query.CustomerId);
+        return orders.ToList();
     }
 }

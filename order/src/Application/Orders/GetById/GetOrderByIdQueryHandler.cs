@@ -1,33 +1,26 @@
 ﻿using Application.Abstractions.Messaging;
+using Application.Abstractions.Query;
 using Domain.Orders.Error;
 using Domain.Orders.Repository;
 using Domain.Shared;
 
 namespace Application.Orders.GetById;
 
-public class GetOrderByIdQueryHandler : IQueryHandler<GetOrderByIdQuery, Output>
+public class GetOrderByIdQueryHandler : IQueryHandler<GetOrderByIdQuery, OrderQueryModel>
 {
-    private readonly IOrderRepository _orderRepository;
+    private readonly IOrderQueryContext _context;
 
-    public GetOrderByIdQueryHandler(IOrderRepository orderRepository)
+    public GetOrderByIdQueryHandler(IOrderQueryContext context)
     {
-        _orderRepository = orderRepository;
+        _context = context;
     }
 
-    public async Task<Result<Output>> Handle(GetOrderByIdQuery query, CancellationToken cancellationToken)
+    public async Task<Result<OrderQueryModel>> Handle(GetOrderByIdQuery query, CancellationToken cancellationToken)
     {
-        var order = await _orderRepository.GetByIdAsync(query.OrderId, cancellationToken);
+        var order = await _context.GetById(query.OrderId);
 
-        if (order == null) return Result.Failure<Output>(OrderErrors.OrderNotFound);
+        if (order == null) return Result.Failure<OrderQueryModel>(OrderErrors.OrderNotFound);
 
-        return new Output(
-            order.Id,
-            order.CustomerId,
-            order.GetStatus(),
-            order.Items.Select(line => new ItemsOutput(line.ProductId, line.Price.Amount, line.Quantity)),
-            order.CalculateTotal(),
-            order.BillingAddressId,
-            order.ShippingAddressId
-        );
+        return order;
     }
 }

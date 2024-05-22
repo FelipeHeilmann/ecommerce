@@ -11,7 +11,7 @@ public class OrderPaymentUrlConsumer : BackgroundService
     private readonly ILogger<OrderPaymentUrlEvent> _logger;
     public OrderPaymentUrlConsumer(ILogger<OrderPaymentUrlEvent> logger, IQueue queue)
     {
-        this._logger = logger;
+        _logger = logger;
         _queue = queue;
     }
 
