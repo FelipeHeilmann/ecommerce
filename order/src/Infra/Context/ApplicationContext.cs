@@ -1,5 +1,5 @@
 ﻿using Domain.Customers.Entity;
-using Infra.Models;
+using Infra.Models.EFCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infra.Context;

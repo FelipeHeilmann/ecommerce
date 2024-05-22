@@ -1,7 +1,7 @@
 ﻿using Domain.Customers.Entity;
 using Domain.Customers.VO;
 
-namespace Infra.Models;
+namespace Infra.Models.EFCore;
 
 public class CustomerModel
 {

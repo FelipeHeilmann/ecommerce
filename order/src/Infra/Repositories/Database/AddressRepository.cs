@@ -1,7 +1,7 @@
 ﻿using Domain.Addresses.Entity;
 using Domain.Addresses.Repository;
 using Infra.Context;
-using Infra.Models;
+using Infra.Models.EFCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infra.Repositories.Database;

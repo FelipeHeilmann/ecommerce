@@ -2,7 +2,7 @@
 using Domain.Addresses.VO;
 using System.Net;
 
-namespace Infra.Models;
+namespace Infra.Models.EFCore;
 
 public class AddressModel
 {

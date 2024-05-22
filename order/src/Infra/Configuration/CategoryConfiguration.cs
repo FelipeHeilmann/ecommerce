@@ -1,5 +1,5 @@
 ﻿using Domain.Categories.Entity;
-using Infra.Models;
+using Infra.Models.EFCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

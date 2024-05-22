@@ -1,6 +1,6 @@
 ﻿using Domain.Categories.Entity;
 
-namespace Infra.Models;
+namespace Infra.Models.EFCore;
 
 public class CategoryModel
 {

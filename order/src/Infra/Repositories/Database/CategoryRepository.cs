@@ -1,7 +1,7 @@
 ﻿using Domain.Categories.Entity;
 using Domain.Categories.Repository;
 using Infra.Context;
-using Infra.Models;
+using Infra.Models.EFCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infra.Repositories.Database;

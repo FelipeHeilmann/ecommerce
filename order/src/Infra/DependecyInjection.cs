@@ -1,4 +1,5 @@
-﻿using Application.Abstractions.Queue;
+﻿using Application.Abstractions.Query;
+using Application.Abstractions.Queue;
 using Application.Abstractions.Services;
 using Application.Data;
 using Application.Orders.OrderPaymentUrl;
@@ -45,6 +46,7 @@ public static class DependecyInjection
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<ICategoryRepository, CategoryRepository>();
         services.AddScoped<IAddressRepository, AddressRepository>();
+        services.AddScoped<IOrderQueryContext, MongoOrderContext>();
 
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IJwtProvider, JwtProvider>();
