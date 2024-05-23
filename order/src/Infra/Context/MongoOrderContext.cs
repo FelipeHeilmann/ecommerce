@@ -1,6 +1,7 @@
 ﻿using Application.Abstractions.Query;
 using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
+using static MongoDB.Driver.WriteConcern;
 
 namespace Infra.Context;
 
@@ -109,4 +110,13 @@ public class MongoOrderContext : IOrderQueryContext
         await _orderCollection.InsertOneAsync(orderModel);
     }
 
+    public async Task Update(OrderQueryModel model)
+    {
+
+        var update = Builders<Models.MongoDB.OrderModel>.Update
+            .Set(o => o.Status, model.Status)
+            .Set(o => o.PayedAt, model.PayedAt);
+
+        await _orderCollection.UpdateOneAsync(o => o.OrderId == model.Id.ToString(), update);
+    }
 }

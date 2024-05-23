@@ -1,7 +1,6 @@
 ﻿using Application.Abstractions.Messaging;
 using Application.Abstractions.Query;
 using Domain.Orders.Error;
-using Domain.Orders.Repository;
 using Domain.Shared;
 
 namespace Application.Orders.GetById;
