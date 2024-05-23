@@ -27,33 +27,33 @@ public class OrderCheckedoutEventHandler : INotificationHandler<OrderCheckedout>
 
     public async Task Handle(OrderCheckedout notification, CancellationToken cancellationToken)
     {
-        var order = await _orderRepository.GetByIdAsync(notification.OrderId, cancellationToken);
-
+        var order = (OrderCheckedoutData)notification.Data;
+   
         var customer = await _customerRepository.GetByIdAsync(order!.CustomerId, cancellationToken);
 
         var orderQueryModel = new OrderQueryModel()
         {
-            Id = notification.OrderId,
+            Id = order.OrderId,
             CustomerId = order.CustomerId,
             PayedAt = null,
-            Status = order.Status,
+            Status = "waiting_payment",
             Items = new List<LineItemQueryModel>()
 
         };
 
-        List<OrderCreatedItem> products = new List<OrderCreatedItem>();
+        List<OrderCheckedoutIMailItem> products = new List<OrderCheckedoutIMailItem>();
 
         foreach (var orderItem in order.Items) 
         {
             var product = await _productRepository.GetByIdAsync(orderItem.ProductId, cancellationToken);
-            products.Add(new OrderCreatedItem(product!.Name, product!.Price.Amount, orderItem.Quantity));
+            products.Add(new OrderCheckedoutIMailItem(product!.Name, product!.Price.Amount, orderItem.Quantity));
             orderQueryModel.Items.Add(new LineItemQueryModel()
             {
                 Id = orderItem.Id,
                 Description = product.Description,
                 ImageUrl = product.ImageUrl,
                 Name = product.Name,
-                Price = orderItem.Price.Amount,
+                Price = orderItem.Price,
                 ProductId = orderItem.ProductId,
                 Quantity = orderItem.Quantity,
             });
@@ -61,6 +61,6 @@ public class OrderCheckedoutEventHandler : INotificationHandler<OrderCheckedout>
 
         await _orderQueryContext.Save(orderQueryModel);
 
-        await _queue.PublishAsync(new OrderCreatedMailEvent(order.Id, DateTime.Now, customer!.Name, customer.Email, products), "order.created");
+        await _queue.PublishAsync(new OrderCheckedoutMail(order.OrderId, DateTime.Now, customer!.Name, customer.Email, products), "order.checkedout");
     }
 }

@@ -1,7 +1,6 @@
 ﻿using API.Extensions;
 using Application.Orders.AddItemToCart;
 using Application.Orders.Checkout;
-using Application.Orders.Create;
 using Application.Orders.GetByCustomerId;
 using Application.Orders.GetById;
 using Application.Orders.GetCart;
@@ -46,32 +45,18 @@ public class OrderController : APIBaseController
     }
 
     [Authorize]
-    [HttpPatch("checkout")]
-    public async Task<IResult> Checkout(Guid id, [FromBody] CheckoutOrderRequest request, CancellationToken cancellationToken)
+    [HttpPost("checkout")]
+    public async Task<IResult> Checkout([FromBody] CheckoutOrderRequest request, CancellationToken cancellationToken)
     {
         var customerId = GetCustomerId();
 
-        var command = new CheckoutOrderCommand(request.items, customerId!.Value, request.ShippingAddressId, request.BillingAddressId, request.PaymentType, request.CardToken, request.Installments);
+        var command = new CheckoutOrderCommand(request.Items, customerId!.Value, request.ShippingAddressId, request.BillingAddressId, request.PaymentType, request.CardToken, request.Installments);
 
         var result = await _sender.Send(command, cancellationToken);
 
-        return result.IsFailure ? result.ToProblemDetail() : Results.Ok();
+        return result.IsFailure ? result.ToProblemDetail() : Results.Ok(result.Value);
     }
 
-    [Authorize]
-    [HttpPost]
-    public async Task<IResult> Create([FromBody] List<OrderItemRequest> request, CancellationToken cancellationToken)
-    {
-        var customerId = GetCustomerId();
-
-        if (customerId == null) return Results.Unauthorized();
-
-        var command = new CreateOrderCommand(request, customerId.Value);
-
-        var result = await _sender.Send(command, cancellationToken);
-
-        return result.IsFailure ? result.ToProblemDetail() : Results.Created($"/orders/{result.Value}", new { Id = result.Value });
-    }
 
     [Authorize]
     [HttpPatch("cart/remove-item/{lineItemId}")]

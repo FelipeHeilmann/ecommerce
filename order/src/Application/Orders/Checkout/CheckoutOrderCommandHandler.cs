@@ -70,12 +70,15 @@ public class CheckoutOrderCommandHandler : ICommandHandler<CheckoutOrderCommand,
         var shippingAddress = await _addressRepository.GetByIdAsync(command.ShippingAddressId, cancellationToken);
         
         if (shippingAddress == null) return Result.Failure<Guid>(AddressErrors.NotFound);
-        
+
+        order.Register("OrderCheckedout", async domainEvent =>
+        {
+            await _mediator.Publish((OrderCheckedout)domainEvent, cancellationToken);
+        });
+
         order.Checkout(shippingAddress.Id, billingAddress.Id, command.PaymentType, command.CardToken, command.Installments);
 
         _orderRepository.Add(order);
-
-        await _mediator.Publish(new OrderCheckedout(order.Id), cancellationToken);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
       

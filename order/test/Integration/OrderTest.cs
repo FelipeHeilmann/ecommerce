@@ -1,5 +1,4 @@
-﻿using Application.Orders.Create;
-using Application.Orders.Cancel;
+﻿using Application.Orders.Cancel;
 using Application.Orders.Model;
 using Application.Orders.GetByCustomerId;
 using Application.Orders.GetById;
@@ -173,6 +172,12 @@ public class OrderTest
 
         var outputCreateCategory = await createCategoryCommandHandler.Handle(inputCreateCategory, CancellationToken.None);
 
+        var inputCreateAddress = new CreateAddressCommand(outputCreateCustomer.Value, "12909-062", "Rua a", "Bairro", "100", null, "São Paulo", "SP", "Brazil");
+
+        var createAddressCommandHandler = new CreateAddressCommandHandler(addressRepository, unitOfWork);
+
+        var outputCreateAddress = await createAddressCommandHandler.Handle(inputCreateAddress, CancellationToken.None);
+
         var inputCreateProduct1 = new CreateProductCommand("Product 1", "Product 1", "BRL", 50, "Image", "0001", outputCreateCategory.Value);
         var inputCreateProduct2 = new CreateProductCommand("Product 2", "Product 2", "BRL", 60, "Image", "0002", outputCreateCategory.Value);
         var inputCreateProduct3 = new CreateProductCommand("Product 3", "Product 3", "BRL", 70, "Image", "0003", outputCreateCategory.Value);
@@ -183,25 +188,34 @@ public class OrderTest
         var outputCreateProduct2 = await createProductCommandHandler.Handle(inputCreateProduct2, CancellationToken.None);
         var outputCreateProduct3 = await createProductCommandHandler.Handle(inputCreateProduct3, CancellationToken.None);
 
-        var inputCreateOrder = new CreateOrderCommand(new List<OrderItemRequest>()
+        var paymentType = "credit";
+        var cardToken = "my-token-card";
+        var installments = 5;
+
+        var inputCreateOrder = new CheckoutOrderCommand(new List<OrderItemRequest>()
         {
             new OrderItemRequest(outputCreateProduct1.Value, 2),
             new OrderItemRequest(outputCreateProduct2.Value, 3),
             new OrderItemRequest(outputCreateProduct3.Value, 4)
-        }, outputCreateCustomer.Value);
+        },
+           outputCreateCustomer.Value,
+            outputCreateAddress.Value,
+            outputCreateAddress.Value,
+            paymentType,
+            cardToken,
+            installments);
 
-        var createOrdercommandHandler = new CreateOrderCommandHandler(orderRepository, productRepository, unitOfWork, mediator.Object, customerRepository);
+        var checkoutOrderCommandHandler = new CheckoutOrderCommandHandler(orderRepository, customerRepository, productRepository, addressRepository, unitOfWork, mediator.Object);
 
         //WHEN
-        await createOrdercommandHandler.Handle(inputCreateOrder, CancellationToken.None);
-        await createOrdercommandHandler.Handle(inputCreateOrder, CancellationToken.None);
-        await createOrdercommandHandler.Handle(inputCreateOrder, CancellationToken.None);
+        await checkoutOrderCommandHandler.Handle(inputCreateOrder, CancellationToken.None);
+        await checkoutOrderCommandHandler.Handle(inputCreateOrder, CancellationToken.None);
+        await checkoutOrderCommandHandler.Handle(inputCreateOrder, CancellationToken.None);
 
-        var getOrdersByCustomerIdQueryHandler = new GetOrdersByCustomerIdQueryHandler(orderQueryContext);
 
-        var outputGetOrders = await getOrdersByCustomerIdQueryHandler.Handle(new GetOrdersByCustomerIdQuery(outputCreateCustomer.Value), CancellationToken.None);
+        var outputGetOrders = await orderRepository.GetOrdersByCustomerId(outputCreateCustomer.Value, CancellationToken.None);
 
-        Assert.Equal(3, outputGetOrders.Value.Count());
+        Assert.Equal(3, outputGetOrders.Count());
     }
 
 
@@ -237,6 +251,12 @@ public class OrderTest
 
         var outputCreateCategory = await createCategoryCommandHandler.Handle(inputCreateCategory, CancellationToken.None);
 
+        var inputCreateAddress = new CreateAddressCommand(outputCreateCustomer.Value, "12909-062", "Rua a", "Bairro", "100", null, "São Paulo", "SP", "Brazil");
+
+        var createAddressCommandHandler = new CreateAddressCommandHandler(addressRepository, unitOfWork);
+
+        var outputCreateAddress = await createAddressCommandHandler.Handle(inputCreateAddress, CancellationToken.None);
+
         var inputCreateProduct1 = new CreateProductCommand("Product 1", "Product 1", "BRL", 50, "Image", "0001", outputCreateCategory.Value);
         var inputCreateProduct2 = new CreateProductCommand("Product 2", "Product 2", "BRL", 60, "Image", "0002", outputCreateCategory.Value);
         var inputCreateProduct3 = new CreateProductCommand("Product 3", "Product 3", "BRL", 70, "Image", "0003", outputCreateCategory.Value);
@@ -247,17 +267,27 @@ public class OrderTest
         var outputCreateProduct2 = await createProductCommandHandler.Handle(inputCreateProduct2, CancellationToken.None);
         var outputCreateProduct3 = await createProductCommandHandler.Handle(inputCreateProduct3, CancellationToken.None);
 
-        var inputCreateOrder = new CreateOrderCommand(new List<OrderItemRequest>()
+        var paymentType = "credit";
+        var cardToken = "my-token-card";
+        var installments = 5;
+
+        var inputCreateOrder = new CheckoutOrderCommand(new List<OrderItemRequest>()
         {
             new OrderItemRequest(outputCreateProduct1.Value, 2),
             new OrderItemRequest(outputCreateProduct2.Value, 3),
             new OrderItemRequest(outputCreateProduct3.Value, 4)
-        }, outputCreateCustomer.Value);
+        },
+        outputCreateCustomer.Value,
+        outputCreateAddress.Value,
+        outputCreateAddress.Value,
+        paymentType,
+        cardToken,
+        installments);
 
-        var createOrderCommandHandler = new CreateOrderCommandHandler(orderRepository, productRepository, unitOfWork, mediator.Object, customerRepository);
+        var checkoutOrderCommandHandler = new CheckoutOrderCommandHandler(orderRepository, customerRepository, productRepository, addressRepository, unitOfWork, mediator.Object);
 
         //WHEN
-        var outputCreateOrder = await createOrderCommandHandler.Handle(inputCreateOrder, CancellationToken.None);
+        var outputCreateOrder = await checkoutOrderCommandHandler.Handle(inputCreateOrder, CancellationToken.None);
 
         var cancelOrderCommandHandler = new CancelOrderCommandHandler(orderRepository, unitOfWork, mediator.Object);
 

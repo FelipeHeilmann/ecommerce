@@ -1,8 +1,6 @@
-﻿using Domain.Categories;
-using Domain.Categories.Entity;
+﻿using Domain.Categories.Entity;
 using Domain.Customers.Entity;
 using Domain.Orders.Entity;
-using Domain.Orders.VO;
 using Domain.Products.Entity;
 using Xunit;
 

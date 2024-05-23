@@ -109,7 +109,7 @@ public class Order : Observable
         UpdatedAt = DateTime.UtcNow;
         _status.Checkout();
 
-        Notify(new OrderPurchased(new OrderPurchasedData(
+        Notify(new OrderCheckedout(new OrderCheckedoutData(
                 Id,
                 CalculateTotal(),
                 Items.Select(li => new LineItemOrderPurchased(li.Id, li.ProductId, li.Quantity, li.Price.Amount)),
