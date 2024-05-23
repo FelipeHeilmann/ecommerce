@@ -66,7 +66,7 @@ public class Templates
         template = template.Replace("[User]", name);
         return template;
     }
-    public static string OrderCreated(OrderCreatedEvent order)
+    public static string OrderCreated(OrderCheckedoutEvent order)
     {
         string template = @"
             <html>
@@ -135,53 +135,6 @@ public class Templates
             itemsHtml.Append("</li>");
         }
         template = template.Replace("[OrderItems]", itemsHtml.ToString());
-        return template;
-    }
-    public static string OrderPurchased(string name, Guid orderId, double amount) 
-    {
-        string template = @"
-            <html>
-            <head>
-                <style>
-                    /* Define your CSS styles here */
-                    /* Example styles */
-                    body {
-                        font-family: Arial, sans-serif;
-                        line-height: 1.6;
-                    }
-                    .container {
-                        max-width: 600px;
-                        margin: 0 auto;
-                        padding: 20px;
-                        border: 1px solid #ccc;
-                        border-radius: 10px;
-                    }
-                    .footer {
-                        margin-top: 20px;
-                        font-size: 12px;
-                        color: #666;
-                    }
-                </style>
-            </head>
-            <body>
-                <div class='container'>
-                    <h1>Payment Received for Order #[OrderNumber]</h1>
-                    <p>Dear [User],</p>
-                    <p>We have received your payment for order #[OrderNumber]. The payment confirmation details are as follows:</p>
-                    <p><strong>Total Amount:</strong> $[TotalAmount]</p>
-                    <p>Your order is now being processed. You will receive another email once your order has been shipped.</p>
-                    <p>Thank you for shopping with us!</p>
-                    <div class='footer'>
-                         <p>Best regards,<br/>Felipe Heilmann<br/>CTO<br/>e-commercce</p>
-                    </div>
-                </div>
-            </body>
-            </html>
-        ";
-
-        template = template.Replace("[User]", name);
-        template = template.Replace("[OrderNumber]", orderId.ToString());
-        template = template.Replace("$[TotalAmount]", amount.ToString("0.00"));
         return template;
     }
 }

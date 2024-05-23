@@ -32,7 +32,7 @@ namespace API.controllers
         }
 
         [HttpPost("order-created")]
-        public async Task<ActionResult> SendOrderCreatedMail([FromBody] OrderCreatedEvent request)
+        public async Task<ActionResult> SendOrderCreatedMail([FromBody] OrderCheckedoutEvent request)
         {
             var mailData = new Maildata()
             {
@@ -40,22 +40,6 @@ namespace API.controllers
                 EmailToName = request.Name,
                 EmailSubject = "Order Created",
                 EmailBody = Templates.OrderCreated(request)
-            };
-
-            await _mailerGateway.Send(mailData);
-
-            return Ok();
-        }
-
-        [HttpPost("payment-recived")]
-        public async Task<ActionResult> SendPaymentRecivedMail([FromBody] PaymenRecivedRequest request)
-        {
-            var mailData = new Maildata() 
-            {
-                EmailToEmail = request.Email,
-                EmailToName = request.Name,
-                EmailBody = Templates.OrderPurchased(request.Name, request.OrderId, request.Amount),
-                EmailSubject = "Payment Recived"
             };
 
             await _mailerGateway.Send(mailData);

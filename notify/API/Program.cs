@@ -24,8 +24,7 @@ builder.Services.AddSingleton<IQueue, RabbitMQAdapter>(provider =>
     return rabbitMQAdapter;
 });
 builder.Services.AddHostedService<CustomerCreatedConsumer>();
-builder.Services.AddHostedService<OrderCreatedConsumer>();
-builder.Services.AddHostedService<OrderPurchasedConsumer>();
+builder.Services.AddHostedService<OrderCheckedoutConsumer>();
 
 
 var app = builder.Build();

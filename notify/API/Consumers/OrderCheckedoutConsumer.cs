@@ -1,40 +1,36 @@
-﻿
-using API.Events;
+﻿using API.Events;
 using API.Gateway;
 using Application.Abstractions.Queue;
 
 namespace API.Consumers
 {
-    public class OrderPurchasedConsumer : BackgroundService
+    public class OrderCheckedoutConsumer : BackgroundService
     {
         private readonly IQueue _queue;
         private readonly IServiceProvider _serviceProvider;
-        private readonly IOrderGateway _orderGateway;
 
-        public OrderPurchasedConsumer(IQueue queue, IServiceProvider serviceProvider, IOrderGateway orderGateway)
+        public OrderCheckedoutConsumer(IQueue queue, IServiceProvider serviceProvider)
         {
             _queue = queue;
             _serviceProvider = serviceProvider;
-            _orderGateway = orderGateway;
         }
 
         protected async override Task ExecuteAsync(CancellationToken stoppingToken)
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                await _queue.SubscribeAsync<OrderPurchasedEvent>("orderPurchased.notification", "order.purchased", async message => {
+                await _queue.SubscribeAsync<OrderCheckedoutEvent>("orderCheckedout.notification", "order.checkedout", async message =>
+                {
                     using (var scope = _serviceProvider.CreateAsyncScope())
                     {
                         var mailerGateway = scope.ServiceProvider.GetRequiredService<IMailerGateway>();
 
-                        var customer = await _orderGateway.GetCustomerById(message.CustomerId);
-
                         var mailData = new Maildata()
                         {
-                            EmailToEmail = customer.Email,
-                            EmailToName = customer.Name,
-                            EmailBody = Templates.OrderPurchased(customer.Name, message.OrderId, message.Items.Sum(item => item.Amount * item.Quantity)),
-                            EmailSubject = "Payment Recived"
+                            EmailToEmail = message.Email,
+                            EmailToName = message.Name,
+                            EmailSubject = "Order Created",
+                            EmailBody = Templates.OrderCreated(message)
                         };
 
                         await mailerGateway.Send(mailData);
