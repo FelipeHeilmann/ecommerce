@@ -1,63 +1,84 @@
 ﻿using Application.Abstractions.Messaging;
 using Application.Data;
 using Domain.Shared;
-using Application.Abstractions.Queue;
 using Domain.Orders.Repository;
-using Domain.Orders.Error;
 using Domain.Addresses.Error;
 using Domain.Addresses.Repository;
 using Domain.Customers.Repository;
+using Domain.Customers.Error;
+using Domain.Orders.Entity;
+using Domain.Products.Error;
+using Domain.Products.Repository;
+using MediatR;
+using Domain.Orders.Events;
 
 namespace Application.Orders.Checkout;
 
-public class CheckoutOrderCommandHandler : ICommandHandler<CheckoutOrderCommand>
+public class CheckoutOrderCommandHandler : ICommandHandler<CheckoutOrderCommand, Guid>
 {
     private readonly IOrderRepository _orderRepository;
     private readonly ICustomerRepository _customerRepository;
     private readonly IAddressRepository _addressRepository;
-    private readonly IQueue _queue;
+    private readonly IProductRepository _productRepository;
+    private readonly IMediator _mediator;
     private readonly IUnitOfWork _unitOfWork;
 
     public CheckoutOrderCommandHandler
     (
         IOrderRepository orderRepository,
         ICustomerRepository customerRepository,
+        IProductRepository productRepository,
         IAddressRepository addressRepository,
         IUnitOfWork unitOfWork,
-        IQueue queue)
+        IMediator mediator)
     {
         _orderRepository = orderRepository;
         _customerRepository = customerRepository;
         _addressRepository = addressRepository;
+        _productRepository = productRepository;
         _unitOfWork = unitOfWork;
-        _queue = queue;
+        _mediator = mediator;
     }
 
-    public async Task<Result> Handle(CheckoutOrderCommand command, CancellationToken cancellationToken)
+    public async Task<Result<Guid>> Handle(CheckoutOrderCommand command, CancellationToken cancellationToken)
     {
-        var order = await _orderRepository.GetByIdAsync(command.OrderId, cancellationToken);
+        var orderItemList = command.OrderItens;
 
-        if (order == null) return Result.Failure(OrderErrors.OrderNotFound);
+        var order = Order.Create(command.CustomerId);
+
+        var customer = await _customerRepository.GetByIdAsync(command.CustomerId, cancellationToken);
+
+        if (customer == null)
+        {
+            return Result.Failure<Guid>(CustomerErrors.CustomerNotFound);
+        }
+
+        foreach (var item in orderItemList)
+        {
+            var product = await _productRepository.GetByIdAsync(item.ProductId, cancellationToken);
+            if (product == null)
+            {
+                return Result.Failure<Guid>(ProductErrors.ProductNotFound);
+            }
+            order.AddItem(item.ProductId, product.Price, item.Quantity);
+        }
 
         var billingAddress = await _addressRepository.GetByIdAsync(command.BillingAddressId, cancellationToken);
 
-        if (billingAddress == null) return Result.Failure(AddressErrors.NotFound);
+        if (billingAddress == null) return Result.Failure<Guid>(AddressErrors.NotFound);
 
         var shippingAddress = await _addressRepository.GetByIdAsync(command.ShippingAddressId, cancellationToken);
         
-        if (shippingAddress == null) return Result.Failure(AddressErrors.NotFound);
-
-        order.Register("OrderPurchased", async domainEvent =>
-        {
-            await _queue.PublishAsync(domainEvent.Data, "order.purchased");
-        });
+        if (shippingAddress == null) return Result.Failure<Guid>(AddressErrors.NotFound);
         
         order.Checkout(shippingAddress.Id, billingAddress.Id, command.PaymentType, command.CardToken, command.Installments);
 
-        _orderRepository.Update(order);
+        _orderRepository.Add(order);
+
+        await _mediator.Publish(new OrderCheckedout(order.Id), cancellationToken);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
       
-        return Result.Success();
+        return order.Id;
     }
 }

@@ -13,7 +13,7 @@ public class ShippedStatus : OrderStatus
 
     public override void Cancel()
     {
-        Order.Status = new CanceledStatus(Order);
+        Order._status = new CanceledStatus(Order);
     }
 
     public override void Checkout()
@@ -38,7 +38,7 @@ public class ShippedStatus : OrderStatus
 
     public override void Delivery()
     {
-        Order.Status = new DeliveredStatus(Order);
+        Order._status = new DeliveredStatus(Order);
     }
 
 }

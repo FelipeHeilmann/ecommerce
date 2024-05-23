@@ -28,7 +28,7 @@ public class ApprovedStatus : OrderStatus
 
     public override void Ship()
     {
-        Order.Status = new ShippedStatus(Order);
+        Order._status = new ShippedStatus(Order);
     }
 
     public override void Delivery()
@@ -38,6 +38,6 @@ public class ApprovedStatus : OrderStatus
 
     public override void Cancel()
     {
-        Order.Status = new CanceledStatus(Order);
+        Order._status = new CanceledStatus(Order);
     }
 }

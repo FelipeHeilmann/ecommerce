@@ -13,12 +13,12 @@ public class CreatedStatus : OrderStatus
 
     public override void Cancel()
     {
-        Order.Status = new CanceledStatus(Order);
+        Order._status = new CanceledStatus(Order);
     }
 
     public override void Checkout()
     {
-        Order.Status = new WaitingPaymentStatus(Order);
+        Order._status = new WaitingPaymentStatus(Order);
     }
 
     public override void Approve()

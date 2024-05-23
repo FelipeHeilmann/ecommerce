@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions.Messaging;
+using Application.Orders.Model;
 
 namespace Application.Orders.Checkout;
 
-public record CheckoutOrderCommand(Guid OrderId, Guid ShippingAddressId, Guid BillingAddressId, string PaymentType, string? CardToken, int Installments) : ICommand;
+public record CheckoutOrderCommand(List<OrderItemRequest> OrderItens, Guid CustomerId, Guid ShippingAddressId, Guid BillingAddressId, string PaymentType, string? CardToken, int Installments) : ICommand<Guid>;

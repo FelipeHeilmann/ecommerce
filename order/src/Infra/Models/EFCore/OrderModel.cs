@@ -37,6 +37,6 @@ public class OrderModel
     public static OrderModel FromAggregate(Order order)
     {
         var items = order.Items.Select(li => LineItemModel.FromAggregate(li)).ToList();
-        return new OrderModel(order.Id, order.CustomerId, order.GetStatus(), items, order.CreatedAt, order.UpdatedAt, order.BillingAddressId, order.ShippingAddressId);
+        return new OrderModel(order.Id, order.CustomerId, order.Status, items, order.CreatedAt, order.UpdatedAt, order.BillingAddressId, order.ShippingAddressId);
     }
 }

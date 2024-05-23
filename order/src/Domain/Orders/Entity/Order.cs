@@ -12,7 +12,8 @@ public class Order : Observable
     private ICollection<LineItem> _items;
     public Guid Id { get; private set; }
     public Guid CustomerId { get; private set; }
-    public OrderStatus Status { get;  set; }
+    public string Status => _status.Value;
+    public OrderStatus _status { private get; set; }
     public IReadOnlyCollection<LineItem> Items => _items.ToList();
     public DateTime CreatedAt { get; private set; }
     public DateTime UpdatedAt { get; private set; }
@@ -23,7 +24,7 @@ public class Order : Observable
     {
         Id = id;
         CustomerId = customerId;
-        Status =  OrderStatusFactory.Create(this,status);
+        _status =  OrderStatusFactory.Create(this,status);
         CreatedAt = createdAt;
         UpdatedAt = updatedAt;
         BillingAddressId = billingAddressId;
@@ -31,12 +32,6 @@ public class Order : Observable
         _items = items;
     }
 
-    private Order() { }
-
-    public string GetStatus()
-    {
-        return Status.Value;
-    }
 
     public static Order Create(Guid customerId, bool cart = false)
     {
@@ -62,7 +57,7 @@ public class Order : Observable
 
     public void RemoveItem(Guid lineItemId)
     {
-        if (HasOneItem() && Status.Value != "cart") throw new CannotRemoveItem();
+        if (HasOneItem() && Status != "cart") throw new CannotRemoveItem();
 
         var lineItem  = _items.FirstOrDefault(li => li.Id == lineItemId);
 
@@ -101,18 +96,18 @@ public class Order : Observable
 
     public Result Cancel()
     {
-        Status.Cancel();
+        _status.Cancel();
         UpdatedAt = DateTime.UtcNow;
 
         return Result.Success();
     }
 
-    public Result Checkout(Guid shippingAddressId, Guid billingAddressId, string paymentType, string? cardToken, int installments)
+    public void Checkout(Guid shippingAddressId, Guid billingAddressId, string paymentType, string? cardToken, int installments)
     {
         ShippingAddressId = shippingAddressId;
         BillingAddressId = billingAddressId;
         UpdatedAt = DateTime.UtcNow;
-        Status.Checkout();
+        _status.Checkout();
 
         Notify(new OrderPurchased(new OrderPurchasedData(
                 Id,
@@ -124,9 +119,6 @@ public class Order : Observable
                 installments,
                 shippingAddressId
          )));
-
-        return Result.Success();
-
     }
 
     public int CountItens()

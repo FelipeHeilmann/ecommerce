@@ -8,7 +8,7 @@ using MediatR;
 
 namespace Application.Orders.EventsHandler;
 
-public class CreateOrderEventHandler : INotificationHandler<OrderCreatedEvent>
+public class OrderCheckedoutEventHandler : INotificationHandler<OrderCheckedout>
 {
     private readonly IQueue _queue;
     private readonly IOrderRepository _orderRepository;
@@ -16,7 +16,7 @@ public class CreateOrderEventHandler : INotificationHandler<OrderCreatedEvent>
     private readonly ICustomerRepository _customerRepository;
     private readonly IOrderQueryContext _orderQueryContext;
 
-    public CreateOrderEventHandler(IQueue queue, IOrderRepository orderRepository, IProductRepository productRepository, ICustomerRepository customerRepository, IOrderQueryContext orderQueryContext)
+    public OrderCheckedoutEventHandler(IQueue queue, IOrderRepository orderRepository, IProductRepository productRepository, ICustomerRepository customerRepository, IOrderQueryContext orderQueryContext)
     {
         _queue = queue;
         _orderRepository = orderRepository;
@@ -25,7 +25,7 @@ public class CreateOrderEventHandler : INotificationHandler<OrderCreatedEvent>
         _orderQueryContext = orderQueryContext;
     }
 
-    public async Task Handle(OrderCreatedEvent notification, CancellationToken cancellationToken)
+    public async Task Handle(OrderCheckedout notification, CancellationToken cancellationToken)
     {
         var order = await _orderRepository.GetByIdAsync(notification.OrderId, cancellationToken);
 
@@ -36,7 +36,7 @@ public class CreateOrderEventHandler : INotificationHandler<OrderCreatedEvent>
             Id = notification.OrderId,
             CustomerId = order.CustomerId,
             PayedAt = null,
-            Status = order.Status.Value,
+            Status = order.Status,
             Items = new List<LineItemQueryModel>()
 
         };

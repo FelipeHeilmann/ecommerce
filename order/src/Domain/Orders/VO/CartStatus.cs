@@ -23,7 +23,7 @@ public class CartStatus : OrderStatus
 
     public override void Checkout()
     {
-        Order.Status = new WaitingPaymentStatus(Order);
+        Order._status = new WaitingPaymentStatus(Order);
     }
 
     public override void Delivery()

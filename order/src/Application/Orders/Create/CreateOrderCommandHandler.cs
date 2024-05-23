@@ -56,7 +56,7 @@ public class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, Gui
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        await _mediator.Publish(new OrderCreatedEvent(order.Id),cancellationToken);
+        await _mediator.Publish(new OrderCheckedout(order.Id),cancellationToken);
 
         return Result.Success(order.Id);
     }

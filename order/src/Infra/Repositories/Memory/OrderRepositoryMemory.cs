@@ -56,7 +56,7 @@ namespace Infra.Repositories.Memory
 
         public Task<Order?> GetCart(CancellationToken cancellationToken)
         {
-            return Task.FromResult(_context.FirstOrDefault(o => o.Status.Value == "cart"));
+            return Task.FromResult(_context.FirstOrDefault(o => o.Status == "cart"));
         }
     }
 }

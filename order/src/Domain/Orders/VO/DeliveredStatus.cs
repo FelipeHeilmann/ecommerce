@@ -13,7 +13,7 @@ public class DeliveredStatus : OrderStatus
 
     public override void Cancel()
     {
-        Order.Status = new CanceledStatus(Order);
+        Order._status = new CanceledStatus(Order);
     }
 
     public override void Checkout()

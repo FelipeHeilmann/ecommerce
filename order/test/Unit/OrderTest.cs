@@ -74,6 +74,6 @@ public class OrderTest
 
         order.Checkout(Guid.NewGuid(), Guid.NewGuid(), "credit", "token", 10);
 
-        Assert.Equal("waiting_payment", order.GetStatus());
+        Assert.Equal("waiting_payment", order.Status);
     }
 }

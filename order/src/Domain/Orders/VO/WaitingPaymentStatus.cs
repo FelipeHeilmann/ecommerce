@@ -13,7 +13,7 @@ public class WaitingPaymentStatus : OrderStatus
 
     public override void Cancel()
     {
-        Order.Status = new CanceledStatus(Order);
+        Order._status = new CanceledStatus(Order);
     }
 
     public override void Checkout()
@@ -23,12 +23,12 @@ public class WaitingPaymentStatus : OrderStatus
 
     public override void Approve()
     {
-        Order.Status = new ApprovedStatus(Order);
+        Order._status = new ApprovedStatus(Order);
     }
 
     public override void Refuse()
     {
-        Order.Status = new RefusedStatus(Order);
+        Order._status = new RefusedStatus(Order);
     }
 
     public override void Ship()

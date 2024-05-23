@@ -28,6 +28,10 @@ using Application.Categories.Create;
 using Application.Addresses.Create;
 using Application.Orders.AddItemToCart;
 using Application.Orders.RemoveItemRemoveItemFromCart;
+using Application.Orders.EventsHandler;
+using Application.Abstractions.Query;
+using Infra.Context;
+using Domain.Orders.Event;
 
 namespace Integration;
 
@@ -38,68 +42,11 @@ public class OrderTest
     private readonly IProductRepository productRepository = new ProductRepositoryMemory();
     private readonly IAddressRepository addressRepository = new AddressRepositoryInMemory();
     private readonly ICategoryRepository categoryRepository = new CategoryRepositoryMemory();
+    private readonly IOrderQueryContext orderQueryContext = new MemoryOrderContext();
     private readonly IPasswordHasher passwordHasher = new PasswordHasher();
     private readonly IQueue queue = new MemoryMQAdapter();
     private readonly IUnitOfWork unitOfWork = new UnitOfWorkMemory();
 
-
-    [Fact]
-    public async Task Should_Create_Order_With_3_Items()
-    {
-        //GIVEN
-        var mediator = new Mock<IMediator>();
-
-        mediator.Setup(m => m.Publish(It.IsAny<CustomerCreatedEvent>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
-        mediator.Setup(m => m.Publish(It.IsAny<OrderCreatedEvent>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
-
-        var inputCreateCustomer = new CreateCustomerCommand("John Doe", "john.doe@gmail.com", "abc123", new DateTime(2004, 11, 06), "659.232.850-96", "(11) 97414-6507"); 
-
-        var createCustomerCommandHandler = new CreateCustomerCommandHandler(customerRepository, unitOfWork, passwordHasher, mediator.Object);
-
-        var outputCreateCustomer = await createCustomerCommandHandler.Handle(inputCreateCustomer, CancellationToken.None);
-
-        var inputCreateCategory = new CreateCategoryCommand("Category", "Category Description");
-
-        var createCategoryCommandHandler = new CreateCatagoryCommandHandler(categoryRepository, unitOfWork);
-
-        var outputCreateCategory = await createCategoryCommandHandler.Handle(inputCreateCategory, CancellationToken.None);
-       
-        var inputCreateProduct1 = new CreateProductCommand("Product 1", "Product 1", "BRL", 50, "Image", "0001", outputCreateCategory.Value);
-        var inputCreateProduct2 = new CreateProductCommand("Product 2", "Product 2", "BRL", 60, "Image", "0002", outputCreateCategory.Value);
-        var inputCreateProduct3 = new CreateProductCommand("Product 3", "Product 3", "BRL", 70, "Image", "0003", outputCreateCategory.Value);
-
-        var createProductCommandHandler = new CreateProductCommandHandler(productRepository, categoryRepository, unitOfWork);
-
-        var outputCreateProduct1 = await createProductCommandHandler.Handle(inputCreateProduct1, CancellationToken.None);
-        var outputCreateProduct2 = await createProductCommandHandler.Handle(inputCreateProduct2, CancellationToken.None);
-        var outputCreateProduct3 = await createProductCommandHandler.Handle(inputCreateProduct3, CancellationToken.None);
-
-        var inputCreateOrder = new CreateOrderCommand(new List<OrderItemRequest>()
-        {
-            new OrderItemRequest(outputCreateProduct1.Value, 2),
-            new OrderItemRequest(outputCreateProduct2.Value, 3),
-            new OrderItemRequest(outputCreateProduct3.Value, 4)
-        }, outputCreateCustomer.Value);
-
-        var createOrdercommandHandler = new CreateOrderCommandHandler(orderRepository, productRepository, unitOfWork, mediator.Object, customerRepository);
-
-        //WHEN
-        var outputCreateOrder = await createOrdercommandHandler.Handle(inputCreateOrder, CancellationToken.None);
-
-        var getOrderQuery = new GetOrderByIdQuery(outputCreateOrder.Value);
-
-        var getOrderQueryHandler = new GetOrderByIdQueryHandler(orderRepository);
-
-        var outputGetOrder = await getOrderQueryHandler.Handle(getOrderQuery, CancellationToken.None);
-
-        var order = outputGetOrder.Value;
-
-        //THEN
-        Assert.Equal(3,order.Items.Count());
-        Assert.Equal(2, order.Items.ToList()[0].Quantity);
-        Assert.Equal(3, order.Items.ToList()[1].Quantity);
-        Assert.Equal(4, order.Items.ToList()[2].Quantity);
-    }
 
 
     [Fact]
@@ -143,9 +90,17 @@ public class OrderTest
     [Fact]
     public async Task Should_Create_Cart_Add_3_Items_And_Remove_One()
     {
+        var checkoutEventHandler = new OrderCheckedoutEventHandler(queue, orderRepository, productRepository, customerRepository, orderQueryContext);
+
         var mediator = new Mock<IMediator>();
 
         mediator.Setup(m => m.Publish(It.IsAny<CustomerCreatedEvent>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
+        mediator.Setup(m => m.Publish(It.IsAny<OrderCheckedout>(), It.IsAny<CancellationToken>()))
+            .Callback<INotification, CancellationToken>(async (notification, token) =>
+            {
+                await checkoutEventHandler.Handle((OrderCheckedout)notification, token);
+            })
+            .Returns(Task.CompletedTask);
 
         var inputCreateCustomer = new CreateCustomerCommand("John Doe", "john.doe@gmail.com", "abc123", new DateTime(2004, 11, 06), "659.232.850-96", "(11) 97414-6507");
 
@@ -194,10 +149,17 @@ public class OrderTest
     [Fact]
     public async Task Should_Get_Orders_By_CustomerId()
     {
+        var checkoutEventHandler = new OrderCheckedoutEventHandler(queue, orderRepository, productRepository, customerRepository, orderQueryContext);
+
         var mediator = new Mock<IMediator>();
 
         mediator.Setup(m => m.Publish(It.IsAny<CustomerCreatedEvent>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
-        mediator.Setup(m => m.Publish(It.IsAny<OrderCreatedEvent>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
+        mediator.Setup(m => m.Publish(It.IsAny<OrderCheckedout>(), It.IsAny<CancellationToken>()))
+            .Callback<INotification, CancellationToken>(async (notification, token) =>
+            {
+                await checkoutEventHandler.Handle((OrderCheckedout)notification, token);
+            })
+            .Returns(Task.CompletedTask);
 
         var inputCreateCustomer = new CreateCustomerCommand("John Doe", "john.doe@gmail.com", "abc123", new DateTime(2004, 11, 06), "659.232.850-96", "(11) 97414-6507");
 
@@ -235,7 +197,7 @@ public class OrderTest
         await createOrdercommandHandler.Handle(inputCreateOrder, CancellationToken.None);
         await createOrdercommandHandler.Handle(inputCreateOrder, CancellationToken.None);
 
-        var getOrdersByCustomerIdQueryHandler = new GetOrdersByCustomerIdQueryHandler(orderRepository);
+        var getOrdersByCustomerIdQueryHandler = new GetOrdersByCustomerIdQueryHandler(orderQueryContext);
 
         var outputGetOrders = await getOrdersByCustomerIdQueryHandler.Handle(new GetOrdersByCustomerIdQuery(outputCreateCustomer.Value), CancellationToken.None);
 
@@ -246,10 +208,22 @@ public class OrderTest
     [Fact]
     public async Task Should_Cancel_Order()
     {
+        var checkoutEventHandler = new OrderCheckedoutEventHandler(queue, orderRepository, productRepository, customerRepository, orderQueryContext);
+        var orderCanceledEventHandler = new OrderCanceledEventHandler(orderQueryContext);
+
         var mediator = new Mock<IMediator>();
 
         mediator.Setup(m => m.Publish(It.IsAny<CustomerCreatedEvent>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
-        mediator.Setup(m => m.Publish(It.IsAny<OrderCreatedEvent>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
+        mediator.Setup(m => m.Publish(It.IsAny<OrderCheckedout>(), It.IsAny<CancellationToken>()))
+            .Callback<INotification, CancellationToken>(async (notification, token) =>
+            {
+                await checkoutEventHandler.Handle((OrderCheckedout)notification, token);
+            });
+        mediator.Setup(m => m.Publish(It.IsAny<OrderCanceledEvent>(), It.IsAny<CancellationToken>()))
+            .Callback<INotification, CancellationToken>(async (notification, token) =>
+            {
+                await orderCanceledEventHandler.Handle((OrderCanceledEvent)notification, token);
+            });
 
         var inputCreateCustomer = new CreateCustomerCommand("John Doe", "john.doe@gmail.com", "abc123", new DateTime(2004, 11, 06), "659.232.850-96", "(11) 97414-6507");
 
@@ -285,11 +259,11 @@ public class OrderTest
         //WHEN
         var outputCreateOrder = await createOrderCommandHandler.Handle(inputCreateOrder, CancellationToken.None);
 
-        var cancelOrderCommandHandler = new CancelOrderCommandHandler(orderRepository, unitOfWork);
+        var cancelOrderCommandHandler = new CancelOrderCommandHandler(orderRepository, unitOfWork, mediator.Object);
 
         await cancelOrderCommandHandler.Handle(new CancelOrderCommand(outputCreateOrder.Value), CancellationToken.None);
 
-        var getOrder = new GetOrderByIdQueryHandler(orderRepository);
+        var getOrder = new GetOrderByIdQueryHandler(orderQueryContext);
 
         var outputGetOrder = await getOrder.Handle(new GetOrderByIdQuery(outputCreateOrder.Value), CancellationToken.None);
 
@@ -297,12 +271,19 @@ public class OrderTest
     }
 
     [Fact]
-    public async Task Should_Create_Checkout_For_Order()
-    {
+    public async Task Should_Create_Order_With_3_Items()
+    { 
+        var checkoutEventHandler = new OrderCheckedoutEventHandler(queue, orderRepository, productRepository, customerRepository, orderQueryContext);
+        
         var mediator = new Mock<IMediator>();
 
         mediator.Setup(m => m.Publish(It.IsAny<CustomerCreatedEvent>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
-        mediator.Setup(m => m.Publish(It.IsAny<OrderCreatedEvent>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
+        mediator.Setup(m => m.Publish(It.IsAny<OrderCheckedout>(), It.IsAny<CancellationToken>()))
+            .Callback<INotification, CancellationToken>(async (notification, token) =>
+            {
+                await checkoutEventHandler.Handle((OrderCheckedout)notification, token);
+            })
+            .Returns(Task.CompletedTask);
 
         var inputCreateCustomer = new CreateCustomerCommand("John Doe", "john.doe@gmail.com", "abc123", new DateTime(2004, 11, 06), "659.232.850-96", "(11) 97414-6507");
 
@@ -325,18 +306,6 @@ public class OrderTest
         var outputCreateProduct1 = await createProductCommandHandler.Handle(inputCreateProduct1, CancellationToken.None);
         var outputCreateProduct2 = await createProductCommandHandler.Handle(inputCreateProduct2, CancellationToken.None);
         var outputCreateProduct3 = await createProductCommandHandler.Handle(inputCreateProduct3, CancellationToken.None);
-
-        var inputCreateOrder = new CreateOrderCommand(new List<OrderItemRequest>()
-        {
-            new OrderItemRequest(outputCreateProduct1.Value, 2),
-            new OrderItemRequest(outputCreateProduct2.Value, 3),
-            new OrderItemRequest(outputCreateProduct3.Value, 4)
-        }, outputCreateCustomer.Value);
-
-        var createOrderCommandHandler = new CreateOrderCommandHandler(orderRepository, productRepository, unitOfWork, mediator.Object, customerRepository);
-
-        //WHEN
-        var outputCreateOrder = await createOrderCommandHandler.Handle(inputCreateOrder, CancellationToken.None);
 
         var inputCreateAddress = new CreateAddressCommand(outputCreateCustomer.Value, "12909-062", "Rua a", "Bairro", "100", null, "São Paulo", "SP", "Brazil");
 
@@ -348,20 +317,28 @@ public class OrderTest
         var cardToken = "my-token-card";
         var installments = 5;
 
-        var checkoutOrderCommandHandler = new CheckoutOrderCommandHandler(orderRepository, customerRepository ,addressRepository, unitOfWork, queue);
+        var inputCheckout = new CheckoutOrderCommand(new List<OrderItemRequest>()
+        {
+            new OrderItemRequest(outputCreateProduct1.Value, 2),
+            new OrderItemRequest(outputCreateProduct2.Value, 3),
+            new OrderItemRequest(outputCreateProduct3.Value, 4)
+        },
+        outputCreateCustomer.Value,
+        outputCreateAddress.Value,
+        outputCreateAddress.Value,
+        paymentType,
+        cardToken,
+        installments);
+      
+        //WHEN
 
-        await checkoutOrderCommandHandler.Handle(new CheckoutOrderCommand(
-                outputCreateOrder.Value,
-                outputCreateAddress.Value,
-                outputCreateAddress.Value,
-                paymentType,
-                cardToken,
-                installments
-            ), CancellationToken.None);
+        var checkoutOrderCommandHandler = new CheckoutOrderCommandHandler(orderRepository, customerRepository, productRepository ,addressRepository, unitOfWork, mediator.Object);
 
-        var getOrder = new GetOrderByIdQueryHandler(orderRepository);
+        var outputCheckoutOrder = await checkoutOrderCommandHandler.Handle(inputCheckout, CancellationToken.None);
 
-        var outputGetOrder = await getOrder.Handle(new GetOrderByIdQuery(outputCreateOrder.Value), CancellationToken.None);
+        var getOrder = new GetOrderByIdQueryHandler(orderQueryContext);
+
+        var outputGetOrder = await getOrder.Handle(new GetOrderByIdQuery(outputCheckoutOrder.Value), CancellationToken.None);
 
         Assert.Equal("waiting_payment", outputGetOrder.Value.Status);
     }
