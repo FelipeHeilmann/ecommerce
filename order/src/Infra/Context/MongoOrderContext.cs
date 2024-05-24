@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions.Query;
+using Domain.Orders.Entity;
 using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
 using static MongoDB.Driver.WriteConcern;
@@ -51,6 +52,18 @@ public class MongoOrderContext : IOrderQueryContext
             PayedAt = o.PayedAt,
             Status = o.Status,
             Total = o.Items.Sum(i => i.Price * i.Quantity),
+            Address = new AddressQueryModel()
+            {
+                Id = Guid.Parse(o.Address.Id),
+                City = o.Address.City,
+                ZipCode = o.Address.ZipCode,
+                Complement = o.Address.Complement,
+                Country = o.Address.Country,
+                Neighborhood = o.Address.Neighborhood,
+                Number = o.Address.Number,
+                State = o.Address.State,
+                Street = o.Address.Street
+            },
             Items = o.Items.Select(li => new LineItemQueryModel()
             {
                 Id = Guid.Parse(li.Id),
@@ -74,6 +87,18 @@ public class MongoOrderContext : IOrderQueryContext
             PayedAt = order.PayedAt,
             Status = order.Status,
             Total = order.Items.Sum(i => i.Price * i.Quantity),
+            Address = new AddressQueryModel()
+            {
+                Id = Guid.Parse(order.Address.Id),
+                City = order.Address.City,
+                ZipCode = order.Address.ZipCode,
+                Complement = order.Address.Complement,
+                Country = order.Address.Country,
+                Neighborhood = order.Address.Neighborhood,
+                Number = order.Address.Number,
+                State = order.Address.State,    
+                Street = order.Address.Street
+            },
             Items = order.Items.Select(li => new LineItemQueryModel()
             {
                 Id = Guid.Parse(li.Id),
@@ -95,6 +120,18 @@ public class MongoOrderContext : IOrderQueryContext
             OrderId = model.Id.ToString(),
             PayedAt = model.PayedAt,
             Status = model.Status,
+            Address = new Models.MongoDB.AddressModel()
+            {
+                Id = model.Id.ToString(),
+                City = model.Address.City,
+                ZipCode = model.Address.ZipCode,
+                Complement = model.Address.Complement,
+                Country = model.Address.Country,
+                Neighborhood = model.Address.Neighborhood,
+                Number = model.Address.Number,
+                State = model.Address.State,
+                Street = model.Address.Street
+            },
             Items = model.Items.Select(i => new Models.MongoDB.LineItemModel()
             {
                 Id = i.Id.ToString(),

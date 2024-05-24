@@ -19,6 +19,9 @@ public class OrderModel
     [BsonElement("items")]
     public ICollection<LineItemModel> Items { get; set; }
 
+    [BsonElement("address")]
+    public AddressModel Address { get; set; }
+
     [BsonElement("customer_id")]
     public string CustomerId { get; set; }
 
@@ -48,4 +51,34 @@ public class LineItemModel
 
     [BsonElement("quantity")]
     public int Quantity { get; set; }
+}
+
+public class AddressModel
+{
+    [BsonElement("id")]
+    public string Id { get; set; }
+
+    [BsonElement("zip_code")]
+    public string ZipCode { get; set; }
+
+    [BsonElement("street")]
+    public string Street { get; set; }
+
+    [BsonElement("neighborhood")]
+    public string Neighborhood { get; set; }
+
+    [BsonElement("number")]
+    public string Number { get; set; }
+
+    [BsonElement("complement")]
+    public string? Complement { get; set; }
+
+    [BsonElement("state")]
+    public string State { get; set; }
+
+    [BsonElement("city")]
+    public string City { get; set; }
+
+    [BsonElement("country")]
+    public string Country { get; set; }
 }
