@@ -1,35 +1,24 @@
 ﻿using Application.Abstractions.Query;
-using Application.Abstractions.Queue;
-using Domain.Customers.Repository;
 using Domain.Orders.Events;
-using Domain.Orders.Repository;
 using Domain.Products.Repository;
 using MediatR;
 
 namespace Application.Orders.EventsHandler;
 
-public class OrderCheckedoutEventHandler : INotificationHandler<OrderCheckedout>
+public class SaveOrderOnProjectionDatabase : INotificationHandler<OrderCheckedout>
 {
-    private readonly IQueue _queue;
-    private readonly IOrderRepository _orderRepository;
-    private readonly IProductRepository _productRepository;
-    private readonly ICustomerRepository _customerRepository;
     private readonly IOrderQueryContext _orderQueryContext;
+    private readonly IProductRepository _productRepository;
 
-    public OrderCheckedoutEventHandler(IQueue queue, IOrderRepository orderRepository, IProductRepository productRepository, ICustomerRepository customerRepository, IOrderQueryContext orderQueryContext)
+    public SaveOrderOnProjectionDatabase(IOrderQueryContext orderQueryContext, IProductRepository productRepository)
     {
-        _queue = queue;
-        _orderRepository = orderRepository;
-        _productRepository = productRepository;
-        _customerRepository = customerRepository;
         _orderQueryContext = orderQueryContext;
+        _productRepository = productRepository;
     }
 
     public async Task Handle(OrderCheckedout notification, CancellationToken cancellationToken)
     {
         var order = (OrderCheckedoutData)notification.Data;
-   
-        var customer = await _customerRepository.GetByIdAsync(order!.CustomerId, cancellationToken);
 
         var orderQueryModel = new OrderQueryModel()
         {
@@ -41,12 +30,10 @@ public class OrderCheckedoutEventHandler : INotificationHandler<OrderCheckedout>
 
         };
 
-        List<OrderCheckedoutIMailItem> products = new List<OrderCheckedoutIMailItem>();
-
-        foreach (var orderItem in order.Items) 
+        foreach (var orderItem in order.Items)
         {
             var product = await _productRepository.GetByIdAsync(orderItem.ProductId, cancellationToken);
-            products.Add(new OrderCheckedoutIMailItem(product!.Name, product!.Price.Amount, orderItem.Quantity));
+
             orderQueryModel.Items.Add(new LineItemQueryModel()
             {
                 Id = orderItem.Id,
@@ -60,7 +47,5 @@ public class OrderCheckedoutEventHandler : INotificationHandler<OrderCheckedout>
         }
 
         await _orderQueryContext.Save(orderQueryModel);
-
-        await _queue.PublishAsync(new OrderCheckedoutMail(order.OrderId, DateTime.Now, customer!.Name, customer.Email, products), "order.checkedout");
     }
 }

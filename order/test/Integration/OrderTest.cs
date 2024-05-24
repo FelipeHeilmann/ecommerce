@@ -89,7 +89,7 @@ public class OrderTest
     [Fact]
     public async Task Should_Create_Cart_Add_3_Items_And_Remove_One()
     {
-        var checkoutEventHandler = new OrderCheckedoutEventHandler(queue, orderRepository, productRepository, customerRepository, orderQueryContext);
+        var checkoutEventHandler = new SaveOrderOnProjectionDatabase(orderQueryContext, productRepository);
 
         var mediator = new Mock<IMediator>();
 
@@ -148,7 +148,7 @@ public class OrderTest
     [Fact]
     public async Task Should_Get_Orders_By_CustomerId()
     {
-        var checkoutEventHandler = new OrderCheckedoutEventHandler(queue, orderRepository, productRepository, customerRepository, orderQueryContext);
+        var checkoutEventHandler = new SaveOrderOnProjectionDatabase(orderQueryContext, productRepository);
 
         var mediator = new Mock<IMediator>();
 
@@ -222,7 +222,7 @@ public class OrderTest
     [Fact]
     public async Task Should_Cancel_Order()
     {
-        var checkoutEventHandler = new OrderCheckedoutEventHandler(queue, orderRepository, productRepository, customerRepository, orderQueryContext);
+        var checkoutEventHandler = new SaveOrderOnProjectionDatabase(orderQueryContext, productRepository);
         var orderCanceledEventHandler = new OrderCanceledEventHandler(orderQueryContext);
 
         var mediator = new Mock<IMediator>();
@@ -303,7 +303,7 @@ public class OrderTest
     [Fact]
     public async Task Should_Create_Order_With_3_Items()
     { 
-        var checkoutEventHandler = new OrderCheckedoutEventHandler(queue, orderRepository, productRepository, customerRepository, orderQueryContext);
+        var checkoutEventHandler = new SaveOrderOnProjectionDatabase(orderQueryContext, productRepository);
         
         var mediator = new Mock<IMediator>();
 
