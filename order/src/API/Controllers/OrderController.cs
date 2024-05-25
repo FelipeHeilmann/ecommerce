@@ -1,5 +1,6 @@
 ﻿using API.Extensions;
 using Application.Orders.AddItemToCart;
+using Application.Orders.Cancel;
 using Application.Orders.Checkout;
 using Application.Orders.GetByCustomerId;
 using Application.Orders.GetById;
@@ -45,6 +46,15 @@ public class OrderController : APIBaseController
     }
 
     [Authorize]
+    [HttpGet("cart")]
+    public async Task<IResult> GetCart(CancellationToken cancellationToken)
+    {
+        var result = await _sender.Send(new GetCartQuery(), cancellationToken);
+
+        return result.IsFailure ? result.ToProblemDetail() : result.Value.Id is null ? Results.Ok(new { }) : Results.Ok(result.Value);
+    }
+
+    [Authorize]
     [HttpPost("checkout")]
     public async Task<IResult> Checkout([FromBody] CheckoutOrderRequest request, CancellationToken cancellationToken)
     {
@@ -57,10 +67,9 @@ public class OrderController : APIBaseController
         return result.IsFailure ? result.ToProblemDetail() : Results.Ok(result.Value);
     }
 
-
     [Authorize]
     [HttpPatch("cart/remove-item/{lineItemId}")]
-    public async Task<IResult> RemoveLineItem(Guid lineItemId ,CancellationToken cancellationToken)
+    public async Task<IResult> RemoveLineItem(Guid lineItemId, CancellationToken cancellationToken)
     {
         var command = new RemoveItemFromCartCommand(lineItemId);
 
@@ -71,10 +80,10 @@ public class OrderController : APIBaseController
 
     [Authorize]
     [HttpPatch("cart/add-item")]
-    public async Task<IResult> AddLineItem( [FromBody] AddItemRequest request, CancellationToken cancellationToken)
+    public async Task<IResult> AddLineItem([FromBody] AddItemRequest request, CancellationToken cancellationToken)
     {
         var customerId = GetCustomerId();
-        
+
         var command = new AddItemToCartCommand(customerId.GetValueOrDefault(), request.ProductId, request.Quantity);
 
         var result = await _sender.Send(command, cancellationToken);
@@ -83,12 +92,12 @@ public class OrderController : APIBaseController
     }
 
     [Authorize]
-    [HttpGet("cart")]
-    public async Task<IResult> GetCart(CancellationToken cancellationToken)
+    [HttpPatch("{id}/cancel")]
+    public async Task<IResult> CancelrOrder(Guid id, CancellationToken cancellationToken)
     {
-        var result = await _sender.Send(new GetCartQuery(), cancellationToken);
+        var result = await _sender.Send(new CancelOrderCommand(id), cancellationToken);
 
-        return result.IsFailure ? result.ToProblemDetail() : result.Value.Id is null ? Results.Ok(new {}) : Results.Ok(result.Value);
+        return result.IsFailure ? result.ToProblemDetail() : Results.NoContent();
     }
 }
 

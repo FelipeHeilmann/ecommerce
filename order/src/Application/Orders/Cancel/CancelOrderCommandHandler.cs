@@ -28,13 +28,15 @@ public class CancelOrderCommandHandler : ICommandHandler<CancelOrderCommand, Ord
 
         if (order == null) return Result.Failure<Order>(OrderErrors.OrderNotFound);
 
+        order.Register("OrderCancelled", async domainEvent => {
+            await _mediator.Publish((OrderCancelled)(domainEvent));
+        });
+
         order.Cancel();
 
         _repository.Update(order);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-        await _mediator.Publish(new OrderCanceledEvent(order.Id));
 
         return Result.Success(order);
     }

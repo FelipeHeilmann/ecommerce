@@ -223,7 +223,7 @@ public class OrderTest
     public async Task Should_Cancel_Order()
     {
         var checkoutEventHandler = new SaveOrderOnProjectionDatabase(orderQueryContext, productRepository, addressRepository);
-        var orderCanceledEventHandler = new OrderCanceledEventHandler(orderQueryContext);
+        var orderCanceledEventHandler = new UpdateOrderOnProjectionDataBase(orderQueryContext);
 
         var mediator = new Mock<IMediator>();
 
@@ -233,10 +233,10 @@ public class OrderTest
             {
                 await checkoutEventHandler.Handle((OrderCheckedout)notification, token);
             });
-        mediator.Setup(m => m.Publish(It.IsAny<OrderCanceledEvent>(), It.IsAny<CancellationToken>()))
+        mediator.Setup(m => m.Publish(It.IsAny<OrderCancelled>(), It.IsAny<CancellationToken>()))
             .Callback<INotification, CancellationToken>(async (notification, token) =>
             {
-                await orderCanceledEventHandler.Handle((OrderCanceledEvent)notification, token);
+                await orderCanceledEventHandler.Handle((OrderCancelled)notification, token);
             });
 
         var inputCreateCustomer = new CreateCustomerCommand("John Doe", "john.doe@gmail.com", "abc123", new DateTime(2004, 11, 06), "659.232.850-96", "(11) 97414-6507");

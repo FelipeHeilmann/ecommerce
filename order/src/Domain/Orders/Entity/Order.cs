@@ -1,9 +1,9 @@
 ﻿using Domain.Abstractions;
 using Domain.Orders.Error;
+using Domain.Orders.Event;
 using Domain.Orders.Events;
 using Domain.Orders.VO;
 using Domain.Products.VO;
-using Domain.Shared;
 
 namespace Domain.Orders.Entity;
 
@@ -54,7 +54,6 @@ public class Order : Observable
         }
     }
 
-
     public void RemoveItem(Guid lineItemId)
     {
         if (HasOneItem() && Status != "cart") throw new CannotRemoveItem();
@@ -94,12 +93,11 @@ public class Order : Observable
         }
     }
 
-    public Result Cancel()
+    public void Cancel()
     {
         _status.Cancel();
         UpdatedAt = DateTime.UtcNow;
-
-        return Result.Success();
+        Notify(new OrderCancelled(new OrderCancelledData(Id)));
     }
 
     public void Checkout(Guid shippingAddressId, Guid billingAddressId, string paymentType, string? cardToken, int installments)
