@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions.Query;
 using Domain.Orders.Entity;
+using Domain.Orders.Error;
 using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
 using static MongoDB.Driver.WriteConcern;
@@ -80,6 +81,7 @@ public class MongoOrderContext : IOrderQueryContext
     public async Task<OrderQueryModel> GetById(Guid id)
     {
         var order = await _orderCollection.Find(o => o.OrderId == id.ToString()).FirstOrDefaultAsync();
+        if (order == null) throw new OrderNotFound();
         return new OrderQueryModel()
         {
             Id = Guid.Parse(order.OrderId),
