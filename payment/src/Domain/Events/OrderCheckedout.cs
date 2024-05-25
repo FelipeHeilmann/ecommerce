@@ -1,11 +1,11 @@
 ﻿using MediatR;
 
 namespace Domain.Events;
-public class OrderPurchasedEvent : INotification
+public class OrderCheckedout : INotification
 {
     public Guid OrderId { get; set; }
     public double Total { get; set; }
-    public IEnumerable<LineItemOrderPurchased> Items { get; set; }
+    public IEnumerable<LineItemOrderCheckedout> Items { get; set; }
     public Guid CustomerId { get; set; }
     public string PaymentType { get; set; }
     public string? CardToken { get; set; }
@@ -14,7 +14,7 @@ public class OrderPurchasedEvent : INotification
 
 
 
-    public OrderPurchasedEvent(Guid orderId, double total, IEnumerable<LineItemOrderPurchased> items, Guid customerId, string paymentType, string? cardToken, int installment, Guid addressId)
+    public OrderCheckedout(Guid orderId, double total, IEnumerable<LineItemOrderCheckedout> items, Guid customerId, string paymentType, string? cardToken, int installment, Guid addressId)
     {
         OrderId = orderId;
         Total = total;
@@ -27,4 +27,4 @@ public class OrderPurchasedEvent : INotification
     }
 }
 
-public record LineItemOrderPurchased(Guid Id, Guid ProductId, int Quantity, double Amount);
+public record LineItemOrderCheckedout(Guid Id, Guid ProductId, int Quantity, double Price);

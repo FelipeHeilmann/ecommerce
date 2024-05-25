@@ -7,30 +7,30 @@ using Application.Abstractions.Queue;
 
 namespace Application.Transactions.MakePaymentRequest;
 
-public class CreatePaymentCommandHandler : ICommandHandler<CreatePaymentCommand>
+public class CreatePaymentCommandHandler : ICommandHandler<CreatePaymentCommand, Guid>
 {
     private readonly IPaymentGateway _paymentGateway;
-    private readonly IOrderGateway _customerGateway;
+    private readonly IOrderGateway _orderGateway;
     private readonly ITransactionRepository _transactionRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IQueue _queue;
 
-    public CreatePaymentCommandHandler(IPaymentGateway paymentGateway, ITransactionRepository transactionRepository, IUnitOfWork unitOfWork, IQueue queue, IOrderGateway customerGateway)
+    public CreatePaymentCommandHandler(IPaymentGateway paymentGateway, ITransactionRepository transactionRepository, IUnitOfWork unitOfWork, IQueue queue, IOrderGateway orderGateway)
     {
         _paymentGateway = paymentGateway;
         _transactionRepository = transactionRepository;
         _unitOfWork = unitOfWork;
         _queue = queue;
-        _customerGateway = customerGateway;
+        _orderGateway = orderGateway;
     }
 
-    public async Task<Result> Handle(CreatePaymentCommand command, CancellationToken cancellationToken)
+    public async Task<Result<Guid>> Handle(CreatePaymentCommand command, CancellationToken cancellationToken)
     {
         var request = command.request;
 
-        var customer = await _customerGateway.GetCustomerById(request.CustomerId);
+        var customer = await _orderGateway.GetCustomerById(request.CustomerId);
 
-        var address = await _customerGateway.GetAddressById(request.AddressId);
+        var address = await _orderGateway.GetAddressById(request.AddressId);
 
         var paymentRequest = new ProccessPaymentRequest(
             request.OrderId,
@@ -51,7 +51,7 @@ public class CreatePaymentCommandHandler : ICommandHandler<CreatePaymentCommand>
 
         var responsePaymentGateway = await _paymentGateway.ProccessPayment(paymentRequest);
 
-        var total = request.Items.Sum(i => i.Amount * i.Quantity);
+        var total = request.Items.Sum(i => i.Price * i.Quantity);
 
         var transaction = Transaction.Create(request.OrderId, request.CustomerId, Guid.Parse(responsePaymentGateway.Id), total, request.PaymentType);
 
@@ -61,6 +61,6 @@ public class CreatePaymentCommandHandler : ICommandHandler<CreatePaymentCommand>
 
         await _queue.PublishAsync(new { request.OrderId, Url = responsePaymentGateway.PaymentUrl, request.PaymentType }, "payment.url");
         
-        return Result.Success();
+        return transaction.Id;
     }
 }

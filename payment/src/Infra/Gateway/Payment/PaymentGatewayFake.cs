@@ -51,7 +51,7 @@ public class PaymentGatewayFake : IPaymentGateway
                 }
             },
             Payments = new List<OrderPaymentType>() { GetPaymentType(request.PaymentType, request.Installment, request.CardToken) },
-            Items = request.Items.Select(i => new CreateOrderItemModel() { Amount = i.Amount, Quantity = i.Quantity, Code = i.Id.ToString(), Description = "Produto" }).ToList(),
+            Items = request.Items.Select(i => new CreateOrderItemModel() { Amount = i.Price, Quantity = i.Quantity, Code = i.Id.ToString(), Description = "Produto" }).ToList(),
             Closed = true
         }, new JsonSerializerOptions
         {

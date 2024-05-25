@@ -17,7 +17,7 @@ public class TransactionConfiguration : IEntityTypeConfiguration<Transaction>
         builder.Property(t => t.CustomerId).HasColumnName("customer_id");
         builder.Property(t => t.CreatedAt).HasColumnName("created_at");
         builder.Property(t => t.ApprovedAt).HasColumnName("approved_at");
-        builder.Property(t => t.RefusedAt).HasColumnName("refused_at");
+        builder.Property(t => t.RejectedAt).HasColumnName("refused_at");
 
         builder.ToTable("transactions");
     }

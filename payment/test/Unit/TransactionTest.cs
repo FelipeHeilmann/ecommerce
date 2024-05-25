@@ -92,9 +92,9 @@ public class TransactionTest
 
         var transaction = Transaction.Create(orderId, customerId, paymentServiceTransactionId, amount, paymentType);
 
-        transaction.Refuse();
+        transaction.Reject();
 
-        Assert.Equal(TransactionStatus.Refused, transaction.Status);
+        Assert.Equal(TransactionStatus.Reject, transaction.Status);
     }
 
     [Fact]

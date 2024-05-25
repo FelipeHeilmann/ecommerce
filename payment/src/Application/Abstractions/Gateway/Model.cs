@@ -5,7 +5,7 @@ namespace Application.Abstractions.Gateway;
 public record ProccessPaymentRequest(
      Guid OrderId, 
      double Total, 
-     IEnumerable<LineItemOrderPurchased> Items, 
+     IEnumerable<LineItemOrderCheckedout> Items, 
      Guid CustomerId, 
      string CustomerName,
      string CustomerEmail, 

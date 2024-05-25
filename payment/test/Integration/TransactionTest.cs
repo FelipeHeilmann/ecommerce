@@ -1,57 +1,191 @@
 ﻿using Application.Abstractions.Gateway;
+using Application.Abstractions.Queue;
 using Application.Data;
 using Application.Transactions.MakePaymentRequest;
+using Application.Transactions.ProccessTransaction;
 using Domain.Events;
 using Domain.Transactions;
 using Infra.Data;
 using Infra.Gateway.Payment;
+using Infra.Queue;
 using Infra.Repositories.Memory;
+using Moq;
 using Xunit;
 
 namespace Integration;
 
 public class TransactionTest
 {
-    private readonly ITransactionRepository _transactionRepository =  new TransactionRepositoryMemory();
-    private readonly IPaymentGateway _paymentGateway = new PaymentGatewayFake();
-    private readonly IUnitOfWork _unitOfWord = new UnitOfWorkMemory();
+    private readonly ITransactionRepository transactionRepository =  new TransactionRepositoryMemory();
+    private readonly IPaymentGateway paymentGateway = new PaymentGatewayFake();
+    private readonly IQueue queue = new MemoryQueueAdapter();
+    private readonly IUnitOfWork unitOfWork = new UnitOfWorkMemory();
 
     [Fact]
-    public async void Should_Recive_Order_Payment_Make_Request_To_Payment_Gateway_Create_Transaction()
+    public async void Should_Create_Transaction()
     {
-        var lineitems = new List<LineItemOrderPurchased>()
+        var orderGateway = new Mock<IOrderGateway>();
+
+        orderGateway.Setup(m => m.GetCustomerById(It.IsAny<Guid>())).ReturnsAsync(new CustomerGatewayResponse(
+             Id: Guid.NewGuid(),
+             Name: "John Doe",
+             Email: "john.doe@example.com",
+             CPF: "123.456.789-00",
+             Phone: "+1234567890",
+             BirthDate: new DateOnly(1990, 5, 15),
+             CreatedAt: DateTime.UtcNow
+         ));
+
+        orderGateway.Setup(m => m.GetAddressById(It.IsAny<Guid>())).ReturnsAsync(new AddressGatewayResponse(
+            Id: Guid.NewGuid(),
+            CustomerId: Guid.NewGuid(),
+            ZipCode: "12345-678",
+            Street: "123 Main St",
+            Neighborhood: "Downtown",
+            Number: "456",
+            Complement: "Apt 101",
+            City: "Cityville",
+            State: "ST",
+            Country: "Countryland"
+        ));
+
+
+        var items = new List<LineItemOrderCheckedout>()
         {
-            new LineItemOrderPurchased(Guid.NewGuid(), Guid.NewGuid(),2, 30.0),
-            new LineItemOrderPurchased(Guid.NewGuid(), Guid.NewGuid(),3, 50.0),
-            new LineItemOrderPurchased(Guid.NewGuid(), Guid.NewGuid(),4, 20.0),
-            new LineItemOrderPurchased(Guid.NewGuid(), Guid.NewGuid(),6, 80.0),
+            new LineItemOrderCheckedout(Guid.NewGuid(), Guid.NewGuid(),2, 30.0),
+            new LineItemOrderCheckedout(Guid.NewGuid(), Guid.NewGuid(),3, 50.0),
+            new LineItemOrderCheckedout(Guid.NewGuid(), Guid.NewGuid(),4, 20.0),
+            new LineItemOrderCheckedout(Guid.NewGuid(), Guid.NewGuid(),6, 80.0),
         };
 
-        var orderPurchasedEvent = new OrderPurchasedEvent(
-            Guid.NewGuid(),
-            50.00,
-            lineitems,
-            Guid.NewGuid(),
-            "felipe heilmann",
-            "felipeheilmannm@gmail.com",
-            "44444444444",
-            "11974149507",
-            "credit",
-            "my-token-card",
-            2,
-            "04182-135",
-            "112",
-            null
-            );
+        var orderId = Guid.NewGuid();
+        var customerId = Guid.NewGuid();  
+        var addressId = Guid.NewGuid();
 
-        var command = new CreatePaymentCommand(orderPurchasedEvent);
+        var inputCreateTransaction = new CreatePaymentCommand(new OrderCheckedout(orderId, items.Sum(i => i.Quantity * i.Price), items, customerId, "credit", "my-token", 5, addressId));
 
-        var commandHandler = new CreatePaymentCommandHandler(_paymentGateway, _transactionRepository, _unitOfWord);
+        var commandHandler = new CreatePaymentCommandHandler(paymentGateway, transactionRepository, unitOfWork, queue, orderGateway.Object);
 
-        var result = await commandHandler.Handle(command, CancellationToken.None);
+        var output = await commandHandler.Handle(inputCreateTransaction, CancellationToken.None);
 
-        Assert.True(result.IsSuccess);
-        Assert.False(result.IsFailure);
+        Assert.True(output.IsSuccess);
+        Assert.False(output.IsFailure);
 
+    }
+
+    [Fact]
+    public async void Should_Approve_Transcation()
+    {
+        var orderGateway = new Mock<IOrderGateway>();
+
+        orderGateway.Setup(m => m.GetCustomerById(It.IsAny<Guid>())).ReturnsAsync(new CustomerGatewayResponse(
+             Id: Guid.NewGuid(),
+             Name: "John Doe",
+             Email: "john.doe@example.com",
+             CPF: "123.456.789-00",
+             Phone: "+1234567890",
+             BirthDate: new DateOnly(1990, 5, 15),
+             CreatedAt: DateTime.UtcNow
+         ));
+
+        orderGateway.Setup(m => m.GetAddressById(It.IsAny<Guid>())).ReturnsAsync(new AddressGatewayResponse(
+            Id: Guid.NewGuid(),
+            CustomerId: Guid.NewGuid(),
+            ZipCode: "12345-678",
+            Street: "123 Main St",
+            Neighborhood: "Downtown",
+            Number: "456",
+            Complement: "Apt 101",
+            City: "Cityville",
+            State: "ST",
+            Country: "Countryland"
+        ));
+
+
+        var items = new List<LineItemOrderCheckedout>()
+        {
+            new LineItemOrderCheckedout(Guid.NewGuid(), Guid.NewGuid(),2, 30.0),
+            new LineItemOrderCheckedout(Guid.NewGuid(), Guid.NewGuid(),3, 50.0),
+            new LineItemOrderCheckedout(Guid.NewGuid(), Guid.NewGuid(),4, 20.0),
+            new LineItemOrderCheckedout(Guid.NewGuid(), Guid.NewGuid(),6, 80.0),
+        };
+
+        var orderId = Guid.NewGuid();
+        var customerId = Guid.NewGuid();
+        var addressId = Guid.NewGuid();
+
+        var inputCreateTransaction = new CreatePaymentCommand(new OrderCheckedout(orderId, items.Sum(i => i.Quantity * i.Price), items, customerId, "credit", "my-token", 5, addressId));
+
+        var commandHandler = new CreatePaymentCommandHandler(paymentGateway, transactionRepository, unitOfWork, queue, orderGateway.Object);
+
+        var outputCreateTransaction = await commandHandler.Handle(inputCreateTransaction, CancellationToken.None);
+
+        var inputProccessTransaction = new ProccessTransactionCommand(outputCreateTransaction.Value, "approved");
+
+        var proccessTransactionCommandHandler = new ProccessTransactionCommandHandler(transactionRepository, unitOfWork, queue);
+
+        await proccessTransactionCommandHandler.Handle(inputProccessTransaction, CancellationToken.None);
+
+        var outputGetTransaction = await transactionRepository.GetByIdAsync(outputCreateTransaction.Value, CancellationToken.None);
+
+        Assert.Equal(TransactionStatus.Approved, outputGetTransaction.Status);
+    }
+
+    [Fact]
+    public async void Should_Reject_Transcation()
+    {
+        var orderGateway = new Mock<IOrderGateway>();
+
+        orderGateway.Setup(m => m.GetCustomerById(It.IsAny<Guid>())).ReturnsAsync(new CustomerGatewayResponse(
+             Id: Guid.NewGuid(),
+             Name: "John Doe",
+             Email: "john.doe@example.com",
+             CPF: "123.456.789-00",
+             Phone: "+1234567890",
+             BirthDate: new DateOnly(1990, 5, 15),
+             CreatedAt: DateTime.UtcNow
+         ));
+
+        orderGateway.Setup(m => m.GetAddressById(It.IsAny<Guid>())).ReturnsAsync(new AddressGatewayResponse(
+            Id: Guid.NewGuid(),
+            CustomerId: Guid.NewGuid(),
+            ZipCode: "12345-678",
+            Street: "123 Main St",
+            Neighborhood: "Downtown",
+            Number: "456",
+            Complement: "Apt 101",
+            City: "Cityville",
+            State: "ST",
+            Country: "Countryland"
+        ));
+
+
+        var items = new List<LineItemOrderCheckedout>()
+        {
+            new LineItemOrderCheckedout(Guid.NewGuid(), Guid.NewGuid(),2, 30.0),
+            new LineItemOrderCheckedout(Guid.NewGuid(), Guid.NewGuid(),3, 50.0),
+            new LineItemOrderCheckedout(Guid.NewGuid(), Guid.NewGuid(),4, 20.0),
+            new LineItemOrderCheckedout(Guid.NewGuid(), Guid.NewGuid(),6, 80.0),
+        };
+
+        var orderId = Guid.NewGuid();
+        var customerId = Guid.NewGuid();
+        var addressId = Guid.NewGuid();
+
+        var inputCreateTransaction = new CreatePaymentCommand(new OrderCheckedout(orderId, items.Sum(i => i.Quantity * i.Price), items, customerId, "credit", "my-token", 5, addressId));
+
+        var commandHandler = new CreatePaymentCommandHandler(paymentGateway, transactionRepository, unitOfWork, queue, orderGateway.Object);
+
+        var outputCreateTransaction = await commandHandler.Handle(inputCreateTransaction, CancellationToken.None);
+
+        var inputProccessTransaction = new ProccessTransactionCommand(outputCreateTransaction.Value, "rejected");
+
+        var proccessTransactionCommandHandler = new ProccessTransactionCommandHandler(transactionRepository, unitOfWork, queue);
+
+        await proccessTransactionCommandHandler.Handle(inputProccessTransaction, CancellationToken.None);
+
+        var outputGetTransaction = await transactionRepository.GetByIdAsync(outputCreateTransaction.Value, CancellationToken.None);
+
+        Assert.Equal(TransactionStatus.Reject, outputGetTransaction.Status);
     }
 }

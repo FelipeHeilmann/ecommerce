@@ -11,9 +11,9 @@ public class Transaction
     public Guid CustomerId { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public DateTime? ApprovedAt { get; private set; }
-    public DateTime? RefusedAt { get; private set; } 
+    public DateTime? RejectedAt { get; private set; } 
 
-    public Transaction(Guid id, Guid orderId, Guid customerId, Guid paymentServiceId, double amount ,PaymentType paymentType, TransactionStatus status, DateTime createdAt, DateTime? approvedAt, DateTime? refusedAt)
+    public Transaction(Guid id, Guid orderId, Guid customerId, Guid paymentServiceId, double amount ,PaymentType paymentType, TransactionStatus status, DateTime createdAt, DateTime? approvedAt, DateTime? rejecteddAt)
     {
         Id = id;
         OrderId = orderId;
@@ -22,7 +22,7 @@ public class Transaction
         CustomerId = customerId;
         CreatedAt = createdAt;
         ApprovedAt = approvedAt;
-        RefusedAt = refusedAt;
+        RejectedAt = rejecteddAt;
         PaymentServiceId = paymentServiceId;
         Amount = Math.Round(amount, 2);
     }
@@ -55,12 +55,12 @@ public class Transaction
         ApprovedAt = DateTime.UtcNow;
     }
 
-    public void Refuse()
+    public void Reject()
     {
         if (Status != TransactionStatus.WaitingPayment) throw new ArgumentException();
 
-        Status = TransactionStatus.Refused;
-        RefusedAt = DateTime.UtcNow;
+        Status = TransactionStatus.Reject;
+        RejectedAt = DateTime.UtcNow;
     }
 
     public void Refund()
@@ -70,6 +70,6 @@ public class Transaction
 
     public void ApplyRefund()
     {
-        Status = TransactionStatus.Refused;
+        Status = TransactionStatus.Reject;
     }
 }
