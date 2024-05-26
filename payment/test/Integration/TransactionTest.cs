@@ -4,7 +4,8 @@ using Application.Data;
 using Application.Transactions.MakePaymentRequest;
 using Application.Transactions.ProccessTransaction;
 using Domain.Events;
-using Domain.Transactions;
+using Domain.Transactions.Repository;
+using Domain.Transactions.VO;
 using Infra.Data;
 using Infra.Gateway.Payment;
 using Infra.Queue;
@@ -128,7 +129,7 @@ public class TransactionTest
 
         var outputGetTransaction = await transactionRepository.GetByIdAsync(outputCreateTransaction.Value, CancellationToken.None);
 
-        Assert.Equal(TransactionStatus.Approved, outputGetTransaction.Status);
+        Assert.Equal("approved", outputGetTransaction.Status);
     }
 
     [Fact]
@@ -186,6 +187,6 @@ public class TransactionTest
 
         var outputGetTransaction = await transactionRepository.GetByIdAsync(outputCreateTransaction.Value, CancellationToken.None);
 
-        Assert.Equal(TransactionStatus.Reject, outputGetTransaction.Status);
+        Assert.Equal("rejected", outputGetTransaction.Status);
     }
 }

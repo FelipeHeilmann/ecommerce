@@ -1,5 +1,5 @@
-﻿
-using Domain.Transactions;
+﻿using Domain.Transactions.Entity;
+using Domain.Transactions.VO;
 using Xunit;
 namespace Unit;
 
@@ -16,8 +16,8 @@ public class TransactionTest
 
         var transaction = Transaction.Create(orderId, customerId, paymentServiceTransactionId, amount ,paymentType);
 
-        Assert.Equal(PaymentType.CreditCard, transaction.PaymentType);
-        Assert.Equal(TransactionStatus.WaitingPayment, transaction.Status);
+        Assert.Equal("credit_card", transaction.PaymentType);
+        Assert.Equal("waiting_payment", transaction.Status);
     }
 
     [Fact]
@@ -31,8 +31,8 @@ public class TransactionTest
 
         var transaction = Transaction.Create(orderId, customerId, paymentServiceTransactionId, amount, paymentType);
 
-        Assert.Equal(PaymentType.DebitCard, transaction.PaymentType);
-        Assert.Equal(TransactionStatus.WaitingPayment, transaction.Status);
+        Assert.Equal("debit_card", transaction.PaymentType);
+        Assert.Equal("waiting_payment", transaction.Status);
     }
 
     [Fact]
@@ -46,8 +46,8 @@ public class TransactionTest
 
         var transaction = Transaction.Create(orderId, customerId, paymentServiceTransactionId, amount, paymentType);
 
-        Assert.Equal(PaymentType.Pix, transaction.PaymentType);
-        Assert.Equal(TransactionStatus.WaitingPayment, transaction.Status);
+        Assert.Equal("pix", transaction.PaymentType);
+        Assert.Equal("waiting_payment", transaction.Status);
     }
 
     [Fact]
@@ -61,8 +61,8 @@ public class TransactionTest
 
         var transaction = Transaction.Create(orderId, customerId, paymentServiceTransactionId, amount, paymentType);
 
-        Assert.Equal(PaymentType.Billet, transaction.PaymentType);
-        Assert.Equal(TransactionStatus.WaitingPayment, transaction.Status);
+        Assert.Equal("billet", transaction.PaymentType);
+        Assert.Equal("waiting_payment", transaction.Status);
     }
 
     [Fact]
@@ -78,7 +78,7 @@ public class TransactionTest
 
         transaction.Approve();
 
-        Assert.Equal(TransactionStatus.Approved, transaction.Status);
+        Assert.Equal("approved", transaction.Status);
     }
 
     [Fact]
@@ -94,7 +94,7 @@ public class TransactionTest
 
         transaction.Reject();
 
-        Assert.Equal(TransactionStatus.Reject, transaction.Status);
+        Assert.Equal("rejected", transaction.Status);
     }
 
     [Fact]
@@ -110,6 +110,6 @@ public class TransactionTest
 
         transaction.Refund();
 
-        Assert.Equal(TransactionStatus.AwaitingRefund, transaction.Status);
+        Assert.Equal("refunding", transaction.Status);
     }
 }

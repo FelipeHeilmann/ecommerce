@@ -5,11 +5,11 @@ public class Refund
     public Guid Id { get; private set; }
     public Guid TransactionId { get; private set; }
     public double Amount { get; private set; }
-    public RefundStatus Status { get; private set; }
+    public string Status { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public DateTime? PayedAt { get; private set; }
 
-    public Refund(Guid id, Guid transactionId, double amount, RefundStatus status, DateTime createdAt, DateTime? payedAt)
+    public Refund(Guid id, Guid transactionId, double amount, string status, DateTime createdAt, DateTime? payedAt)
     {
         Id = id;
         TransactionId = transactionId;
@@ -21,12 +21,12 @@ public class Refund
 
     public static Refund Create(Guid transactionId, double amount) 
     { 
-        return new Refund(Guid.NewGuid(),transactionId, amount, RefundStatus.WaitingRefund, DateTime.UtcNow, null);
+        return new Refund(Guid.NewGuid(),transactionId, amount, "in_proggress", DateTime.UtcNow, null);
     }
 
     public void Pay()
     {
-        Status = RefundStatus.RefundPayed;
+        Status = "payed";
         PayedAt = DateTime.UtcNow;
     }
 }

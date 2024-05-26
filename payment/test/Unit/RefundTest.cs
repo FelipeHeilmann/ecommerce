@@ -11,7 +11,7 @@ public class RefundTest
         var amount = 300.0;
         var refund = Refund.Create(trasactionId, amount);
 
-        Assert.Equal(RefundStatus.WaitingRefund, refund.Status);
+        Assert.Equal("in_proggress", refund.Status);
     }
 
     [Fact]
@@ -23,6 +23,6 @@ public class RefundTest
 
         refund.Pay();
 
-        Assert.Equal(RefundStatus.RefundPayed, refund.Status);
+        Assert.Equal("payed", refund.Status);
     }
 }
