@@ -1,9 +1,10 @@
 ﻿using Application.Abstractions.Gateway;
 using Application.Abstractions.Messaging;
 using Domain.Shared;
-using Domain.Transactions;
 using Application.Data;
 using Application.Abstractions.Queue;
+using Domain.Transactions.Repository;
+using Domain.Transactions.Entity;
 
 namespace Application.Transactions.MakePaymentRequest;
 
@@ -46,7 +47,12 @@ public class CreatePaymentCommandHandler : ICommandHandler<CreatePaymentCommand,
             request.Installment,
             address.ZipCode,
             address.Number,
-            address.Complement
+            address.Street,
+            address.State,
+            address.Neighborhood,
+            address.Complement,
+            address.City,
+            address.Country
         );
 
         var responsePaymentGateway = await _paymentGateway.ProccessPayment(paymentRequest);

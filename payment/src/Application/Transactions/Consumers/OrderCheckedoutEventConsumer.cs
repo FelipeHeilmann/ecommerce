@@ -4,17 +4,17 @@ using Domain.Events;
 using Application.Transactions.MakePaymentRequest;
 using Application.Abstractions.Gateway;
 using Application.Data;
-using Domain.Transactions;
 using Microsoft.Extensions.DependencyInjection;
+using Domain.Transactions.Repository;
 
 namespace Application.Transactions.Consumers;
 
-public class OrderPurchasedEventConsumer : BackgroundService
+public class OrderCheckedoutEventConsumer : BackgroundService
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly IQueue _queue;
 
-    public OrderPurchasedEventConsumer(IQueue queue, IServiceProvider serviceProvider)
+    public OrderCheckedoutEventConsumer(IQueue queue, IServiceProvider serviceProvider)
     {
         _queue = queue;
         _serviceProvider = serviceProvider;
@@ -24,7 +24,7 @@ public class OrderPurchasedEventConsumer : BackgroundService
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            await _queue.SubscribeAsync<OrderCheckedout>("orderPurchased.proccessPayment", "order.purchased", async message => {
+            await _queue.SubscribeAsync<OrderCheckedout>("orderCheckedout.proccessPayment", "order.checkedout", async message => {
                 using (var scope = _serviceProvider.CreateAsyncScope())
                 {
                     var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();

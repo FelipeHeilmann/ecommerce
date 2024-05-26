@@ -2,7 +2,7 @@
 using Application.Abstractions.Queue;
 using Application.Data;
 using Domain.Shared;
-using Domain.Transactions;
+using Domain.Transactions.Repository;
 
 namespace Application.Transactions.ProccessTransaction;
 

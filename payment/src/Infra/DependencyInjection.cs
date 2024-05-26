@@ -3,7 +3,7 @@ using Application.Abstractions.Queue;
 using Application.Data;
 using Application.Transactions.Consumers;
 using Domain.Refunds;
-using Domain.Transactions;
+using Domain.Transactions.Repository;
 using Infra.Context;
 using Infra.Data;
 using Infra.Gateway.Order;
@@ -43,6 +43,6 @@ public static class DependecyInjection
         services.AddTransient<IRefundRepository, RefundRepository>();
         services.AddTransient<IUnitOfWork, UnitOfWork>();
 
-       services.AddHostedService<OrderPurchasedEventConsumer>();
+       services.AddHostedService<OrderCheckedoutEventConsumer>();
     }
 }

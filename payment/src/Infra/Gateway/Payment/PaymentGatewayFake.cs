@@ -12,14 +12,7 @@ public class PaymentGatewayFake : IPaymentGateway
     {
         HttpClient client = new HttpClient();
 
-        HttpResponseMessage zipCodeResponse = await client.GetAsync($"https://viacep.com.br/ws/{request.AddressZipCode}/json/");
-
-        string jsonResponse = await zipCodeResponse.Content.ReadAsStringAsync();
-
-        var cepInfo = JsonSerializer.Deserialize<CepAPIResponse>(jsonResponse, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        })!;
+ 
 
         var body = JsonSerializer.Serialize(new CreateOrderModel()
         {
@@ -32,15 +25,15 @@ public class PaymentGatewayFake : IPaymentGateway
                 Type = "individual",
                 Address = new CreateAddressModel()
                 {
-                    City = cepInfo.Localidade,
-                    Complement = request.AddressLine ?? string.Empty,
-                    Country = "Brasil",
+                    City = request.AddressCity,
+                    Complement = request.AddressComplement ?? "",
+                    Country = request.AddressCountry,
                     Line1 = "",
                     Line2 = "",
-                    Neighborhood = cepInfo.Bairro,
+                    Neighborhood = request.AddressNeighborhood,
                     Number = request.AddressNumber,
-                    State = cepInfo.Uf,
-                    Street = cepInfo.Logradouro,
+                    State = request.AddressState,
+                    Street = request.AddressStreet,
                     ZipCode = request.AddressZipCode
                 },
                 Phone = new CreateCustomerPhoneModel()

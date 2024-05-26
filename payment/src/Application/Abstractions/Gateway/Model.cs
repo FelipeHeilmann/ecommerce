@@ -16,5 +16,10 @@ public record ProccessPaymentRequest(
      int Installment, 
      string AddressZipCode, 
      string AddressNumber, 
-     string? AddressLine 
+     string AddressStreet,
+     string AddressState,
+     string AddressNeighborhood,
+     string? AddressComplement,
+     string AddressCity,
+     string AddressCountry
 );
