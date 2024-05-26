@@ -1,5 +1,6 @@
 ﻿using Domain.Shared;
-using Domain.Transactions;
+using Domain.Transactions.Entity;
+using Domain.Transactions.Repository;
 
 namespace Infra.Repositories.Memory;
 

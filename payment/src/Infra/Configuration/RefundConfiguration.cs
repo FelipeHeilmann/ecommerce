@@ -1,12 +1,13 @@
 ﻿using Domain.Refunds;
+using Infra.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infra.Configuration;
 
-public class RefundConfiguration : IEntityTypeConfiguration<Refund>
+public class RefundConfiguration : IEntityTypeConfiguration<RefundModel>
 {
-    public void Configure(EntityTypeBuilder<Refund> builder)
+    public void Configure(EntityTypeBuilder<RefundModel> builder)
     {
         builder.HasKey(r => r.Id);
         builder.Property(r => r.Id).HasColumnName("id");

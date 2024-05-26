@@ -1,11 +1,11 @@
-﻿using Domain.Transactions;
+﻿using Infra.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Infra.Configuration;
 
-public class TransactionConfiguration : IEntityTypeConfiguration<Transaction>
+public class TransactionConfiguration : IEntityTypeConfiguration<TransactionModel>
 {
-    public void Configure(EntityTypeBuilder<Transaction> builder) 
+    public void Configure(EntityTypeBuilder<TransactionModel> builder) 
     {
         builder.HasKey(t => t.Id);
         builder.Property(t => t.Id).HasColumnName("id");
@@ -18,6 +18,7 @@ public class TransactionConfiguration : IEntityTypeConfiguration<Transaction>
         builder.Property(t => t.CreatedAt).HasColumnName("created_at");
         builder.Property(t => t.ApprovedAt).HasColumnName("approved_at");
         builder.Property(t => t.RejectedAt).HasColumnName("refused_at");
+
 
         builder.ToTable("transactions");
     }
