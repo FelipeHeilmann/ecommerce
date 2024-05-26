@@ -1,4 +1,5 @@
 ﻿using API.Events;
+using API.Model;
 using API.Request;
 using System.Text;
 
@@ -66,7 +67,7 @@ public class Templates
         template = template.Replace("[User]", name);
         return template;
     }
-    public static string OrderCreated(OrderCheckedoutEvent order)
+    public static string OrderCheckedout(OrderCheckedoutMailModel order)
     {
         string template = @"
             <html>

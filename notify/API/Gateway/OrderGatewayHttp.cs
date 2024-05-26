@@ -18,6 +18,21 @@ namespace API.Gateway
                 })!;
             }
         }
+
+        public async Task<ProductGatewayResponse> GetProductById(Guid id)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                var response = await client.GetAsync($"https://localhost:7078/api/products/{id}");
+
+                string productResponseJson = await response.Content.ReadAsStringAsync();
+
+                return JsonSerializer.Deserialize<ProductGatewayResponse>(productResponseJson, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                })!;
+            }
+        }
     }
 
 }

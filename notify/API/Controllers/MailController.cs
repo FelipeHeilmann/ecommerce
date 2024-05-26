@@ -30,21 +30,5 @@ namespace API.controllers
 
             return Ok();
         }
-
-        [HttpPost("order-created")]
-        public async Task<ActionResult> SendOrderCreatedMail([FromBody] OrderCheckedoutEvent request)
-        {
-            var mailData = new Maildata()
-            {
-                EmailToEmail = request.Email,
-                EmailToName = request.Name,
-                EmailSubject = "Order Created",
-                EmailBody = Templates.OrderCreated(request)
-            };
-
-            await _mailerGateway.Send(mailData);
-
-            return Ok();
-        }
     }
 }

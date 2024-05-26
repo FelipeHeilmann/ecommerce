@@ -1,5 +1,6 @@
 ﻿using API.Events;
 using API.Gateway;
+using API.Model;
 using Application.Abstractions.Queue;
 
 namespace API.Consumers
@@ -19,21 +20,37 @@ namespace API.Consumers
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                await _queue.SubscribeAsync<OrderCheckedoutEvent>("orderCheckedout.notification", "order.checkedout", async message =>
+                await _queue.SubscribeAsync<OrderCheckedout>("orderCheckedout.notification", "order.checkedout", async message =>
                 {
                     using (var scope = _serviceProvider.CreateAsyncScope())
                     {
-                        var mailerGateway = scope.ServiceProvider.GetRequiredService<IMailerGateway>();
-
-                        var mailData = new Maildata()
+                        using (var client = new HttpClient())
                         {
-                            EmailToEmail = message.Email,
-                            EmailToName = message.Name,
-                            EmailSubject = "Order Created",
-                            EmailBody = Templates.OrderCreated(message)
-                        };
+                            var mailerGateway = scope.ServiceProvider.GetRequiredService<IMailerGateway>();
 
-                        await mailerGateway.Send(mailData);
+                            var orderGateway = scope.ServiceProvider.GetRequiredService<IOrderGateway>();
+
+                            var customer = await orderGateway.GetCustomerById(message.CustomerId);
+
+                            var items = new List<OrderChecedoutItem>();
+                            foreach (var item in message.Items) 
+                            { 
+                                var product = await orderGateway.GetProductById(item.ProductId);
+                                items.Add(new OrderChecedoutItem(item.Id, product.Name, item.Quantity, item.Price));
+                            }
+
+                            var mailModel = new OrderCheckedoutMailModel(customer.Name, message.OrderId, DateTime.Now, items);
+
+                            var mailData = new Maildata()
+                            {
+                                EmailToEmail = customer.Email,
+                                EmailToName = customer.Name,
+                                EmailSubject = "Order Created",
+                                EmailBody = Templates.OrderCheckedout(mailModel)
+                            };
+
+                            await mailerGateway.Send(mailData);
+                        }
                     }
                 });
 

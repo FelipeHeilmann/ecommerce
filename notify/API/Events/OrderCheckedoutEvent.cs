@@ -1,5 +1,15 @@
 ﻿namespace API.Events;
 
 
-public sealed record OrderCheckedoutEvent(Guid OrderId, DateTime Date, string Name, string Email, List<OrderCreatedItem> Items);
-public record OrderCreatedItem(string Name, double Price, int Quantity);
+public record OrderCheckedout(
+    Guid OrderId,
+    double Total,
+    IEnumerable<LineItemOrderCheckedout> Items,
+    Guid CustomerId,
+    string PaymentType,
+    string? CardToken,
+    int Installment,
+    Guid AddressId
+);
+
+public record LineItemOrderCheckedout(Guid Id, Guid ProductId, int Quantity, double Price);

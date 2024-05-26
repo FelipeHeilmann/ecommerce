@@ -3,6 +3,7 @@
 public interface IOrderGateway
 {
     Task<CustomerGatewayResponse> GetCustomerById(Guid id);
+    Task<ProductGatewayResponse> GetProductById(Guid id);
 }
 
 public record CustomerGatewayResponse(
@@ -14,4 +15,12 @@ public record CustomerGatewayResponse(
     DateOnly BirthDate,
     DateTime CreatedAt
 );
+
+public record ProductGatewayResponse(
+      Guid Id,
+      string Name, 
+      string Description,
+      double Amount,
+      string currency
+    );
 
