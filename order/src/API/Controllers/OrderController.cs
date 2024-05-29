@@ -45,6 +45,17 @@ public class OrderController : APIBaseController
         return result.IsFailure ? result.ToProblemDetail() : Results.Ok(result.Value);
     }
 
+    [HttpGet("services/{id}")]
+    public async Task<IResult> GetByIdFromService(Guid id, CancellationToken cancellationToken)
+    {
+        var query = new GetOrderByIdQuery(id);
+
+        var result = await _sender.Send(query, cancellationToken);
+
+        return result.IsFailure ? result.ToProblemDetail() : Results.Ok(result.Value);
+    }
+
+
     [Authorize]
     [HttpGet("cart")]
     public async Task<IResult> GetCart(CancellationToken cancellationToken)
