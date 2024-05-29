@@ -27,8 +27,9 @@ public static class DependecyInjection
         {
             opt
             .UseNpgsql(configuration.GetConnectionString("Database"))
-            .UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll);
-        });
+            .UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll)
+            .EnableSensitiveDataLogging(true);
+        }, ServiceLifetime.Scoped);
 
         services.AddSingleton<IQueue, RabbitMQAdapter>(provider =>
         {
