@@ -23,9 +23,9 @@ public class ProccessTransactionCommandHandler : ICommandHandler<ProccessTransac
     {
         var transaction = await _transactionRepository.GetByGatewayServiceId(command.TransactionGatewayId, cancellationToken);
 
-        transaction.Register("TransactionApproved", async domainEvent => {
+        transaction.Register("TransactionStatusChanged", async domainEvent => {
 
-            await _queue.PublishAsync(domainEvent.Data, "transaction.approved");
+            await _queue.PublishAsync(domainEvent.Data, "transaction.status.changed");
         });
         
         if(command.Status == "approved")

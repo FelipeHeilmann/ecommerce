@@ -43,13 +43,14 @@ public class Transaction : Observable
     {
         _status.Approve();
         ApprovedAt = DateTime.UtcNow;
-        Notify(new TransactionApproved(Id, OrderId, ApprovedAt.Value));
+        Notify(new TransactionStatusChanged(Id, OrderId, ApprovedAt.Value, Status));
     }
 
     public void Reject()
     {   
         _status.Reject();
         RejectedAt = DateTime.UtcNow;
+        Notify(new TransactionStatusChanged(Id, OrderId, RejectedAt.Value, Status));
     }
 
     public void Refund()
