@@ -21,10 +21,13 @@ public class ProccessTransactionCommandHandler : ICommandHandler<ProccessTransac
 
     public async Task<Result> Handle(ProccessTransactionCommand command, CancellationToken cancellationToken)
     {
-        var transaction = await _transactionRepository.GetByIdAsync(command.TransactionId, cancellationToken);
+        var transaction = await _transactionRepository.GetByGatewayServiceId(command.TransactionGatewayId, cancellationToken);
 
-        if (transaction == null) throw new Exception("Transaction not found");
+        transaction.Register("TransactionApproved", async domainEvent => {
 
+            await _queue.PublishAsync(domainEvent.Data, "transaction.approved");
+        });
+        
         if(command.Status == "approved")
         {
             transaction.Approve();

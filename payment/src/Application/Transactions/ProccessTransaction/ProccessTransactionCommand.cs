@@ -2,4 +2,4 @@
 
 namespace Application.Transactions.ProccessTransaction;
 
-public record ProccessTransactionCommand(Guid TransactionId, string Status): ICommand;
+public record ProccessTransactionCommand(Guid TransactionGatewayId, string Status): ICommand;

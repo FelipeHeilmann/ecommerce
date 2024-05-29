@@ -21,6 +21,11 @@ public class TransactionRepositoryMemory : IRepositoryBase<Transaction>, ITransa
     {
         return Task.FromResult(_transactions.FirstOrDefault(t => t.Id == id));
     }
+
+    public Task<Transaction> GetByGatewayServiceId(Guid id, CancellationToken cancellationToken)
+    {
+        return Task.FromResult(_transactions.First(t => t.PaymentServiceId == id));
+    }
     public IQueryable<Transaction> GetQueryable(CancellationToken cancellation)
     {
         return _transactions.AsQueryable();
@@ -44,4 +49,6 @@ public class TransactionRepositoryMemory : IRepositoryBase<Transaction>, ITransa
     {
         _transactions.Remove(entity);
     }
+
+   
 }

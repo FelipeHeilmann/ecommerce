@@ -1,8 +1,10 @@
-﻿using Domain.Transactions.VO;
+﻿using Domain.Abstractions;
+using Domain.Events;
+using Domain.Transactions.VO;
 
 namespace Domain.Transactions.Entity;
 
-public class Transaction
+public class Transaction : Observable
 {
     public TransactionStatus _status;
     public Guid Id { get; private set; }
@@ -41,6 +43,7 @@ public class Transaction
     {
         _status.Approve();
         ApprovedAt = DateTime.UtcNow;
+        Notify(new TransactionApproved(Id, OrderId, ApprovedAt.Value));
     }
 
     public void Reject()

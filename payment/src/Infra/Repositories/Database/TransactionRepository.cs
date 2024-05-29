@@ -35,15 +35,28 @@ public class TransactionRepository : ITransactionRepository
         var model = await _context.Set<TransactionModel>().FirstOrDefaultAsync(transaction => transaction.Id == id);
         return model?.ToAggregate();
     }
- 
+
+    public async Task<Transaction> GetByGatewayServiceId(Guid id, CancellationToken cancellationToken)
+    {
+        var model = await _context.Set<TransactionModel>().FirstOrDefaultAsync(transaction => transaction.PaymentServiceId == id, cancellationToken);
+        if (model == null) throw new Exception("Transaction not found");
+        return model.ToAggregate();
+    }
+
     public void Add(Transaction entity)
     {
         _context.Set<TransactionModel>().Add(TransactionModel.FromAggregate(entity));
     }
     public void Update(Transaction entity)
     {
+        var existingEntity = _context.Set<TransactionModel>().Local.FirstOrDefault(e => e.Id == entity.Id);
+        if (existingEntity != null)
+        {
+            _context.Entry(existingEntity).State = EntityState.Detached;
+        }
         _context.Set<TransactionModel>().Update(TransactionModel.FromAggregate(entity));
     }
+
     public void Delete(Transaction entity)
     {
         _context.Set<TransactionModel>().Remove(TransactionModel.FromAggregate(entity));
