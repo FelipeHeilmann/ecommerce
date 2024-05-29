@@ -26,9 +26,9 @@ public class WaitingPaymentStatus : OrderStatus
         Order._status = new ApprovedStatus(Order);
     }
 
-    public override void Refuse()
+    public override void Reject()
     {
-        Order._status = new RefusedStatus(Order);
+        Order._status = new RejectedStatus(Order);
     }
 
     public override void Ship()

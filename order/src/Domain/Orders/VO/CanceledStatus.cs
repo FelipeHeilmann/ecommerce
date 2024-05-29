@@ -26,7 +26,7 @@ public class CanceledStatus : OrderStatus
         throw new NotImplementedException();
     }
 
-    public override void Refuse()
+    public override void Reject()
     {
         throw new Exception("Invalid Status");
     }

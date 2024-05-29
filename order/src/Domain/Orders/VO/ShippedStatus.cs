@@ -26,7 +26,7 @@ public class ShippedStatus : OrderStatus
         throw new Exception("Invalid Status");
     }
 
-    public override void Refuse()
+    public override void Reject()
     {
         throw new Exception("Invalid Status");
     }

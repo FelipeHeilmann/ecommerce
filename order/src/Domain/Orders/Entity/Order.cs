@@ -119,6 +119,18 @@ public class Order : Observable
          )));
     }
 
+    public void ApprovPayment()
+    {
+        _status.Approve();
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    public void RejectPayment()
+    {
+        _status.Reject();
+        UpdatedAt = DateTime.UtcNow;
+    }
+
     public int CountItens()
     {
         var total = 0;

@@ -2,12 +2,12 @@
 
 namespace Domain.Orders.VO;
 
-public class RefusedStatus : OrderStatus
+public class RejectedStatus : OrderStatus
 {
     public override string Value { get; set; }
-    public RefusedStatus(Order order) : base(order)
+    public RejectedStatus(Order order) : base(order)
     {
-        Value = "payment_refused";
+        Value = "payment_rejected";
     }
 
     public override void Approve()
@@ -30,7 +30,7 @@ public class RefusedStatus : OrderStatus
         throw new NotImplementedException();
     }
 
-    public override void Refuse()
+    public override void Reject()
     {
         throw new NotImplementedException();
     }

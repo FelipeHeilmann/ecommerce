@@ -3,6 +3,7 @@ using Application.Abstractions.Query;
 using Application.Abstractions.Queue;
 using Application.Abstractions.Services;
 using Application.Data;
+using Application.Orders.Consumer;
 using Application.Orders.OrderPaymentUrl;
 using Domain.Addresses.Repository;
 using Domain.Categories.Repository;
@@ -56,5 +57,6 @@ public static class DependecyInjection
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         services.AddHostedService<OrderPaymentUrlConsumer>();
+        services.AddHostedService<TransactionStatusConsumer>();
     }
 }

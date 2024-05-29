@@ -9,7 +9,7 @@ public abstract class OrderStatus
     public OrderStatus(Order order ) { this.Order = order; }
     public abstract void Checkout();
     public abstract void Approve();
-    public abstract void Refuse();
+    public abstract void Reject();
     public abstract void Ship();
     public abstract void Delivery();
     public abstract void Cancel();
@@ -23,7 +23,7 @@ public class OrderStatusFactory
         if (status == "created") return new CreatedStatus(order);
         if (status == "waiting_payment") return new WaitingPaymentStatus(order);
         if (status == "payment_approved") return new ApprovedStatus(order);
-        if (status == "payment_refused") return new RefusedStatus(order);
+        if (status == "payment_rejected") return new RejectedStatus(order);
         if (status == "shipped") return new ShippedStatus(order);
         if (status == "delivered") return new DeliveredStatus(order);
         if (status == "canceled") return new CanceledStatus(order);

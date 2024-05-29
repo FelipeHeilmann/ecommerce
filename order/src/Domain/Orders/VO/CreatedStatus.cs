@@ -27,7 +27,7 @@ public class CreatedStatus : OrderStatus
     }
 
 
-    public override void Refuse()
+    public override void Reject()
     {
         throw new Exception("Invalid Status");
     }
