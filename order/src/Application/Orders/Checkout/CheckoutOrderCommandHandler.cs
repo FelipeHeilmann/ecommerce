@@ -81,7 +81,7 @@ public class CheckoutOrderCommandHandler : ICommandHandler<CheckoutOrderCommand,
         _orderRepository.Add(order);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-      
+
         return order.Id;
     }
 }

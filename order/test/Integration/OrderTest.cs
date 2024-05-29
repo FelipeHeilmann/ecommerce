@@ -46,8 +46,6 @@ public class OrderTest
     private readonly IQueue queue = new MemoryMQAdapter();
     private readonly IUnitOfWork unitOfWork = new UnitOfWorkMemory();
 
-
-
     [Fact]
     public async Task Should_Create_Cart_And_Add_One_Item()
     {

@@ -1,4 +1,5 @@
-﻿using Application.Abstractions.Query;
+﻿using Application;
+using Application.Abstractions.Query;
 using Application.Abstractions.Queue;
 using Application.Abstractions.Services;
 using Application.Data;
@@ -14,6 +15,7 @@ using Infra.Data;
 using Infra.Implementations;
 using Infra.Queue;
 using Infra.Repositories.Database;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,7 +34,7 @@ public static class DependecyInjection
             .UseNpgsql(configuration.GetConnectionString("Database"))
             .UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll)
             .EnableSensitiveDataLogging(true);
-        });
+        }, ServiceLifetime.Scoped);
 
         services.AddSingleton<IQueue, RabbitMQAdapter>(provider =>
         {

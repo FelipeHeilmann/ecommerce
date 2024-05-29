@@ -23,7 +23,7 @@ public class SaveOrderOnProjectionDatabase : INotificationHandler<OrderCheckedou
     {
         var order = (OrderCheckedoutData)notification.Data;
 
-        var address = await _addressRepository.GetByIdAsync(order.AddressId ,cancellationToken);
+        var address = await _addressRepository.GetByIdAsync(order.AddressId, cancellationToken);
 
         var orderQueryModel = new OrderQueryModel()
         {
@@ -39,7 +39,7 @@ public class SaveOrderOnProjectionDatabase : INotificationHandler<OrderCheckedou
                 Complement = address!.Complement,
                 Country = address!.Country,
                 Neighborhood = address!.Neighborhood,
-                Number = address!.Number,   
+                Number = address!.Number,
                 State = address!.State,
                 Street = address!.Street,
                 ZipCode = address!.ZipCode

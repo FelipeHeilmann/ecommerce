@@ -14,12 +14,13 @@ public class Observable
         Observers.Add(new Observer(eventName, callback));
     }
 
-    public async void Notify(IDomainEvent domainEvent) {
-        foreach(var observer in Observers)
+    public void Notify(IDomainEvent domainEvent)
+    {
+        foreach (var observer in Observers)
         {
-            if(observer.Event == domainEvent.EventName)
+            if (observer.Event == domainEvent.EventName)
             {
-                await observer.Callback(domainEvent);
+                Task.Run(() => observer.Callback(domainEvent));
             }
         }
     }

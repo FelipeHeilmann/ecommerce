@@ -19,7 +19,7 @@ public class OrderCheckedout : INotification, IDomainEvent
 public record OrderCheckedoutData(
     Guid OrderId,
     double Total,
-    IEnumerable<LineItemOrderPurchased> Items,
+    IEnumerable<LineItemOrderCheckedout> Items,
     Guid CustomerId,
     string PaymentType,
     string? CardToken,
@@ -27,4 +27,4 @@ public record OrderCheckedoutData(
     Guid AddressId
 );
 
-public record LineItemOrderPurchased(Guid Id, Guid ProductId, int Quantity, double Price);
+public record LineItemOrderCheckedout(Guid Id, Guid ProductId, int Quantity, double Price);
