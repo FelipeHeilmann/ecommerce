@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using ProjectionWorker.Context;
 using ProjectionWorker.Gateway;
+using ProjectionWorker.OrderCanceled;
 using ProjectionWorker.OrderCheckedout;
 using ProjectionWorker.Queue;
 
@@ -13,6 +14,7 @@ builder.Services.AddSingleton<IQueue, RabbitMQAdapter>(provider =>
     return rabbitMQAdapter;
 });
 builder.Services.AddHostedService<OrderCheckedoutConsumer>();
+builder.Services.AddHostedService<OrderCanceledConsumer>();
 builder.Services.AddSingleton<OrderContext>();
 
 builder.Services.AddSingleton<IOrderGeteway, OrderGatewayHttp>();
