@@ -11,6 +11,7 @@ using Domain.Products.Error;
 using Domain.Products.Repository;
 using MediatR;
 using Domain.Orders.Events;
+using Application.Abstractions.Queue;
 
 namespace Application.Orders.Checkout;
 
@@ -20,7 +21,7 @@ public class CheckoutOrderCommandHandler : ICommandHandler<CheckoutOrderCommand,
     private readonly ICustomerRepository _customerRepository;
     private readonly IAddressRepository _addressRepository;
     private readonly IProductRepository _productRepository;
-    private readonly IMediator _mediator;
+    private readonly IQueue _queue;
     private readonly IUnitOfWork _unitOfWork;
 
     public CheckoutOrderCommandHandler
@@ -30,14 +31,14 @@ public class CheckoutOrderCommandHandler : ICommandHandler<CheckoutOrderCommand,
         IProductRepository productRepository,
         IAddressRepository addressRepository,
         IUnitOfWork unitOfWork,
-        IMediator mediator)
+        IQueue queue)
     {
         _orderRepository = orderRepository;
         _customerRepository = customerRepository;
         _addressRepository = addressRepository;
         _productRepository = productRepository;
         _unitOfWork = unitOfWork;
-        _mediator = mediator;
+        _queue = queue;
     }
 
     public async Task<Result<Guid>> Handle(CheckoutOrderCommand command, CancellationToken cancellationToken)
@@ -73,7 +74,7 @@ public class CheckoutOrderCommandHandler : ICommandHandler<CheckoutOrderCommand,
 
         order.Register("OrderCheckedout", async domainEvent =>
         {
-            await _mediator.Publish((OrderCheckedout)domainEvent, cancellationToken);
+            await _queue.PublishAsync(domainEvent.Data, "order.checkedout");
         });
 
         order.Checkout(shippingAddress.Id, billingAddress.Id, command.PaymentType, command.CardToken, command.Installments);

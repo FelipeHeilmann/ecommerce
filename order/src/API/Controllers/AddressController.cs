@@ -40,7 +40,7 @@ public class AddressController : APIBaseController
         return Results.Ok(result.Value);
     }
 
-    [HttpGet("{id}/service")]
+    [HttpGet("service/{id}")]
     public async Task<IResult> GetByIdService(Guid id, CancellationToken cancellationToken)
     {
         var query = new GetAddressByIdQuery(id);

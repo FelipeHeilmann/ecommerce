@@ -107,7 +107,7 @@ public class Order : Observable
         UpdatedAt = DateTime.UtcNow;
         _status.Checkout();
 
-         Notify(new OrderCheckedout(new OrderCheckedoutData(
+         Notify(new OrderCheckedout(
               Id,
               CalculateTotal(),
               Items.Select(li => new LineItemOrderCheckedout(li.Id, li.ProductId, li.Quantity, li.Price.Amount)),
@@ -116,7 +116,7 @@ public class Order : Observable
               cardToken,
               installments,
               shippingAddressId
-         )));
+         ));
     }
 
     public void ApprovPayment()

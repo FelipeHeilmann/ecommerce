@@ -9,9 +9,16 @@ public class OrderCheckedout : INotification, IDomainEvent
 
     public object Data { get; set; }
 
-    public OrderCheckedout(OrderCheckedoutData data)
+    public OrderCheckedout(Guid orderId,
+        double total,
+        IEnumerable<LineItemOrderCheckedout> items,
+        Guid customerId,
+        string paymentType,
+        string? cardToken,
+        int installment,
+        Guid addressId)
     {
-        Data = data;
+        Data = new OrderCheckedoutData(orderId, total, items, customerId, paymentType, cardToken, installment, addressId);
     }
 }
 
