@@ -1,11 +1,10 @@
 ﻿using Application.Abstractions.Messaging;
+using Application.Abstractions.Queue;
 using Application.Data;
 using Domain.Orders.Entity;
 using Domain.Orders.Error;
-using Domain.Orders.Event;
 using Domain.Orders.Repository;
 using Domain.Shared;
-using MediatR;
 
 namespace Application.Orders.Cancel;
 
@@ -13,13 +12,13 @@ public class CancelOrderCommandHandler : ICommandHandler<CancelOrderCommand, Ord
 {
     private readonly IOrderRepository _repository;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IMediator _mediator;
+    private readonly IQueue _queue;
 
-    public CancelOrderCommandHandler(IOrderRepository repository, IUnitOfWork unitOfWork, IMediator mediator)
+    public CancelOrderCommandHandler(IOrderRepository repository, IUnitOfWork unitOfWork, IQueue queue)
     {
         _repository = repository;
         _unitOfWork = unitOfWork;
-        _mediator = mediator;
+        _queue = queue;
     }
 
     public async Task<Result<Order>> Handle(CancelOrderCommand command, CancellationToken cancellationToken)
@@ -29,7 +28,7 @@ public class CancelOrderCommandHandler : ICommandHandler<CancelOrderCommand, Ord
         if (order == null) return Result.Failure<Order>(OrderErrors.OrderNotFound);
 
         order.Register("OrderCancelled", async domainEvent => {
-            await _mediator.Publish((OrderCancelled)(domainEvent));
+            await _queue.PublishAsync(domainEvent.Data, "order.canceled");
         });
 
         order.Cancel();
