@@ -10,7 +10,7 @@ public class OrderGatewayHttp : IOrderGateway
     {
         using(HttpClient client = new HttpClient())
         {
-            var response = await client.GetAsync($"https://localhost:7078/api/addresses/{id}/service");
+            var response = await client.GetAsync($"https://localhost:7078/api/addresses/service/{id}");
 
             string addressResponseJson = await response.Content.ReadAsStringAsync();
 
