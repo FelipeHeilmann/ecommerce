@@ -1,6 +1,4 @@
-﻿using API.Events;
-using API.Model;
-using API.Request;
+﻿using API.Model;
 using System.Text;
 
 namespace API;
@@ -257,6 +255,56 @@ public class Templates
         template = template.Replace("[User]", order.Name);
         template = template.Replace("[OrderNumber]", order.OrderId.ToString());
         template = template.Replace("[PaymentRetryLink]", "https://s2-g1.glbimg.com/pPHEot7nCrPZ3b1dzvuhdXRxtaA=/0x0:1722x1078/1008x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2024/t/O/ztA6HSSmuDWNUYTX6fGg/david-corenswet-superman.jpg");
+        return template;
+    }
+    public static string OrderCanceled(string name, Guid orderId)
+    {
+        string template = @"
+            <html>
+            <head>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        line-height: 1.6;
+                    }
+                    .container {
+                        max-width: 600px;
+                        margin: 0 auto;
+                        padding: 20px;
+                        border: 1px solid #ccc;
+                        border-radius: 10px;
+                    }
+                    .footer {
+                        margin-top: 20px;
+                        font-size: 12px;
+                        color: #666;
+                    }
+                    .button {
+                        display: inline-block;
+                        padding: 10px 20px;
+                        background-color: #007bff;
+                        color: #fff;
+                        text-decoration: none;
+                        border-radius: 5px;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class='container'>
+                    <h1>Order Cancelled</h1>
+                    <p>Dear [User],</p>
+                    <p>We regret to inform you that your order #[OrderNumber] has been cancelled.</p>
+                    <p>If you have any questions or need further assistance, please feel free to contact our customer support team.</p>
+                    <div class='footer'>
+                        <p>Best regards,<br/>Felipe Heilmann<br/>CTO<br/>e-commercce</p>
+                    </div>
+                </div>
+            </body>
+            </html>
+        ";
+
+        template = template.Replace("[User]", name);
+        template = template.Replace("[OrderNumber]", orderId.ToString());
         return template;
     }
 }
