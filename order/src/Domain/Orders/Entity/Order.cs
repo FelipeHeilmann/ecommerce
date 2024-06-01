@@ -97,7 +97,7 @@ public class Order : Observable
     {
         _status.Cancel();
         UpdatedAt = DateTime.UtcNow;
-        Notify(new OrderCancelled(new OrderCancelledData(Id)));
+        Notify(new OrderCancelled(Id, CustomerId));
     }
 
     public void Checkout(Guid shippingAddressId, Guid billingAddressId, string paymentType, string? cardToken, int installments)

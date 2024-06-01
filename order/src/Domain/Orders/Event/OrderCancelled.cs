@@ -9,10 +9,10 @@ public class OrderCancelled : INotification, IDomainEvent
 
     public object Data { get; set; }
 
-    public OrderCancelled(OrderCancelledData data)
+    public OrderCancelled(Guid orderId, Guid customerId)
     {
-        Data = data;
+        Data = new OrderCancelledData(orderId, customerId);
     }
 }
 
-public record OrderCancelledData(Guid OrderId);
+public record OrderCancelledData(Guid OrderId, Guid CustomerId);
