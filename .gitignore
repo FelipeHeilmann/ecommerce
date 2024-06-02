@@ -401,4 +401,6 @@ FodyWeavers.xsd
 **containers/
 
 # Projects
-notify/src/NotifyWorker/appsettings*.json
+**/*appsettings*
+**/**/appsettings
+**/**/**/appsettings
