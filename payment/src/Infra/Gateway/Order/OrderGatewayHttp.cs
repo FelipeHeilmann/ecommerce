@@ -1,15 +1,23 @@
 ﻿using Application.Abstractions.Gateway;
 using System.Text.Json;
-using System.Text;
+using Microsoft.Extensions.Configuration;
 
 namespace Infra.Gateway.Order;
 
 public class OrderGatewayHttp : IOrderGateway
 {
+    private const string APIKEYNAME = "ApiKey";
+    private readonly string _apiKey;
+    public OrderGatewayHttp(IConfiguration configuration)
+    {
+        _apiKey = configuration.GetValue<string>(APIKEYNAME) ?? throw new ArgumentException();
+    }
     public async Task<AddressGatewayResponse> GetAddressById(Guid id)
     {
         using(HttpClient client = new HttpClient())
         {
+            client.DefaultRequestHeaders.Add(APIKEYNAME, _apiKey);
+
             var response = await client.GetAsync($"https://localhost:7078/api/addresses/service/{id}");
 
             string addressResponseJson = await response.Content.ReadAsStringAsync();
