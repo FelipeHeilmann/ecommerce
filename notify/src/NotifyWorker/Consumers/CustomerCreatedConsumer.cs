@@ -17,26 +17,21 @@ public class CustomerCreatedConsumer : BackgroundService
 
     protected async override Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        while (!stoppingToken.IsCancellationRequested)
-        {
-            await _queue.SubscribeAsync<CustomerCreatedEvent>("customerCreated.notification", "customerCreated", async message => {
-                using (var scope = _serviceProvider.CreateAsyncScope())
+        await _queue.SubscribeAsync<CustomerCreatedEvent>("customerCreated.notification", "customer.created", async message => {
+            using (var scope = _serviceProvider.CreateAsyncScope())
+            {
+                var mailerGateway = scope.ServiceProvider.GetRequiredService<IMailerGateway>();
+
+                var mailData = new Maildata()
                 {
-                    var mailerGateway = scope.ServiceProvider.GetRequiredService<IMailerGateway>();
+                    EmailBody = Templates.Welcome(message.Name),
+                    EmailSubject = "Welcome",
+                    EmailToEmail = message.Email,
+                    EmailToName = message.Name,
+                };
 
-                    var mailData = new Maildata()
-                    {
-                        EmailBody = Templates.Welcome(message.Name),
-                        EmailSubject = "Welcome",
-                        EmailToEmail = message.Email,
-                        EmailToName = message.Name,
-                    };
-
-                    await mailerGateway.Send(mailData);
-                }
-            });
-
-            await Task.Delay(1000, stoppingToken);
-        }
+                await mailerGateway.Send(mailData);
+            }
+        });
     }
 }
