@@ -1,12 +1,11 @@
 ﻿using Application.Abstractions.Messaging;
+using Application.Abstractions.Queue;
 using Application.Abstractions.Services;
 using Application.Data;
 using Domain.Customers.Entity;
 using Domain.Customers.Error;
-using Domain.Customers.Event;
 using Domain.Customers.Repository;
 using Domain.Shared;
-using MediatR;
 
 namespace Application.Customers.Create;
 
@@ -14,15 +13,15 @@ public class CreateCustomerCommandHandler : ICommandHandler<CreateCustomerComman
 {
     private readonly ICustomerRepository _repository;
     private readonly IPasswordHasher _passwordHasher;
-    private readonly IMediator _mediator;
+    private readonly IQueue _queue;
     private readonly IUnitOfWork _unitOfWork;
 
-    public CreateCustomerCommandHandler(ICustomerRepository repository, IUnitOfWork unitOfWork, IPasswordHasher passwordHasher, IMediator mediator)
+    public CreateCustomerCommandHandler(ICustomerRepository repository, IUnitOfWork unitOfWork, IPasswordHasher passwordHasher, IQueue queue)
     {
         _repository = repository;
         _unitOfWork = unitOfWork;
         _passwordHasher = passwordHasher;
-        _mediator = mediator;
+        _queue = queue;
     }
 
     public async Task<Result<Guid>> Handle(CreateCustomerCommand command, CancellationToken cancellationToken)
@@ -36,13 +35,12 @@ public class CreateCustomerCommandHandler : ICommandHandler<CreateCustomerComman
         var birthDate = new DateOnly(command.birthDate.Year, command.birthDate.Month, command.birthDate.Day);
 
         var customer = Customer.Create(command.Name, command.Email, hashedPassword, birthDate, command.CPF, command.Phone);
-
  
         _repository.Add(customer);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        await _mediator.Publish(new CustomerCreatedEvent(customer.Name, customer.Email), cancellationToken);
+        await _queue.PublishAsync(new { customer.Name, customer.Email }, "customer.created");
 
         return Result.Success(customer.Id);
     }

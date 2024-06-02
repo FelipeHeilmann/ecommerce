@@ -8,14 +8,11 @@ using Application.Data;
 using Application.Orders.Checkout;
 using Application.Abstractions.Queue;
 using Infra.Queue;
-using Moq;
-using MediatR;
 using Domain.Orders.Repository;
 using Domain.Addresses.Repository;
 using Domain.Customers.Repository;
 using Domain.Products.Repository;
 using Application.Customers.Create;
-using Domain.Customers.Event;
 using Infra.Implementations;
 using Application.Abstractions.Services;
 using Application.Products.Create;
@@ -44,13 +41,9 @@ public class OrderTest
     [Fact]
     public async Task Should_Create_Cart_And_Add_One_Item()
     {
-        var mediator = new Mock<IMediator>();
-
-        mediator.Setup(m => m.Publish(It.IsAny<CustomerCreatedEvent>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
-
         var inputCreateCustomer = new CreateCustomerCommand("John Doe", "john.doe@gmail.com", "abc123", new DateTime(2004, 11, 06), "659.232.850-96", "(11) 97414-6507");
 
-        var createCustomerCommandHandler = new CreateCustomerCommandHandler(customerRepository, unitOfWork, passwordHasher, mediator.Object);
+        var createCustomerCommandHandler = new CreateCustomerCommandHandler(customerRepository, unitOfWork, passwordHasher, queue);
 
         var outputCreateCustomer = await createCustomerCommandHandler.Handle(inputCreateCustomer, CancellationToken.None);
 
@@ -82,13 +75,9 @@ public class OrderTest
     [Fact]
     public async Task Should_Create_Cart_Add_3_Items_And_Remove_One()
     { 
-        var mediator = new Mock<IMediator>();
-
-        mediator.Setup(m => m.Publish(It.IsAny<CustomerCreatedEvent>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
-
         var inputCreateCustomer = new CreateCustomerCommand("John Doe", "john.doe@gmail.com", "abc123", new DateTime(2004, 11, 06), "659.232.850-96", "(11) 97414-6507");
 
-        var createCustomerCommandHandler = new CreateCustomerCommandHandler(customerRepository, unitOfWork, passwordHasher, mediator.Object);
+        var createCustomerCommandHandler = new CreateCustomerCommandHandler(customerRepository, unitOfWork, passwordHasher, queue);
 
         var outputCreateCustomer = await createCustomerCommandHandler.Handle(inputCreateCustomer, CancellationToken.None);
 
@@ -133,13 +122,9 @@ public class OrderTest
     [Fact]
     public async Task Should_Get_Orders_By_CustomerId()
     {
-        var mediator = new Mock<IMediator>();
-
-        mediator.Setup(m => m.Publish(It.IsAny<CustomerCreatedEvent>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
-
         var inputCreateCustomer = new CreateCustomerCommand("John Doe", "john.doe@gmail.com", "abc123", new DateTime(2004, 11, 06), "659.232.850-96", "(11) 97414-6507");
 
-        var createCustomerCommandHandler = new CreateCustomerCommandHandler(customerRepository, unitOfWork, passwordHasher, mediator.Object);
+        var createCustomerCommandHandler = new CreateCustomerCommandHandler(customerRepository, unitOfWork, passwordHasher, queue);
 
         var outputCreateCustomer = await createCustomerCommandHandler.Handle(inputCreateCustomer, CancellationToken.None);
 
@@ -198,13 +183,9 @@ public class OrderTest
     [Fact]
     public async Task Should_Cancel_Order()
     {
-        var mediator = new Mock<IMediator>();
-
-        mediator.Setup(m => m.Publish(It.IsAny<CustomerCreatedEvent>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
-
         var inputCreateCustomer = new CreateCustomerCommand("John Doe", "john.doe@gmail.com", "abc123", new DateTime(2004, 11, 06), "659.232.850-96", "(11) 97414-6507");
 
-        var createCustomerCommandHandler = new CreateCustomerCommandHandler(customerRepository, unitOfWork, passwordHasher, mediator.Object);
+        var createCustomerCommandHandler = new CreateCustomerCommandHandler(customerRepository, unitOfWork, passwordHasher, queue);
 
         var outputCreateCustomer = await createCustomerCommandHandler.Handle(inputCreateCustomer, CancellationToken.None);
 
@@ -264,13 +245,9 @@ public class OrderTest
     [Fact]
     public async Task Should_Create_Order_With_3_Items()
     { 
-        var mediator = new Mock<IMediator>();
-
-        mediator.Setup(m => m.Publish(It.IsAny<CustomerCreatedEvent>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
-
         var inputCreateCustomer = new CreateCustomerCommand("John Doe", "john.doe@gmail.com", "abc123", new DateTime(2004, 11, 06), "659.232.850-96", "(11) 97414-6507");
 
-        var createCustomerCommandHandler = new CreateCustomerCommandHandler(customerRepository, unitOfWork, passwordHasher, mediator.Object);
+        var createCustomerCommandHandler = new CreateCustomerCommandHandler(customerRepository, unitOfWork, passwordHasher, queue);
 
         var outputCreateCustomer = await createCustomerCommandHandler.Handle(inputCreateCustomer, CancellationToken.None);
 

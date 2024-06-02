@@ -1,4 +1,5 @@
-﻿using Application.Abstractions.Services;
+﻿using Application.Abstractions.Queue;
+using Application.Abstractions.Services;
 using Application.Addresses.Create;
 using Application.Addresses.GetByCustomerId;
 using Application.Addresses.GetById;
@@ -6,13 +7,11 @@ using Application.Addresses.Update;
 using Application.Customers.Create;
 using Application.Data;
 using Domain.Addresses.Repository;
-using Domain.Customers.Event;
 using Domain.Customers.Repository;
 using Infra.Data;
 using Infra.Implementations;
+using Infra.Queue;
 using Infra.Repositories.Memory;
-using MediatR;
-using Moq;
 using Xunit;
 
 namespace Integration;
@@ -22,18 +21,15 @@ public class AddressTest
     private readonly IAddressRepository addressRepository = new AddressRepositoryInMemory();
     private readonly ICustomerRepository customerRepository = new CustomerRepositoryMemory();
     private readonly IPasswordHasher passwordHasher = new PasswordHasher();
+    private readonly IQueue queue = new MemoryMQAdapter();
     private readonly IUnitOfWork unitOfWork = new UnitOfWorkMemory();
 
     [Fact]
     public async Task Sould_Create_Address()
     {
-        var mediatorMock = new Mock<IMediator>();
-
-        mediatorMock.Setup(m => m.Publish(It.IsAny<CustomerCreatedEvent>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
-
         var inputCreateCustomer = new CreateCustomerCommand("Felipe Heilmann", "felipeheilmannm@gmail.com", "senha", new DateTime(2004, 6, 2), "97067401046", "11 97414-6507");
 
-        var createAccountCommandHandler = new CreateCustomerCommandHandler(customerRepository, unitOfWork, passwordHasher, mediatorMock.Object);
+        var createAccountCommandHandler = new CreateCustomerCommandHandler(customerRepository, unitOfWork, passwordHasher, queue);
 
         var outputCreateCustomer = await createAccountCommandHandler.Handle(inputCreateCustomer, CancellationToken.None);
 
@@ -55,13 +51,9 @@ public class AddressTest
     [Fact]
     public async Task Sould_Get_Addresses_By_Customer_Id()
     {
-        var mediatorMock = new Mock<IMediator>();
-
-        mediatorMock.Setup(m => m.Publish(It.IsAny<CustomerCreatedEvent>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
-
         var inputCreateCustomer = new CreateCustomerCommand("Felipe Heilmann", "felipeheilmannm@gmail.com", "senha", new DateTime(2004, 6, 2), "97067401046", "11 97414-6507");
 
-        var createAccountCommandHandler = new CreateCustomerCommandHandler(customerRepository, unitOfWork, passwordHasher, mediatorMock.Object);
+        var createAccountCommandHandler = new CreateCustomerCommandHandler(customerRepository, unitOfWork, passwordHasher, queue);
 
         var outputCreateCustomer = await createAccountCommandHandler.Handle(inputCreateCustomer, CancellationToken.None);
 
@@ -100,13 +92,9 @@ public class AddressTest
     [Fact]
     public async Task Should_Update_Address()
     {
-        var mediatorMock = new Mock<IMediator>();
-
-        mediatorMock.Setup(m => m.Publish(It.IsAny<CustomerCreatedEvent>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
-
         var inputCreateCustomer = new CreateCustomerCommand("Felipe Heilmann", "felipeheilmannm@gmail.com", "senha", new DateTime(2004, 6, 2), "97067401046", "11 97414-6507");
 
-        var createAccountCommandHandler = new CreateCustomerCommandHandler(customerRepository, unitOfWork, passwordHasher, mediatorMock.Object);
+        var createAccountCommandHandler = new CreateCustomerCommandHandler(customerRepository, unitOfWork, passwordHasher, queue);
 
         var outputCreateCustomer = await createAccountCommandHandler.Handle(inputCreateCustomer, CancellationToken.None);
 
@@ -130,5 +118,4 @@ public class AddressTest
         Assert.Equal("apt 43", outputGetAddress.Value.Complement);
         Assert.Equal("04182-123", outputGetAddress.Value.ZipCode);
     }
-
 }
