@@ -1,8 +1,6 @@
-﻿
-using NotifyWorker.Events;
+﻿using NotifyWorker.Events;
 using NotifyWorker.Gateway;
-using Application.Abstractions.Queue;
-using Org.BouncyCastle.Asn1.Ocsp;
+using NotifyWorker.Queue;
 
 namespace NotifyWorker.Consumers;
 

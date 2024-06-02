@@ -1,4 +1,7 @@
-using Application.Abstractions.Queue;
+using NotifyWorker;
+using NotifyWorker.Consumers;
+using NotifyWorker.Gateway;
+using NotifyWorker.Queue;
 
 var builder = Host.CreateApplicationBuilder(args);
 

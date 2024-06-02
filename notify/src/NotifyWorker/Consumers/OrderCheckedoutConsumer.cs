@@ -1,7 +1,7 @@
 ﻿using NotifyWorker.Events;
 using NotifyWorker.Gateway;
 using NotifyWorker.Model;
-using Application.Abstractions.Queue;
+using NotifyWorker.Queue;
 
 namespace NotifyWorker.Consumers;
 
