@@ -25,22 +25,4 @@ public class MemoryOrderContext : IOrderQueryContext
     {
         return Task.FromResult(orders.FirstOrDefault(o => o.Id == id));
     }
-
-    public Task Save(OrderQueryModel model)
-    {
-        orders.Add(model);
-        return Task.CompletedTask;  
-    }
-
-    public Task Update(OrderQueryModel order)
-    {
-        var index = orders.ToList().FindIndex(o => o.Id == order.Id);
-
-        if (index == -1)
-        {
-            orders.ToList()[index] = order;
-        }
-
-        return Task.CompletedTask;
-    }
 }
