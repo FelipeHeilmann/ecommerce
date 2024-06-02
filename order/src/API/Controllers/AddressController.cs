@@ -1,4 +1,5 @@
 ﻿using API.Extensions;
+using API.Middleware;
 using Application.Addresses.Create;
 using Application.Addresses.GetByCustomerId;
 using Application.Addresses.GetById;
@@ -37,17 +38,7 @@ public class AddressController : APIBaseController
 
         var result = await _sender.Send(query, cancellationToken);
 
-        return Results.Ok(result.Value);
-    }
-
-    [HttpGet("service/{id}")]
-    public async Task<IResult> GetByIdService(Guid id, CancellationToken cancellationToken)
-    {
-        var query = new GetAddressByIdQuery(id);
-
-        var result = await _sender.Send(query, cancellationToken);
-
-        return Results.Ok(result.Value);
+        return result.IsFailure ? result.ToProblemDetail() :  Results.Ok(result.Value);
     }
 
     [Authorize]
@@ -95,5 +86,16 @@ public class AddressController : APIBaseController
         var result = await _sender.Send(command, cancellationToken);
 
         return result.IsFailure ? result.ToProblemDetail() : Results.NoContent();
+    }
+
+    [ServiceFilter(typeof(ApiKeyAuthenticationMiddleware))]
+    [HttpGet("service/{id}")]
+    public async Task<IResult> GetByIdWithApiKey(Guid id, CancellationToken cancellationToken)
+    {
+        var query = new GetAddressByIdQuery(id);
+
+        var result = await _sender.Send(query, cancellationToken);
+
+        return result.IsFailure ? result.ToProblemDetail() : Results.Ok(result.Value);
     }
 }
