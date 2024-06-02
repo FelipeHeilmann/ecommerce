@@ -4,6 +4,14 @@ namespace NotifyWorker.Gateway;
 
 public class OrderGatewayHttp : IOrderGateway
 {
+    private const string APIKEYNAME = "ApiKey";
+    private readonly string _apiKey;
+
+    public OrderGatewayHttp(IConfiguration configuration)
+    {
+        _apiKey = configuration.GetValue<string>(APIKEYNAME) ?? throw new ArgumentException();
+    }
+
     public async Task<CustomerGatewayResponse> GetCustomerById(Guid id)
     {
         using (HttpClient client = new HttpClient())
@@ -38,7 +46,9 @@ public class OrderGatewayHttp : IOrderGateway
     {
         using (HttpClient client = new HttpClient())
         {
-            var response = await client.GetAsync($"https://localhost:7078/api/orders/services/{id}");
+            client.DefaultRequestHeaders.Add(APIKEYNAME, _apiKey);
+
+            var response = await client.GetAsync($"https://localhost:7078/api/orders/service/{id}");
 
             response.EnsureSuccessStatusCode();
 
