@@ -1,4 +1,4 @@
-﻿namespace API.Events;
+﻿namespace NotifyWorker.Events;
 
 
 public record OrderCheckedout(

@@ -1,4 +1,4 @@
-﻿namespace API.Gateway;
+﻿namespace NotifyWorker.Gateway;
 
 public interface IOrderGateway
 {

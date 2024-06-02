@@ -1,10 +1,9 @@
-﻿using Application.Abstractions.Queue;
-using RabbitMQ.Client.Events;
+﻿using RabbitMQ.Client.Events;
 using RabbitMQ.Client;
 using System.Text.Json;
 using System.Text;
 
-namespace API.Queue;
+namespace NotifyWorker.Queue;
 
 public class RabbitMQAdapter : IQueue
 {
@@ -14,7 +13,7 @@ public class RabbitMQAdapter : IQueue
 
     public RabbitMQAdapter(IConfiguration configuration)
     {
-        _configuration = configuration;
+        _configuration = configuration ?? throw new ArgumentException();
     }
 
     public void Connect()

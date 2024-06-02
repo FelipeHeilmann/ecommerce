@@ -1,10 +1,10 @@
 ﻿
-using API.Events;
-using API.Gateway;
+using NotifyWorker.Events;
+using NotifyWorker.Gateway;
 using Application.Abstractions.Queue;
 using Org.BouncyCastle.Asn1.Ocsp;
 
-namespace API.Consumers;
+namespace NotifyWorker.Consumers;
 
 public class CustomerCreatedConsumer : BackgroundService
 {

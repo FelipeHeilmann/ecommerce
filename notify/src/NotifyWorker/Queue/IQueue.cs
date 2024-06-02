@@ -1,4 +1,4 @@
-﻿namespace Application.Abstractions.Queue;
+﻿namespace NotifyWorker.Queue;
 
 public interface IQueue
 {

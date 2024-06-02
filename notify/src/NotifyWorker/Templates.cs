@@ -1,7 +1,7 @@
-﻿using API.Model;
+﻿using NotifyWorker.Model;
 using System.Text;
 
-namespace API;
+namespace NotifyWorker;
 
 public class Templates
 {

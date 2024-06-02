@@ -2,7 +2,7 @@
 using MimeKit;
 using MailKit.Net.Smtp;
 
-namespace API.Gateway;
+namespace NotifyWorker.Gateway;
 
 public class MailtrapAdapter : IMailerGateway
 {

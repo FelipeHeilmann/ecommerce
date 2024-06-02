@@ -1,4 +1,4 @@
-﻿namespace API;
+﻿namespace NotifyWorker;
 
 public class MailtrapSettings
 {
