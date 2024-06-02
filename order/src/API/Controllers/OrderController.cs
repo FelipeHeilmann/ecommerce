@@ -1,4 +1,5 @@
 ﻿using API.Extensions;
+using API.Middleware;
 using Application.Orders.AddItemToCart;
 using Application.Orders.Cancel;
 using Application.Orders.Checkout;
@@ -45,7 +46,8 @@ public class OrderController : APIBaseController
         return result.IsFailure ? result.ToProblemDetail() : Results.Ok(result.Value);
     }
 
-    [HttpGet("services/{id}")]
+    [ServiceFilter(typeof(ApiKeyAuthenticationMiddleware))]
+    [HttpGet("service/{id}")]
     public async Task<IResult> GetByIdFromService(Guid id, CancellationToken cancellationToken)
     {
         var query = new GetOrderByIdQuery(id);

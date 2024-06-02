@@ -19,14 +19,14 @@ public class OrderModel
     [BsonElement("items")]
     public ICollection<LineItemModel> Items { get; set; }
 
+    [BsonElement("payment")]
+    public PaymentModel? Payment { get; set; }
+
     [BsonElement("address")]
     public AddressModel Address { get; set; }
 
     [BsonElement("customer_id")]
     public string CustomerId { get; set; }
-
-    [BsonElement("payed_at")]
-    public DateTime? PayedAt { get; set; }
 }
 
 public class LineItemModel
@@ -81,4 +81,16 @@ public class AddressModel
 
     [BsonElement("country")]
     public string Country { get; set; }
+}
+
+public class PaymentModel
+{
+    [BsonElement("payment_type")]
+    public string PaymentType { get; set; }
+
+    [BsonElement("installments")]
+    public int Installments { get; set; }
+
+    [BsonElement("payed_at")]
+    public DateTime? PayedAt { get; set; }
 }

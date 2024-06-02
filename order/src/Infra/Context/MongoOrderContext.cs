@@ -27,7 +27,12 @@ public class MongoOrderContext : IOrderQueryContext
         {
             Id = Guid.Parse(o.OrderId),
             CustomerId = Guid.Parse(o.CustomerId),
-            PayedAt = o.PayedAt,
+            Payment = new PaymentQueryModel()
+            {
+                PayedAt = o.Payment.PayedAt,
+                Installments = o.Payment.Installments,
+                PaymentType = o.Payment.PaymentType,
+            },
             Status = o.Status,
             Total = o.Items.Sum(i => i.Price * i.Quantity),
             Items = o.Items.Select(li => new LineItemQueryModel()
@@ -50,7 +55,12 @@ public class MongoOrderContext : IOrderQueryContext
         {
             Id = Guid.Parse(o.OrderId),
             CustomerId = Guid.Parse(o.CustomerId),
-            PayedAt = o.PayedAt,
+            Payment = new PaymentQueryModel()
+            {
+                PayedAt = o.Payment.PayedAt,
+                Installments = o.Payment.Installments,
+                PaymentType = o.Payment.PaymentType,
+            },
             Status = o.Status,
             Total = o.Items.Sum(i => i.Price * i.Quantity),
             Address = new AddressQueryModel()
@@ -86,7 +96,12 @@ public class MongoOrderContext : IOrderQueryContext
         {
             Id = Guid.Parse(order.OrderId),
             CustomerId = Guid.Parse(order.CustomerId),
-            PayedAt = order.PayedAt,
+            Payment = new PaymentQueryModel()
+            {
+                PayedAt = order.Payment.PayedAt,
+                Installments = order.Payment.Installments,
+                PaymentType = order.Payment.PaymentType,
+            },
             Status = order.Status,
             Total = order.Items.Sum(i => i.Price * i.Quantity),
             Address = new AddressQueryModel()
@@ -120,7 +135,12 @@ public class MongoOrderContext : IOrderQueryContext
         {
             CustomerId = model.CustomerId.ToString(),
             OrderId = model.Id.ToString(),
-            PayedAt = model.PayedAt,
+            Payment = new Models.MongoDB.PaymentModel()
+            {
+                PayedAt = model.Payment.PayedAt,
+                Installments = model.Payment.Installments,
+                PaymentType = model.Payment.PaymentType,
+            },
             Status = model.Status,
             Address = new Models.MongoDB.AddressModel()
             {
@@ -153,8 +173,7 @@ public class MongoOrderContext : IOrderQueryContext
     {
 
         var update = Builders<Models.MongoDB.OrderModel>.Update
-            .Set(o => o.Status, model.Status)
-            .Set(o => o.PayedAt, model.PayedAt);
+            .Set(o => o.Status, model.Status);
 
         await _orderCollection.UpdateOneAsync(o => o.OrderId == model.Id.ToString(), update);
     }

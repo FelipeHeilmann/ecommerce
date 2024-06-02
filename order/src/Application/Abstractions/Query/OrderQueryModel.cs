@@ -6,10 +6,10 @@ public class OrderQueryModel
     public Guid Id { get; set; }
     public string Status { get; set; }
     public ICollection<LineItemQueryModel> Items { get; set; }
+    public PaymentQueryModel? Payment { get; set; }
     public AddressQueryModel? Address { get; set; }
     public Guid CustomerId { get; set; }
     public double Total { get; set; }
-    public DateTime? PayedAt { get; set; }
 }
 
 public class LineItemQueryModel
@@ -34,4 +34,11 @@ public class AddressQueryModel
     public string State { get; set; }
     public string City { get; set; }
     public string Country { get; set; }
+}
+
+public class PaymentQueryModel
+{
+    public string PaymentType { get; set; }
+    public int Installments { get; set; }
+    public DateTime? PayedAt { get; set; }
 }
