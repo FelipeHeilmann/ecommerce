@@ -2,13 +2,14 @@
 
 namespace Domain.Orders.VO;
 
-public class RejectedStatus : OrderStatus
+internal class InPreparationStatus : OrderStatus
 {
-    public override string Value { get; set; }
-    public RejectedStatus(Order order) : base(order)
+    public override string Value { get; set ; }
+
+    public InPreparationStatus(Order order): base(order) 
     {
-        Value = "payment_rejected";
-    }
+        Value = "in_preparation";
+    }    
 
     public override void Approve()
     {
@@ -37,7 +38,7 @@ public class RejectedStatus : OrderStatus
 
     public override void Ship()
     {
-        throw new Exception("Invalid Status");
+        Order._status = new ShippedStatus(Order);
     }
 
     public override void Prepare()

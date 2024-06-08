@@ -36,6 +36,11 @@ public class CanceledStatus : OrderStatus
         throw new Exception("Invalid Status");
     }
 
+    public override void Prepare()
+    {
+        throw new Exception("Invalid Status");
+    }
+
     public override void Ship()
     {
         throw new Exception("Invalid Status");

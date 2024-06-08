@@ -13,31 +13,36 @@ public class ApprovedStatus : OrderStatus
 
     public override void Checkout()
     {
-        throw new NotImplementedException();
+        throw new Exception("Invalid Status");
     }
 
     public override void Approve()
     {
-        throw new NotImplementedException();
+        throw new Exception("Invalid Status");
     }
 
     public override void Reject()
     {
-        throw new NotImplementedException();
+        throw new Exception("Invalid Status");
+    }
+
+    public override void Prepare()
+    {
+        Order._status = new InPreparationStatus(Order);
     }
 
     public override void Ship()
     {
-        Order._status = new ShippedStatus(Order);
+        throw new Exception("Invalid Status");
     }
 
     public override void Delivery()
     {
-        throw new NotImplementedException();
+        throw new Exception("Invalid Status");
     }
 
     public override void Cancel()
     {
         Order._status = new CanceledStatus(Order);
-    }
+    }   
 }

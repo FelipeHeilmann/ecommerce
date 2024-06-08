@@ -41,5 +41,10 @@ public class CreatedStatus : OrderStatus
     {
         throw new Exception("Invalid Status");
     }
+
+    public override void Prepare()
+    {
+        throw new Exception("Invalid Status");
+    }
 }
 

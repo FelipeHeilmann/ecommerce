@@ -31,7 +31,7 @@ public class ShippedStatus : OrderStatus
         throw new Exception("Invalid Status");
     }
 
-    public override void Ship(  )
+    public override void Ship()
     {
         throw new Exception("Invalid Status");
     }
@@ -41,5 +41,9 @@ public class ShippedStatus : OrderStatus
         Order._status = new DeliveredStatus(Order);
     }
 
+    public override void Prepare()
+    {
+        throw new Exception("Invalid Status");
+    }
 }
 

@@ -31,6 +31,11 @@ public class WaitingPaymentStatus : OrderStatus
         Order._status = new RejectedStatus(Order);
     }
 
+    public override void Prepare()
+    {
+        throw new Exception("Invalid Status");
+    }
+
     public override void Ship()
     {
         throw new Exception("Invalid Status");
@@ -40,5 +45,7 @@ public class WaitingPaymentStatus : OrderStatus
     {
         throw new Exception("Invalid Status");
     }
+
+   
 }
 

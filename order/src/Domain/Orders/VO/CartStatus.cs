@@ -13,12 +13,12 @@ public class CartStatus : OrderStatus
 
     public override void Approve()
     {
-        throw new NotImplementedException();
+        throw new Exception("Invalid Status");
     }
 
     public override void Cancel()
     {
-        throw new NotImplementedException();
+        throw new Exception("Invalid Status");
     }
 
     public override void Checkout()
@@ -28,16 +28,21 @@ public class CartStatus : OrderStatus
 
     public override void Delivery()
     {
-        throw new NotImplementedException();
+        throw new Exception("Invalid Status");
     }
 
     public override void Reject()
     {
-        throw new NotImplementedException();
+        throw new Exception("Invalid Status");
     }
 
     public override void Ship()
     {
-        throw new NotImplementedException();
+        throw new Exception("Invalid Status");
+    }
+
+    public override void Prepare()
+    {
+        throw new Exception("Invalid Status");
     }
 }
