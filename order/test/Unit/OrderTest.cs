@@ -18,7 +18,7 @@ public class OrderTest
 
         var customer = Customer.Create("Felipe Heilmann", "felipeheilmannm@gmail.com", "senha" ,new DateOnly(2004, 6, 11), "460.200.040-15", "11 97414-6507");
 
-        var order = Order.Create(customer.Id);
+        var order = Order.Create(customer.Id, null);
 
         order.AddItem(product1.Id, product1.Price, 2);
         order.AddItem(product2.Id, product2.Price, 1);
@@ -39,7 +39,7 @@ public class OrderTest
 
         var customer = Customer.Create("Felipe Heilmann", "felipeheilmannm@gmail.com", "senha", new DateOnly(2004, 6, 11), "460.200.040-15", "11 97414-6507");
 
-        var order = Order.Create(customer.Id);
+        var order = Order.Create(customer.Id, null);
 
         order.AddItem(product1.Id, product1.Price ,2);
         order.AddItem(product2.Id, product2.Price, 1);
@@ -64,7 +64,7 @@ public class OrderTest
 
         var customer = Customer.Create("Felipe Heilmann", "felipeheilmannm@gmail.com", "senha", new DateOnly(2004, 6, 11), "460.200.040-15", "11 97414-6507");
 
-        var order = Order.Create(customer.Id);
+        var order = Order.Create(customer.Id, null);
 
         order.AddItem(product1.Id, product1.Price, 2);
         order.AddItem(product2.Id, product2.Price, 1);

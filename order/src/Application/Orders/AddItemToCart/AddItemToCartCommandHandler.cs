@@ -28,7 +28,7 @@ public class AddItemToCartCommandHandler : ICommandHandler<AddItemToCartCommand>
 
         var existingCart = await _orderRepository.GetCart(cancellationToken);
 
-        order = existingCart ?? Order.Create(command.CustomerId, true);
+        order = existingCart ?? Order.Create(command.CustomerId, null, true);
 
         var product = await _productRepository.GetByIdAsync(command.ProductId, cancellationToken);
 

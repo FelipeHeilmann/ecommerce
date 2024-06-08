@@ -73,7 +73,7 @@ public class OrderController : APIBaseController
     {
         var customerId = GetCustomerId();
 
-        var command = new CheckoutOrderCommand(request.Items, customerId!.Value, request.ShippingAddressId, request.BillingAddressId, request.PaymentType, request.CardToken, request.Installments);
+        var command = new CheckoutOrderCommand(request.Items, customerId!.Value,request.ShippingAddressId, request.BillingAddressId, request.CouponName, request.PaymentType, request.CardToken, request.Installments);
 
         var result = await _sender.Send(command, cancellationToken);
 

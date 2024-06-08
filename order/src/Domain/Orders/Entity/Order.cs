@@ -1,4 +1,5 @@
 ﻿using Domain.Abstractions;
+using Domain.Coupons.Entity;
 using Domain.Orders.Error;
 using Domain.Orders.Event;
 using Domain.Orders.Events;
@@ -15,12 +16,14 @@ public class Order : Observable
     public string Status => _status.Value;
     public OrderStatus _status { private get; set; }
     public IReadOnlyCollection<LineItem> Items => _items.ToList();
+    public Guid? CouponId { get; private set; }
+    public Coupon? Coupon { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public DateTime UpdatedAt { get; private set; }
     public Guid? BillingAddressId { get; private set; }
     public Guid? ShippingAddressId { get; private set; }
 
-    public Order(Guid id, Guid customerId, string status, ICollection<LineItem> items, DateTime createdAt, DateTime updatedAt, Guid? billingAddressId, Guid? shippingAddressId)
+    public Order(Guid id, Guid customerId, string status, ICollection<LineItem> items, Coupon? coupon, DateTime createdAt, DateTime updatedAt, Guid? billingAddressId, Guid? shippingAddressId)
     {
         Id = id;
         CustomerId = customerId;
@@ -29,13 +32,15 @@ public class Order : Observable
         UpdatedAt = updatedAt;
         BillingAddressId = billingAddressId;
         ShippingAddressId = shippingAddressId;
+        Coupon = coupon;
+        CouponId = coupon?.Id;
         _items = items;
     }
 
 
-    public static Order Create(Guid customerId, bool cart = false)
+    public static Order Create(Guid customerId, Coupon? coupon ,bool cart = false)
     {
-        return new Order(Guid.NewGuid(), customerId, cart ? "cart" : "created", new List<LineItem>(), DateTime.UtcNow, DateTime.UtcNow, null, null);
+        return new Order(Guid.NewGuid(), customerId, cart ? "cart" : "created", new List<LineItem>(), coupon ,DateTime.UtcNow, DateTime.UtcNow, null, null);
     }
 
     public void AddItem(Guid productId, Money price, int quantity)
@@ -79,7 +84,12 @@ public class Order : Observable
         double total = 0;
         foreach (var lineItem in _items)
         {
-            total += lineItem.Price.Amount * lineItem.Quantity;
+            total += lineItem.Price.Amount * lineItem.Quantity; 
+        }
+
+        if (Coupon is not null)
+        {
+            total -= Coupon.GetDiscountAmount(total);
         }
 
         return Math.Round(total, 2);

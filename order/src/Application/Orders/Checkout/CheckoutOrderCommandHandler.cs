@@ -10,6 +10,7 @@ using Domain.Orders.Entity;
 using Domain.Products.Error;
 using Domain.Products.Repository;
 using Application.Abstractions.Queue;
+using Domain.Coupons.Repository;
 
 namespace Application.Orders.Checkout;
 
@@ -17,8 +18,9 @@ public class CheckoutOrderCommandHandler : ICommandHandler<CheckoutOrderCommand,
 {
     private readonly IOrderRepository _orderRepository;
     private readonly ICustomerRepository _customerRepository;
-    private readonly IAddressRepository _addressRepository;
     private readonly IProductRepository _productRepository;
+    private readonly IAddressRepository _addressRepository;
+    private readonly ICouponRepository _couponRepository;
     private readonly IQueue _queue;
     private readonly IUnitOfWork _unitOfWork;
 
@@ -28,13 +30,15 @@ public class CheckoutOrderCommandHandler : ICommandHandler<CheckoutOrderCommand,
         ICustomerRepository customerRepository,
         IProductRepository productRepository,
         IAddressRepository addressRepository,
+        ICouponRepository couponRepository,
         IUnitOfWork unitOfWork,
         IQueue queue)
     {
         _orderRepository = orderRepository;
         _customerRepository = customerRepository;
-        _addressRepository = addressRepository;
         _productRepository = productRepository;
+        _addressRepository = addressRepository;
+        _couponRepository = couponRepository;
         _unitOfWork = unitOfWork;
         _queue = queue;
     }
@@ -43,7 +47,9 @@ public class CheckoutOrderCommandHandler : ICommandHandler<CheckoutOrderCommand,
     {
         var orderItemList = command.OrderItens;
 
-        var order = Order.Create(command.CustomerId);
+         var coupon = command.CouponName is not null ? await _couponRepository.GetByNameAsync(command.CouponName, cancellationToken) : null;
+
+        var order = Order.Create(command.CustomerId, coupon);
 
         var customer = await _customerRepository.GetByIdAsync(command.CustomerId, cancellationToken);
 

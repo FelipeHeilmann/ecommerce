@@ -25,6 +25,8 @@ using Application.Abstractions.Query;
 using Infra.Context;
 using Application.Orders.PrepareOrderForShipping;
 using Application.Orders.OrderPaymentStatusChanged;
+using Domain.Coupons.Repository;
+using Application.Coupons.Create;
 
 namespace Integration;
 
@@ -35,6 +37,7 @@ public class OrderTest
     private readonly IProductRepository productRepository = new ProductRepositoryMemory();
     private readonly IAddressRepository addressRepository = new AddressRepositoryInMemory();
     private readonly ICategoryRepository categoryRepository = new CategoryRepositoryMemory();
+    private readonly ICouponRepository couponRepository = new CouponRepositoryMemory();
     private readonly IOrderQueryContext orderQueryContext = new MemoryOrderContext();
     private readonly IPasswordHasher passwordHasher = new PasswordHasher();
     private readonly IQueue queue = new MemoryMQAdapter();
@@ -108,21 +111,22 @@ public class OrderTest
         var installments = 5;
 
         var inputCheckout = new CheckoutOrderCommand(new List<OrderItemRequest>()
-        {
-            new OrderItemRequest(outputCreateProduct1.Value, 2),
-            new OrderItemRequest(outputCreateProduct2.Value, 3),
-            new OrderItemRequest(outputCreateProduct3.Value, 4)
-        },
-        outputCreateCustomer.Value,
-        outputCreateAddress.Value,
-        outputCreateAddress.Value,
-        paymentType,
-        cardToken,
-        installments);
+            {
+                new OrderItemRequest(outputCreateProduct1.Value, 2),
+                new OrderItemRequest(outputCreateProduct2.Value, 3),
+                new OrderItemRequest(outputCreateProduct3.Value, 4)
+            },
+            outputCreateCustomer.Value,
+            outputCreateAddress.Value,
+            outputCreateAddress.Value,
+            null,
+            paymentType,
+            cardToken,
+            installments);
 
         //WHEN
 
-        var checkoutOrderCommandHandler = new CheckoutOrderCommandHandler(orderRepository, customerRepository, productRepository, addressRepository, unitOfWork, queue);
+        var checkoutOrderCommandHandler = new CheckoutOrderCommandHandler(orderRepository, customerRepository, productRepository, addressRepository, couponRepository, unitOfWork, queue);
 
         var outputCheckoutOrder = await checkoutOrderCommandHandler.Handle(inputCheckout, CancellationToken.None);
 
@@ -132,9 +136,76 @@ public class OrderTest
         Assert.Equal(560, outputGetOrder?.CalculateTotal());
     }
 
+    [Fact]
+    public async Task Should_Create_Order_And_ApplyCoupon()
+    { 
+        var inputCreateCoupon = new CreateCouponCommand("CUPOM10", DateTime.Now.AddDays(10), 10.00);
+
+        var createCouponCommandHandler = new CreateCouponCommandHandler(couponRepository, unitOfWork);
+
+        await createCouponCommandHandler.Handle(inputCreateCoupon, CancellationToken.None);
+
+        var inputCreateCustomer = new CreateCustomerCommand("John Doe", "john.doe@gmail.com", "abc123", new DateTime(2004, 11, 06), "659.232.850-96", "(11) 97414-6507");
+
+        var createCustomerCommandHandler = new CreateCustomerCommandHandler(customerRepository, unitOfWork, passwordHasher, queue);
+
+        var outputCreateCustomer = await createCustomerCommandHandler.Handle(inputCreateCustomer, CancellationToken.None);
+
+        var inputCreateCategory = new CreateCategoryCommand("Category", "Category Description");
+
+        var createCategoryCommandHandler = new CreateCatagoryCommandHandler(categoryRepository, unitOfWork);
+
+        var outputCreateCategory = await createCategoryCommandHandler.Handle(inputCreateCategory, CancellationToken.None);
+
+        var inputCreateProduct1 = new CreateProductCommand("Product 1", "Product 1", "BRL", 50, "Image", "0001", outputCreateCategory.Value);
+        var inputCreateProduct2 = new CreateProductCommand("Product 2", "Product 2", "BRL", 60, "Image", "0002", outputCreateCategory.Value);
+        var inputCreateProduct3 = new CreateProductCommand("Product 3", "Product 3", "BRL", 70, "Image", "0003", outputCreateCategory.Value);
+
+        var createProductCommandHandler = new CreateProductCommandHandler(productRepository, categoryRepository, unitOfWork);
+
+        var outputCreateProduct1 = await createProductCommandHandler.Handle(inputCreateProduct1, CancellationToken.None);
+        var outputCreateProduct2 = await createProductCommandHandler.Handle(inputCreateProduct2, CancellationToken.None);
+        var outputCreateProduct3 = await createProductCommandHandler.Handle(inputCreateProduct3, CancellationToken.None);
+
+        var inputCreateAddress = new CreateAddressCommand(outputCreateCustomer.Value, "12909-062", "Rua a", "Bairro", "100", null, "São Paulo", "SP", "Brazil");
+
+        var createAddressCommandHandler = new CreateAddressCommandHandler(addressRepository, unitOfWork);
+
+        var outputCreateAddress = await createAddressCommandHandler.Handle(inputCreateAddress, CancellationToken.None);
+
+        var paymentType = "credit";
+        var cardToken = "my-token-card";
+        var installments = 5;
+
+        var inputCheckout = new CheckoutOrderCommand(new List<OrderItemRequest>()
+        {
+            new OrderItemRequest(outputCreateProduct1.Value, 2),
+            new OrderItemRequest(outputCreateProduct2.Value, 3),
+            new OrderItemRequest(outputCreateProduct3.Value, 4)
+        },
+        outputCreateCustomer.Value,
+        outputCreateAddress.Value,
+        outputCreateAddress.Value,
+        "CUPOM10",
+        paymentType,
+        cardToken,
+        installments);
+
+        //WHEN
+
+        var checkoutOrderCommandHandler = new CheckoutOrderCommandHandler(orderRepository, customerRepository, productRepository, addressRepository, couponRepository ,unitOfWork, queue);
+
+        var outputCheckoutOrder = await checkoutOrderCommandHandler.Handle(inputCheckout, CancellationToken.None);
+
+        var outputGetOrder = await orderRepository.GetByIdAsync(outputCheckoutOrder.Value, CancellationToken.None);
+
+        Assert.Equal("waiting_payment", outputGetOrder?.Status);
+        Assert.Equal(504.00, outputGetOrder?.CalculateTotal());
+    }
+
 
     [Fact]
-    public async Task Should__Remove_One_Item_From_Cart()
+    public async Task Should_Remove_One_Item_From_Cart()
     { 
         var inputCreateCustomer = new CreateCustomerCommand("John Doe", "john.doe@gmail.com", "abc123", new DateTime(2004, 11, 06), "659.232.850-96", "(11) 97414-6507");
 
@@ -172,12 +243,13 @@ public class OrderTest
 
         var removeLineItemFromCartCommandHandler = new RemoveItemFromCartCommandHandler(orderRepository, unitOfWork);
 
-        await removeLineItemFromCartCommandHandler.Handle(new RemoveItemFromCartCommand(lineItemToRemove.LineItemId), CancellationToken.None);
+        await removeLineItemFromCartCommandHandler.Handle(new RemoveItemFromCartCommand(lineItemToRemove!.LineItemId), CancellationToken.None);
 
         var outputGetCartAfterRemove = await getCartQueryHandler.Handle(new GetCartQuery(), CancellationToken.None);
 
         Assert.Equal(2, outputGetCartAfterRemove.Value?.Items?.Count());
         Assert.Equal("cart", outputGetCartAfterRemove.Value?.Status);
+        Assert.Equal(440, outputGetCartAfterRemove.Value?.Total);
     }
 
     [Fact]
@@ -216,19 +288,20 @@ public class OrderTest
         var installments = 5;
 
         var inputCreateOrder = new CheckoutOrderCommand(new List<OrderItemRequest>()
-        {
-            new OrderItemRequest(outputCreateProduct1.Value, 2),
-            new OrderItemRequest(outputCreateProduct2.Value, 3),
-            new OrderItemRequest(outputCreateProduct3.Value, 4)
-        },
-           outputCreateCustomer.Value,
+            {
+                new OrderItemRequest(outputCreateProduct1.Value, 2),
+                new OrderItemRequest(outputCreateProduct2.Value, 3),
+                new OrderItemRequest(outputCreateProduct3.Value, 4)
+            },
+            outputCreateCustomer.Value,
             outputCreateAddress.Value,
             outputCreateAddress.Value,
+            null,
             paymentType,
             cardToken,
             installments);
 
-        var checkoutOrderCommandHandler = new CheckoutOrderCommandHandler(orderRepository, customerRepository, productRepository, addressRepository, unitOfWork, queue);
+        var checkoutOrderCommandHandler = new CheckoutOrderCommandHandler(orderRepository, customerRepository, productRepository, addressRepository, couponRepository, unitOfWork, queue);
 
         //WHEN
         await checkoutOrderCommandHandler.Handle(inputCreateOrder, CancellationToken.None);
@@ -276,19 +349,20 @@ public class OrderTest
         var installments = 5;
 
         var inputCreateOrder = new CheckoutOrderCommand(new List<OrderItemRequest>()
-        {
-            new OrderItemRequest(outputCreateProduct1.Value, 2),
-            new OrderItemRequest(outputCreateProduct2.Value, 3),
-            new OrderItemRequest(outputCreateProduct3.Value, 4)
-        },
-        outputCreateCustomer.Value,
-        outputCreateAddress.Value,
-        outputCreateAddress.Value,
-        paymentType,
-        cardToken,
-        installments);
+            {
+                new OrderItemRequest(outputCreateProduct1.Value, 2),
+                new OrderItemRequest(outputCreateProduct2.Value, 3),
+                new OrderItemRequest(outputCreateProduct3.Value, 4)
+            },
+            outputCreateCustomer.Value,
+            outputCreateAddress.Value,
+            outputCreateAddress.Value,
+            null,
+            paymentType,
+            cardToken,
+            installments);
 
-        var checkoutOrderCommandHandler = new CheckoutOrderCommandHandler(orderRepository, customerRepository, productRepository, addressRepository, unitOfWork, queue);
+        var checkoutOrderCommandHandler = new CheckoutOrderCommandHandler(orderRepository, customerRepository, productRepository, addressRepository, couponRepository, unitOfWork, queue);
 
         //WHEN
         var outputCheckoutOrder = await checkoutOrderCommandHandler.Handle(inputCreateOrder, CancellationToken.None);
@@ -338,21 +412,22 @@ public class OrderTest
         var installments = 5;
 
         var inputCheckout = new CheckoutOrderCommand(new List<OrderItemRequest>()
-        {
-            new OrderItemRequest(outputCreateProduct1.Value, 2),
-            new OrderItemRequest(outputCreateProduct2.Value, 3),
-            new OrderItemRequest(outputCreateProduct3.Value, 4)
-        },
-        outputCreateCustomer.Value,
-        outputCreateAddress.Value,
-        outputCreateAddress.Value,
-        paymentType,
-        cardToken,
-        installments);
+            {
+                new OrderItemRequest(outputCreateProduct1.Value, 2),
+                new OrderItemRequest(outputCreateProduct2.Value, 3),
+                new OrderItemRequest(outputCreateProduct3.Value, 4)
+            },
+            outputCreateCustomer.Value,
+            outputCreateAddress.Value,
+            outputCreateAddress.Value,
+            null,
+            paymentType,
+            cardToken,
+            installments);
 
         //WHEN
 
-        var checkoutOrderCommandHandler = new CheckoutOrderCommandHandler(orderRepository, customerRepository, productRepository, addressRepository, unitOfWork, queue);
+        var checkoutOrderCommandHandler = new CheckoutOrderCommandHandler(orderRepository, customerRepository, productRepository, addressRepository, couponRepository, unitOfWork, queue);
 
         var outputCheckoutOrder = await checkoutOrderCommandHandler.Handle(inputCheckout, CancellationToken.None);
 
