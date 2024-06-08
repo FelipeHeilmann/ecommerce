@@ -23,6 +23,8 @@ using Application.Orders.AddItemToCart;
 using Application.Orders.RemoveItemRemoveItemFromCart;
 using Application.Abstractions.Query;
 using Infra.Context;
+using Application.Orders.PrepareOrderForShipping;
+using Application.Orders.OrderPaymentStatusChanged;
 
 namespace Integration;
 
@@ -299,5 +301,76 @@ public class OrderTest
         var outputGetOrder = await orderRepository.GetByIdAsync(outputCheckoutOrder.Value, CancellationToken.None);
 
         Assert.Equal("waiting_payment", outputGetOrder.Status);
+    }
+
+    [Fact]
+    public async Task Should_Prepare_An_Order_For_Shipping()
+    {
+        var inputCreateCustomer = new CreateCustomerCommand("John Doe", "john.doe@gmail.com", "abc123", new DateTime(2004, 11, 06), "659.232.850-96", "(11) 97414-6507");
+
+        var createCustomerCommandHandler = new CreateCustomerCommandHandler(customerRepository, unitOfWork, passwordHasher, queue);
+
+        var outputCreateCustomer = await createCustomerCommandHandler.Handle(inputCreateCustomer, CancellationToken.None);
+
+        var inputCreateCategory = new CreateCategoryCommand("Category", "Category Description");
+
+        var createCategoryCommandHandler = new CreateCatagoryCommandHandler(categoryRepository, unitOfWork);
+
+        var outputCreateCategory = await createCategoryCommandHandler.Handle(inputCreateCategory, CancellationToken.None);
+
+        var inputCreateProduct1 = new CreateProductCommand("Product 1", "Product 1", "BRL", 50, "Image", "0001", outputCreateCategory.Value);
+        var inputCreateProduct2 = new CreateProductCommand("Product 2", "Product 2", "BRL", 60, "Image", "0002", outputCreateCategory.Value);
+        var inputCreateProduct3 = new CreateProductCommand("Product 3", "Product 3", "BRL", 70, "Image", "0003", outputCreateCategory.Value);
+
+        var createProductCommandHandler = new CreateProductCommandHandler(productRepository, categoryRepository, unitOfWork);
+
+        var outputCreateProduct1 = await createProductCommandHandler.Handle(inputCreateProduct1, CancellationToken.None);
+        var outputCreateProduct2 = await createProductCommandHandler.Handle(inputCreateProduct2, CancellationToken.None);
+        var outputCreateProduct3 = await createProductCommandHandler.Handle(inputCreateProduct3, CancellationToken.None);
+
+        var inputCreateAddress = new CreateAddressCommand(outputCreateCustomer.Value, "12909-062", "Rua a", "Bairro", "100", null, "São Paulo", "SP", "Brazil");
+
+        var createAddressCommandHandler = new CreateAddressCommandHandler(addressRepository, unitOfWork);
+
+        var outputCreateAddress = await createAddressCommandHandler.Handle(inputCreateAddress, CancellationToken.None);
+
+        var paymentType = "credit";
+        var cardToken = "my-token-card";
+        var installments = 5;
+
+        var inputCheckout = new CheckoutOrderCommand(new List<OrderItemRequest>()
+        {
+            new OrderItemRequest(outputCreateProduct1.Value, 2),
+            new OrderItemRequest(outputCreateProduct2.Value, 3),
+            new OrderItemRequest(outputCreateProduct3.Value, 4)
+        },
+        outputCreateCustomer.Value,
+        outputCreateAddress.Value,
+        outputCreateAddress.Value,
+        paymentType,
+        cardToken,
+        installments);
+
+        //WHEN
+
+        var checkoutOrderCommandHandler = new CheckoutOrderCommandHandler(orderRepository, customerRepository, productRepository, addressRepository, unitOfWork, queue);
+
+        var outputCheckoutOrder = await checkoutOrderCommandHandler.Handle(inputCheckout, CancellationToken.None);
+
+        var inputOrderPaymentStatusChanged = new OrderPaymentStatusChangedCommand(outputCheckoutOrder.Value, "approved");
+
+        var orderPaymentStatusChangedCommandHandler = new OrderPaymentStatusChangedCommandHandler(orderRepository, unitOfWork);
+
+        await orderPaymentStatusChangedCommandHandler.Handle(inputOrderPaymentStatusChanged, CancellationToken.None); 
+
+        var inputPrepareOrderForShipping = new PrepareOrderForShippingCommand(outputCheckoutOrder.Value);
+
+        var prepareOrderForShippingCommandHandler = new PrepareOrderForShippingCommandHandler(orderRepository, unitOfWork);
+
+       await prepareOrderForShippingCommandHandler.Handle(inputPrepareOrderForShipping, CancellationToken.None); 
+
+        var outputGetOrder = await orderRepository.GetByIdAsync(outputCheckoutOrder.Value, CancellationToken.None);
+
+        Assert.Equal("in_preparation", outputGetOrder.Status);
     }
 }
