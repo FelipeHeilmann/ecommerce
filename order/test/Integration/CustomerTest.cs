@@ -4,14 +4,11 @@ using Application.Customers.Create;
 using Application.Customers.GetById;
 using Application.Data;
 using Domain.Customers.Error;
-using Domain.Customers.Event;
 using Domain.Customers.Repository;
 using Infra.Data;
 using Infra.Implementations;
 using Infra.Queue;
 using Infra.Repositories.Memory;
-using MediatR;
-using Moq;
 using Xunit;
 
 namespace Integration;

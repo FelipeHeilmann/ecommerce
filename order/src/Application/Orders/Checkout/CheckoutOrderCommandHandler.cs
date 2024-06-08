@@ -9,8 +9,6 @@ using Domain.Customers.Error;
 using Domain.Orders.Entity;
 using Domain.Products.Error;
 using Domain.Products.Repository;
-using MediatR;
-using Domain.Orders.Events;
 using Application.Abstractions.Queue;
 
 namespace Application.Orders.Checkout;
