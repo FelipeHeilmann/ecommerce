@@ -7,6 +7,7 @@ using Application.Orders.Consumer;
 using Application.Orders.OrderPaymentUrl;
 using Domain.Addresses.Repository;
 using Domain.Categories.Repository;
+using Domain.Coupons.Repository;
 using Domain.Customers.Repository;
 using Domain.Orders.Repository;
 using Domain.Products.Repository;
@@ -49,6 +50,7 @@ public static class DependecyInjection
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<ICategoryRepository, CategoryRepository>();
         services.AddScoped<IAddressRepository, AddressRepository>();
+        services.AddScoped<ICouponRepository, CouponRepository>();
         services.AddScoped<IOrderQueryContext, MongoOrderContext>();
 
         services.AddScoped<IPasswordHasher, PasswordHasher>();
