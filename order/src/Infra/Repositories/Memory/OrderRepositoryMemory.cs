@@ -5,48 +5,53 @@ namespace Infra.Repositories.Memory
 {
     public class OrderRepositoryMemory : IOrderRepository
     {
-        private readonly List<Order> _context = new();
+        private List<Order> _orders;
+
+        public OrderRepositoryMemory()
+        {
+            _orders = [];
+        }
 
         public Task<ICollection<Order>> GetAllAsync(CancellationToken cancellationToken)
         { 
-            return Task.FromResult<ICollection<Order>>(_context);
+            return Task.FromResult<ICollection<Order>>(_orders);
         }
 
         public Task<Order?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
-            return Task.FromResult(_context.FirstOrDefault(o => o.Id == id));
+            return Task.FromResult(_orders.FirstOrDefault(o => o.Id == id));
         }
 
         public Task<ICollection<Order>> GetOrdersByCustomerId(Guid customerId, CancellationToken cancellationToken)
         {
-            return Task.FromResult<ICollection<Order>>(_context.Where(o => o.CustomerId == customerId).ToList());
+            return Task.FromResult<ICollection<Order>>(_orders.Where(o => o.CustomerId == customerId).ToList());
         }
 
         public void Add(Order entity)
         {
-            _context.Add(entity);
+            _orders.Add(entity);
         }
 
         public void Update(Order entity)
         {
-            var index = _context.FindIndex(o => o.Id == entity.Id);
+            var index = _orders.FindIndex(o => o.Id == entity.Id);
 
             if (index == -1)
             {
                 return;
             }
 
-            _context[index] = entity;
+            _orders[index] = entity;
         }
 
         public void Delete(Order entity)
         {
-            _context.Remove(entity);
+            _orders.Remove(entity);
         }
 
         public Task<Order?> GetCategoryById(Guid id)
         {
-            return Task.FromResult(_context.FirstOrDefault(c => c.Id == id));
+            return Task.FromResult(_orders.FirstOrDefault(c => c.Id == id));
         }
 
         public IQueryable<Order> GetQueryable(CancellationToken cancellation)
@@ -56,7 +61,7 @@ namespace Infra.Repositories.Memory
 
         public Task<Order?> GetCart(CancellationToken cancellationToken)
         {
-            return Task.FromResult(_context.FirstOrDefault(o => o.Status == "cart"));
+            return Task.FromResult(_orders.FirstOrDefault(o => o.Status == "cart"));
         }
     }
 }

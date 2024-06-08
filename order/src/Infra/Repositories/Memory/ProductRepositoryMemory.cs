@@ -6,47 +6,54 @@ namespace Infra.Repositories.Memory
 {
     public class ProductRepositoryMemory : IProductRepository
     {
-        private readonly List<Product> _context = new();
-        private readonly List<Category> _categoryContext = new();
+        private List<Product> _products;
+        private List<Category> _categories;
+
+        public ProductRepositoryMemory()
+        {
+            _products = [];
+            _categories = [];
+        }
+
+        public IQueryable<Product> GetQueryable(CancellationToken cancellation)
+        {
+            return _products.AsQueryable();
+        }
 
         public Task<ICollection<Product>> GetAllAsync(CancellationToken cancellationToken)
         {
-            return Task.FromResult<ICollection<Product>>(_context);
+            return Task.FromResult<ICollection<Product>>(_products);
         }
         public Task<Product?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
-            return Task.FromResult(_context.ToList().FirstOrDefault(p => p.Id == id));
+            return Task.FromResult(_products.ToList().FirstOrDefault(p => p.Id == id));
         }
         public Task<ICollection<Product>> GetByIdsAsync(List<Guid> Ids, CancellationToken cancellationToken)
         {
-            var products = _context.Where(p => Ids.Contains(p.Id)).ToList();
+            var products = _products.Where(p => Ids.Contains(p.Id)).ToList();
             return Task.FromResult<ICollection<Product>>(products);
         }
         public void Add(Product entity)
         {
-            _context.Add(entity);
+            _products.Add(entity);
         }
 
         public void Update(Product entity)
         {
-            var index = _context.FindIndex(p => p.Id == entity.Id);
+            var index = _products.FindIndex(p => p.Id == entity.Id);
 
             if (index == -1)
             {
                 return;
             }
 
-            _context[index] = entity;
+            _products[index] = entity;
 
         }
         public void Delete(Product entity)
         {
-            _context.Remove(entity);
+            _products.Remove(entity);
         }
 
-        public IQueryable<Product> GetQueryable(CancellationToken cancellation)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

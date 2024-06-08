@@ -5,49 +5,54 @@ namespace Infra.Repositories.Memory
 {
     public class CustomerRepositoryMemory : ICustomerRepository
     {
-        private readonly List<Customer> _context = new();
+        private List<Customer> _customers;
+
+        public CustomerRepositoryMemory()
+        {
+            _customers = [];
+        }
 
         public Task<ICollection<Customer>> GetAllAsync(CancellationToken cancellationToken)
         {
-            return Task.FromResult<ICollection<Customer>>(_context);
+            return Task.FromResult<ICollection<Customer>>(_customers);
         }
 
         public Task<Customer?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
-            return Task.FromResult(_context.ToList().FirstOrDefault(c => c.Id == id));
+            return Task.FromResult(_customers.ToList().FirstOrDefault(c => c.Id == id));
         }
 
         public Task<Customer?> GetByEmailAsync(string email, CancellationToken cancellationToken)
         {
-            return Task.FromResult(_context.ToList().FirstOrDefault(c => c.Email == email));
+            return Task.FromResult(_customers.ToList().FirstOrDefault(c => c.Email == email));
         }
 
         public Task<bool> IsEmailUsedAsync(string email, CancellationToken cancellationToken)
         {
-            return Task.FromResult(_context.Any(c => c.Email == email));
+            return Task.FromResult(_customers.Any(c => c.Email == email));
         }
 
         public void Add(Customer entity)
         {
-            _context.Add(entity);
+            _customers.Add(entity);
         }
 
         public void Update(Customer entity)
         {
-            var index = _context.FindIndex(c => c.Id == entity.Id);
+            var index = _customers.FindIndex(c => c.Id == entity.Id);
 
             if (index == -1)
             {
                 return;
             }
 
-            _context[index] = entity;
+            _customers[index] = entity;
 
         }
 
         public void Delete(Customer entity)
         {
-            _context.Remove(entity);
+            _customers.Remove(entity);
         }
 
         public IQueryable<Customer> GetQueryable(CancellationToken cancellation)

@@ -5,36 +5,41 @@ namespace Infra.Repositories.Memory;
 
 public class CategoryRepositoryMemory : ICategoryRepository
 {
-    private readonly List<Category> _context = new();
+    private List<Category> categories;
+
+    public CategoryRepositoryMemory()
+    {
+        categories = [];
+    }
 
     public Task<ICollection<Category>> GetAllAsync(CancellationToken cancellationToken)
     {
-        return Task.FromResult<ICollection<Category>>((_context));
+        return Task.FromResult<ICollection<Category>>((categories));
     }
 
     public Task<Category?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
-        return Task.FromResult(_context.FirstOrDefault(c => c.Id == id));
+        return Task.FromResult(categories.FirstOrDefault(c => c.Id == id));
     }
     public void Add(Category entity)
     {
-        _context.Add(entity);
+        categories.Add(entity);
     }
 
     public void Update(Category entity)
     {
-        var index = _context.FindIndex(o => o.Id == entity.Id);
+        var index = categories.FindIndex(o => o.Id == entity.Id);
 
         if (index == -1)
         {
             return;
         }
 
-        _context[index] = entity;
+        categories[index] = entity;
     }
     public void Delete(Category entity)
     {
-        _context.Remove(entity);
+        categories.Remove(entity);
     }
 
     public IQueryable<Category> GetQueryable(CancellationToken cancellation)

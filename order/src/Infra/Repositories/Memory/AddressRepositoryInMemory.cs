@@ -5,11 +5,16 @@ namespace Infra.Repositories.Memory;
 
 public class AddressRepositoryInMemory : IAddressRepository
 {
-    private readonly List<Address> _context = new();
+    private readonly List<Address> _addresses;
+
+    public AddressRepositoryInMemory()
+    {
+        _addresses = [];
+    }
 
     public Task<ICollection<Address>> GetAllAsync(CancellationToken cancellationToken)
     {
-        return Task.FromResult<ICollection<Address>>(_context);
+        return Task.FromResult<ICollection<Address>>(_addresses);
     }
     public IQueryable<Address> GetQueryable(CancellationToken cancellation)
     {
@@ -18,33 +23,33 @@ public class AddressRepositoryInMemory : IAddressRepository
 
     public Task<Address?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
-        return Task.FromResult(_context.FirstOrDefault(a => a.Id == id));
+        return Task.FromResult(_addresses.FirstOrDefault(a => a.Id == id));
     }
 
     public Task<ICollection<Address>> GetByCustomerIdAsync(Guid customerId, CancellationToken cancellationToken)
     {
-        return Task.FromResult<ICollection<Address>>(_context.Where(a => a.CustomerId == customerId).ToList());
+        return Task.FromResult<ICollection<Address>>(_addresses.Where(a => a.CustomerId == customerId).ToList());
     }
 
     public void Add(Address entity)
     {
-        _context.Add(entity);
+        _addresses.Add(entity);
     }
 
     public void Update(Address entity)
     {
-        var index = _context.FindIndex(a => a.Id == entity.Id);
+        var index = _addresses.FindIndex(a => a.Id == entity.Id);
 
         if (index == -1)
         {
             return;
         }
 
-        _context[index] = entity;
+        _addresses[index] = entity;
     }
 
     public void Delete(Address entity)
     {
-        _context.Remove(entity);
+        _addresses.Remove(entity);
     }
 }
