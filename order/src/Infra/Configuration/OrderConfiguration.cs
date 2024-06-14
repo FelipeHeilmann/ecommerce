@@ -35,7 +35,7 @@ public class OrderConfiguration : IEntityTypeConfiguration<OrderModel>
             .WithMany()
             .HasForeignKey(o => o.ShippingAddressId);
 
-        builder.HasOne<CouponModel>()
+        builder.HasOne(o => o.Coupon)
             .WithMany()
             .HasForeignKey(o => o.CouponId);
 
