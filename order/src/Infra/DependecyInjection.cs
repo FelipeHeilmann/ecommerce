@@ -42,7 +42,7 @@ public static class DependecyInjection
         services.AddScoped<IProductRepository, ProductRepositoryMemory>();
         services.AddScoped<ICategoryRepository, CategoryRepositoryDatabase>();
         services.AddScoped<IAddressRepository, AddressRepositoryDatabase>();
-        services.AddScoped<ICouponRepository, CouponRepositoryMemory>();
+        services.AddScoped<ICouponRepository, CouponRepositoryDatabase>();
         services.AddScoped<IOrderQueryContext, MongoOrderContext>();
 
         services.AddScoped<IPasswordHasher, PasswordHasher>();

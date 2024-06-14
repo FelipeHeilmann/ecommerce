@@ -5,26 +5,36 @@ public class Coupon
     public Guid Id { get; private set; }
     public string Name { get; private set; }
     public double Value { get; private set; }
-    public DateTime ExpiressAt { get; private set; }
+    public DateTime ExpiresAt { get; private set; }
 
-    public Coupon(Guid id, string name, double value, DateTime expiressAt)
+    private Coupon(Guid id, string name, double value, DateTime expiresAt)
     {
         Id = id;
         Name = name;
         Value = value;
-        ExpiressAt = expiressAt;
+        ExpiresAt = expiresAt;
     }
 
-    public static Coupon Create(string name, double value, DateTime expiressAt)
+    public static Coupon Create(string name, double value, DateTime expiresAt)
     {
-        if (expiressAt < DateTime.Now) throw new Exception("Invalid date");
+        if (expiresAt < DateTime.Now) throw new Exception("Invalid date");
 
-        return new Coupon(Guid.NewGuid(), name, value, expiressAt); 
+        return new Coupon(Guid.NewGuid(), name, value, expiresAt); 
+    }
+
+    public static Coupon Restore(Guid id, string name, double value, DateTime expiresAt)
+    {
+        return new Coupon(id, name, value, expiresAt);
     }
 
     public double GetDiscountAmount(double total)
     {
-        return (Value/100)*total;
+        return Value/100*total;
+    }
+
+    public bool IsValid()
+    {
+         return ExpiresAt < DateTime.Now;
     }
 }
 
