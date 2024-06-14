@@ -25,7 +25,7 @@ public class NpgsqlAdapter : IDatabaseConnection
             {
                 foreach (var property in parameters.GetType().GetProperties())
                 {
-                    cmd.Parameters.AddWithValue(property.Name, property.GetValue(parameters) ?? throw new Exception());
+                    cmd.Parameters.AddWithValue(property.Name, property.GetValue(parameters) ?? DBNull.Value);
                 }
             }
 
