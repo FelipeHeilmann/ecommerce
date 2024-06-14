@@ -61,7 +61,7 @@ public class CheckoutOrderCommandHandler : ICommandHandler<CheckoutOrderCommand,
             {
                 return Result.Failure<Guid>(ProductErrors.ProductNotFound);
             }
-            order.AddItem(item.ProductId, product.Price, item.Quantity);
+            order.AddItem(item.ProductId, product.Currency, product.Amount, item.Quantity);
         }
 
         var billingAddress = await _addressRepository.GetByIdAsync(command.BillingAddressId, cancellationToken);

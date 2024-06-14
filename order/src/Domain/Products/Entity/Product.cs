@@ -6,47 +6,50 @@ namespace Domain.Products.Entity;
 
 public class Product
 {
+    private Money _price;
+    private Sku _sku;
     public Guid Id { get; private set; }
     public string Name { get; private set; }
     public string Description { get; private set; }
     public string ImageUrl { get; private set; }
     public DateTime CreatedAt { get; private set; }
-    public Money Price { get; private set; }
-    public Sku Sku { get; private set; }
-    public Guid CategoryId { get; private set; }
-    public Category Category { get; private set; }
+    public string Currency { get =>  _price.Currency; }
+    public double Amount { get => _price.Amount; }
+    public string Sku {get => _sku.Value; }
+    public Guid? CategoryId { get; private set; }
 
-    public Product(Guid id, string name, string description, string imageUrl, DateTime createdAt, Money money, Sku sku, Guid categoryId, Category category)
+    private Product(Guid id, string name, string description, string imageUrl, DateTime createdAt, Money money, Sku sku, Guid? categoryId)
     {
         Id = id;
         Name = name;
         Description = description;
         ImageUrl = imageUrl;
-        Price = money;
-        Sku = sku;
+        _price = money;
+        _sku = sku;
         CategoryId = categoryId;
-        Category = category;
         CreatedAt = createdAt;
     }
 
-    public Product() { }
-
-    public static Product Create(string name, string description, string imageUrl, string currency, double price, string skuString, Category category)
+    public static Product Create(string name, string description, string imageUrl, string currency, double price, string skuString, Guid? categoryId)
     {
         var money = new Money(currency, price);
 
-        return new Product(Guid.NewGuid(), name, description, imageUrl, DateTime.UtcNow, money, new Sku(skuString), category.Id, category);
+        return new Product(Guid.NewGuid(), name, description, imageUrl, DateTime.UtcNow, money, new Sku(skuString), categoryId);
     }
 
-    public void Update(string name, string description, string imageUrl, string currency, double price, string skuString, Category category)
+    public static Product Restore(Guid id, string name, string description, string imageUrl, string currency, double amount, string sku, Guid? categoryId, DateTime createdAt)
+    {
+        return new Product(id, name, description, imageUrl, createdAt, new Money(currency, amount), new Sku(sku), categoryId);
+    }
+
+    public void Update(string name, string description, string imageUrl, string currency, double price, string skuString, Guid? categoryId)
     {
         var money = new Money(currency, price);
         Name = name;
         Description = description;
         ImageUrl = imageUrl;
-        CategoryId = Category.Id;
-        Category = category;
-        Sku = new Sku(skuString);
-        Price = money;
+        CategoryId = categoryId;
+        _sku = new Sku(skuString);
+        _price = money;
     }
 }

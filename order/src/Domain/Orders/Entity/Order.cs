@@ -43,7 +43,7 @@ public class Order : Observable
         return new Order(Guid.NewGuid(), customerId, cart ? "cart" : "created", new List<LineItem>(), coupon ,DateTime.UtcNow, DateTime.UtcNow, null, null);
     }
 
-    public void AddItem(Guid productId, Money price, int quantity)
+    public void AddItem(Guid productId, string currency, double amount, int quantity)
     {
         UpdatedAt = DateTime.UtcNow;
 
@@ -55,7 +55,7 @@ public class Order : Observable
         }
         else
         {
-            _items.Add(new LineItem(Guid.NewGuid(), Id, productId, price, quantity));  
+            _items.Add(new LineItem(Guid.NewGuid(), Id, productId, new Money(currency, amount), quantity));  
         }
     }
 

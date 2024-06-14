@@ -28,7 +28,7 @@ public class UpdateProductCommandHandler : ICommandHandler<UpdateProductCommand>
 
         if (category == null) return Result.Failure<Product>(CategoryErrors.CategoryNotFound);
 
-        product.Update(command.Name, command.Description, command.ImageUrl, command.Currency, command.Price, command.Sku, category);
+        product.Update(command.Name, command.Description, command.ImageUrl, command.Currency, command.Price, command.Sku, category.Id);
 
         await _productRepository.Update(product);
 

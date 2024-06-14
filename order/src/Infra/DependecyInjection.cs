@@ -39,7 +39,7 @@ public static class DependecyInjection
         services.AddScoped<IDatabaseConnection, NpgsqlAdapter>();
         services.AddScoped<ICustomerRepository, CustomerRepositoryDatabase>();
         services.AddScoped<IOrderRepository, OrderRepositoryMemory>();
-        services.AddScoped<IProductRepository, ProductRepositoryMemory>();
+        services.AddScoped<IProductRepository, ProductRepositoryDatabase>();
         services.AddScoped<ICategoryRepository, CategoryRepositoryDatabase>();
         services.AddScoped<IAddressRepository, AddressRepositoryDatabase>();
         services.AddScoped<ICouponRepository, CouponRepositoryDatabase>();

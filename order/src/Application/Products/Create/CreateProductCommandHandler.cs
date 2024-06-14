@@ -20,13 +20,6 @@ public class CreateProductCommandHandler : ICommandHandler<CreateProductCommand,
 
     public async Task<Result<Guid>> Handle(CreateProductCommand command, CancellationToken cancellationToken)
     {
-        var category = await _categoryRepository.GetByIdAsync(command.CategoryId, cancellationToken);
-
-        if (category == null)
-        {
-            return Result.Failure<Guid>(CategoryErrors.CategoryNotFound);
-        }
-
         var product = Product.Create(
             command.Name,
             command.Description,
@@ -34,11 +27,10 @@ public class CreateProductCommandHandler : ICommandHandler<CreateProductCommand,
             command.Currency,
             command.Price,
             command.Sku,
-            category
+            command.CategoryId
         );
-
-
-        await  _productRepository.Add(product);
+        
+        await _productRepository.Add(product);
 
         return Result.Success(product.Id);
     }

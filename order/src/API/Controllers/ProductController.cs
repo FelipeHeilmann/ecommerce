@@ -57,7 +57,7 @@ public class ProductController : APIBaseController
                 request.Price, 
                 request.ImageUrl, 
                 request.Sku, 
-                request.CategoryId
+                request.CategoryId!.Value
             );
 
         var result = await _sender.Send(command, cancellationToken);

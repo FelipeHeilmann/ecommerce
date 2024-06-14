@@ -31,7 +31,7 @@ public class AddItemToCartCommandHandler : ICommandHandler<AddItemToCartCommand>
 
         if (product == null) return Result.Failure(ProductErrors.ProductNotFound);
 
-        order.AddItem(product.Id, product.Price, command.Quantity);
+        order.AddItem(product.Id, product.Currency, product.Amount, command.Quantity);
 
         if (existingCart == null)
         {
