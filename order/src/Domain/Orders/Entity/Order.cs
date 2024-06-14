@@ -23,7 +23,7 @@ public class Order : Observable
     public Guid? BillingAddressId { get; private set; }
     public Guid? ShippingAddressId { get; private set; }
 
-    public Order(Guid id, Guid customerId, string status, ICollection<LineItem> items, Coupon? coupon, DateTime createdAt, DateTime updatedAt, Guid? billingAddressId, Guid? shippingAddressId)
+    private Order(Guid id, Guid customerId, string status, ICollection<LineItem> items, Coupon? coupon, DateTime createdAt, DateTime updatedAt, Guid? billingAddressId, Guid? shippingAddressId)
     {
         Id = id;
         CustomerId = customerId;
@@ -37,10 +37,19 @@ public class Order : Observable
         _items = items;
     }
 
-
     public static Order Create(Guid customerId, Coupon? coupon ,bool cart = false)
     {
         return new Order(Guid.NewGuid(), customerId, cart ? "cart" : "created", new List<LineItem>(), coupon ,DateTime.UtcNow, DateTime.UtcNow, null, null);
+    }
+
+    public static Order Restore(Guid id, Guid customerId, string status,ICollection<LineItem> items, Coupon? coupon ,DateTime createdAt, DateTime updatedAt, Guid? billingAddressId,Guid? shippingAddressId)
+    {
+        return new Order(id, customerId, status, items, coupon, createdAt, updatedAt, billingAddressId, shippingAddressId);
+    }
+
+    public void RestoreLineItems(IList<LineItem> items)
+    {
+        _items = items;
     }
 
     public void AddItem(Guid productId, string currency, double amount, int quantity)
@@ -84,7 +93,7 @@ public class Order : Observable
         double total = 0;
         foreach (var lineItem in _items)
         {
-            total += lineItem.Price.Amount * lineItem.Quantity; 
+            total += lineItem.Amount * lineItem.Quantity; 
         }
 
         if (Coupon is not null)
@@ -93,14 +102,6 @@ public class Order : Observable
         }
 
         return Math.Round(total, 2);
-    }
-
-    public void RestoreLineItens(ICollection<LineItem> lineItens)
-    {
-        foreach (var item in lineItens)
-        {
-            _items.Add(item);
-        }
     }
 
     public void Cancel()
@@ -120,7 +121,7 @@ public class Order : Observable
          Notify(new OrderCheckedout(
               Id,
               CalculateTotal(),
-              Items.Select(li => new LineItemOrderCheckedout(li.Id, li.ProductId, li.Quantity, li.Price.Amount)),
+              Items.Select(li => new LineItemOrderCheckedout(li.Id, li.ProductId, li.Quantity, li.Amount)),
               CustomerId,
               paymentType,
               cardToken,

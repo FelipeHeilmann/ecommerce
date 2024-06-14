@@ -7,7 +7,9 @@ public class LineItem
     public Guid Id { get; private set; }
     public Guid OrderId { get; private set; }
     public Guid ProductId { get; private set; }
-    public Money Price { get; private set; }
+    private Money _price;
+    public string Currency => _price.Currency;
+    public double Amount => _price.Amount;
     public int Quantity { get; private set; }
 
     public LineItem(Guid id, Guid orderId, Guid productId, Money price, int quantity)
@@ -15,12 +17,8 @@ public class LineItem
         Id = id;
         OrderId = orderId;
         ProductId = productId;
-        Price = price;
+        _price = price;
         Quantity = quantity;
-    }
-
-    public LineItem()
-    {
     }
 
     public void AddQuantity(int quantity)
