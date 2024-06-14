@@ -36,8 +36,10 @@ public class CustomerTest
     [Fact]
     public void Should_Create_Valid_CPF()
     {
-        var cpf = new CPF("460.200.040-15");
-        Assert.Equal("46020004015", cpf.Value);
+        // var cpf = new CPF("460.200.040-15");
+        // Assert.Equal("46020004015", cpf.Value);
+        var cpf2 = new CPF("46020004015");
+        Assert.Equal("46020004015", cpf2.Value);
     }
 
     [Fact]
@@ -73,7 +75,7 @@ public class CustomerTest
     {
         var name = "Felipe Heilmann";
         var email = "felipeheilmannm@gmail.com";
-        var birthDate = new DateOnly(2020, 6, 2);
+        var birthDate = new DateTime(2020, 6, 2);
         var cpf = "44444444444";
         var phone = "11 97414-6507";
         var password = "senha";

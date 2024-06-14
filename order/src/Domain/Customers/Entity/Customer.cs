@@ -14,10 +14,10 @@ public class Customer
     public string CPF { get => _cpf.Value; }
     public string Phone { get => _phone.Value; }
     public string Password { get; private set; }
-    public DateOnly BirthDate { get; private set; }
+    public DateTime BirthDate { get; private set; }
     public DateTime CreatedAt { get; private set; }
 
-    public Customer(Guid id, Name name, Email email, CPF cpf, Phone phone, string password, DateOnly birthDate, DateTime createdAt)
+    private Customer(Guid id, Name name, Email email, CPF cpf, Phone phone, string password, DateTime birthDate, DateTime createdAt)
     {
         Id = id;
         _name = name;
@@ -29,18 +29,21 @@ public class Customer
         Password = password;
     }
 
-    protected Customer() { }
-
-    public static Customer Create(string name, string email, string password, DateOnly birthDate, string cpf, string phone)
+    public static Customer Create(string name, string email, string password, DateTime birthDate, string cpf, string phone)
     {
         if (!IsOldEnough(birthDate)) throw new UnderAge();
 
         return new Customer(Guid.NewGuid(), new Name(name), new Email(email), new CPF(cpf), new Phone(phone), password, birthDate, DateTime.UtcNow);
     }
 
-    private static bool IsOldEnough(DateOnly birthDate)
+    public static Customer Restore(Guid id, string name, string email, string cpf, string phone, string password, DateTime birthDate, DateTime createdAt)
     {
-        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        return new Customer(id, new Name(name), new Email(email), new CPF(cpf), new Phone(phone), password, birthDate, createdAt);
+    }
+
+    private static bool IsOldEnough(DateTime birthDate)
+    {
+        var today = DateTime.Now;
         var age = today.Year - birthDate.Year;
         if (today.Month < birthDate.Month || today.Month == birthDate.Month && today.Day < birthDate.Day)
         {
