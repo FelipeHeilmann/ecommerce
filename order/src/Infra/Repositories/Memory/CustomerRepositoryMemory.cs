@@ -32,32 +32,34 @@ namespace Infra.Repositories.Memory
             return Task.FromResult(_customers.Any(c => c.Email == email));
         }
 
-        public void Add(Customer entity)
+        public Task Add(Customer entity)
         {
             _customers.Add(entity);
+             return Task.CompletedTask;
         }
 
-        public void Update(Customer entity)
+        public Task Update(Customer entity)
         {
             var index = _customers.FindIndex(c => c.Id == entity.Id);
 
             if (index == -1)
             {
-                return;
+                 return Task.CompletedTask;;
             }
 
             _customers[index] = entity;
-
+            return Task.CompletedTask;
         }
 
-        public void Delete(Customer entity)
+        public Task Delete(Customer entity)
         {
             _customers.Remove(entity);
+             return Task.CompletedTask;
         }
 
         public IQueryable<Customer> GetQueryable(CancellationToken cancellation)
         {
-            throw new NotImplementedException();
+            return _customers.AsQueryable();
         }
     }
 }

@@ -7,12 +7,10 @@ namespace Infra.Repositories.Memory
     public class ProductRepositoryMemory : IProductRepository
     {
         private List<Product> _products;
-        private List<Category> _categories;
 
         public ProductRepositoryMemory()
         {
             _products = [];
-            _categories = [];
         }
 
         public IQueryable<Product> GetQueryable(CancellationToken cancellation)
@@ -33,26 +31,29 @@ namespace Infra.Repositories.Memory
             var products = _products.Where(p => Ids.Contains(p.Id)).ToList();
             return Task.FromResult<ICollection<Product>>(products);
         }
-        public void Add(Product entity)
+        public Task Add(Product entity)
         {
             _products.Add(entity);
+            return Task.CompletedTask;
         }
 
-        public void Update(Product entity)
+        public Task Update(Product entity)
         {
             var index = _products.FindIndex(p => p.Id == entity.Id);
 
             if (index == -1)
             {
-                return;
+                return Task.CompletedTask;;
             }
 
             _products[index] = entity;
+            return Task.CompletedTask;
 
         }
-        public void Delete(Product entity)
+        public Task Delete(Product entity)
         {
             _products.Remove(entity);
+            return Task.CompletedTask;
         }
 
     }

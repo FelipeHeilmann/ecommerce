@@ -21,29 +21,32 @@ public class CategoryRepositoryMemory : ICategoryRepository
     {
         return Task.FromResult(categories.FirstOrDefault(c => c.Id == id));
     }
-    public void Add(Category entity)
+    public Task Add(Category entity)
     {
         categories.Add(entity);
+         return Task.CompletedTask;
     }
 
-    public void Update(Category entity)
+    public Task Update(Category entity)
     {
         var index = categories.FindIndex(o => o.Id == entity.Id);
 
         if (index == -1)
         {
-            return;
+             return Task.CompletedTask;;
         }
 
         categories[index] = entity;
+         return Task.CompletedTask;
     }
-    public void Delete(Category entity)
+    public Task Delete(Category entity)
     {
         categories.Remove(entity);
+         return Task.CompletedTask;
     }
 
     public IQueryable<Category> GetQueryable(CancellationToken cancellation)
     {
-        throw new NotImplementedException();
+        return categories.AsQueryable();
     }
 }

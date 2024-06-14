@@ -27,26 +27,29 @@ namespace Infra.Repositories.Memory
             return Task.FromResult<ICollection<Order>>(_orders.Where(o => o.CustomerId == customerId).ToList());
         }
 
-        public void Add(Order entity)
+        public Task Add(Order entity)
         {
-            _orders.Add(entity);
+            _orders.Add(entity); 
+            return Task.CompletedTask;
         }
 
-        public void Update(Order entity)
+        public Task Update(Order entity)
         {
             var index = _orders.FindIndex(o => o.Id == entity.Id);
 
             if (index == -1)
             {
-                return;
+                 return Task.CompletedTask;;
             }
 
             _orders[index] = entity;
+            return Task.CompletedTask;
         }
 
-        public void Delete(Order entity)
+        public Task Delete(Order entity)
         {
             _orders.Remove(entity);
+            return Task.CompletedTask;
         }
 
         public Task<Order?> GetCategoryById(Guid id)

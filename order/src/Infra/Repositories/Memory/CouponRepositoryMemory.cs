@@ -32,23 +32,26 @@ public class CouponRepositoryMemory : ICouponRepository
         return Task.FromResult(coupons.First(coupon => coupon.Name == name) ?? null);
     }
 
-    public void Add(Coupon entity)
+    public Task Add(Coupon entity)
     {
         coupons.Add(entity);
+         return Task.CompletedTask;
     }
 
-    public void Update(Coupon entity)
+    public Task Update(Coupon entity)
     {
         var index = coupons.FindIndex(coupon => coupon.Id == entity.Id);
         if (index == -1)
         {
-            return;
+            return Task.CompletedTask;;
         }
         coupons[index] = entity;
+         return Task.CompletedTask;
     }
 
-    public void Delete(Coupon entity)
+    public Task Delete(Coupon entity)
     {
         coupons.Remove(entity);
+        return Task.CompletedTask;
     }
 }

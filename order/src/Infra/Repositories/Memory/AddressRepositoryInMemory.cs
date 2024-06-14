@@ -31,25 +31,28 @@ public class AddressRepositoryInMemory : IAddressRepository
         return Task.FromResult<ICollection<Address>>(_addresses.Where(a => a.CustomerId == customerId).ToList());
     }
 
-    public void Add(Address entity)
+    public Task Add(Address entity)
     {
         _addresses.Add(entity);
+        return Task.CompletedTask;
     }
 
-    public void Update(Address entity)
+    public Task Update(Address entity)
     {
         var index = _addresses.FindIndex(a => a.Id == entity.Id);
 
         if (index == -1)
         {
-            return;
+             return Task.CompletedTask;
         }
 
         _addresses[index] = entity;
+        return Task.CompletedTask;
     }
 
-    public void Delete(Address entity)
+    public Task Delete(Address entity)
     {
         _addresses.Remove(entity);
+         return Task.CompletedTask;
     }
 }
