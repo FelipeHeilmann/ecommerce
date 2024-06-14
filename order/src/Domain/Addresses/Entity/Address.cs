@@ -17,8 +17,7 @@ public class Address
     public string State { get; private set; }
     public string Country { get; private set; }
 
-    public Address() { }
-    public Address(
+    private Address(
         Guid id,
         Guid customerId,
         ZipCode zipCode,
@@ -68,6 +67,21 @@ public class Address
             state,
             country
         );
+    }
+
+    public static Address Restore(
+        Guid id, 
+        Guid customerId,
+        string zipCode,
+        string street,
+        string neighborhood,
+        string number,
+        string? complement,
+        string city,
+        string state,
+        string country)
+    {
+        return new Address(id, customerId, new ZipCode(zipCode), street, neighborhood, number, complement, city, state, country);
     }
 
     public void Update(
