@@ -23,7 +23,7 @@ public class OrderRepositoryDatabase : IOrderRepository
         {
             if(order is not null) 
             {
-                var lineItems = await _connection.Query("select * from line_item where order_id = @OrderId", new { OrderId = order.Id }, MapLineItem);
+                var lineItems = await _connection.Query("select * from line_items where order_id = @OrderId", new { OrderId = order.Id }, MapLineItem);
                 order.RestoreLineItems(lineItems.ToList());
             }
         }    
@@ -36,7 +36,7 @@ public class OrderRepositoryDatabase : IOrderRepository
         var order = orders.FirstOrDefault();
         if(order is not null) 
         {
-            var lineItems = await _connection.Query("select * from line_item where order_id = @OrderId", new { OrderId = id }, MapLineItem);
+            var lineItems = await _connection.Query("select * from line_items where order_id = @OrderId", new { OrderId = id }, MapLineItem);
             order.RestoreLineItems(lineItems.ToList());
         }
         return order;
@@ -48,7 +48,7 @@ public class OrderRepositoryDatabase : IOrderRepository
         var order = orders.FirstOrDefault();       
         if(order is not null) 
         {
-            var lineItems = await _connection.Query("select * from line_item where order_id = @OrderId", new { OrderId = order.Id }, MapLineItem);
+            var lineItems = await _connection.Query("select * from line_items where order_id = @OrderId", new { OrderId = order.Id }, MapLineItem);
             order.RestoreLineItems(lineItems.ToList());
         }
         return order;
@@ -61,7 +61,7 @@ public class OrderRepositoryDatabase : IOrderRepository
         {
             if(order is not null) 
             {
-                var lineItems = await _connection.Query("select * from line_item where order_id = @OrderId", new { OrderId = order.Id }, MapLineItem);
+                var lineItems = await _connection.Query("select * from line_items where order_id = @OrderId", new { OrderId = order.Id }, MapLineItem);
                 order.RestoreLineItems(lineItems.ToList());
             }
         }    
@@ -75,7 +75,7 @@ public class OrderRepositoryDatabase : IOrderRepository
         {
             if(order is not null) 
             {
-                var lineItems = _connection.Query("select * from line_item where order_id = @OrderId", new { OrderId = order.Id }, MapLineItem).Result;
+                var lineItems = _connection.Query("select * from line_items where order_id = @OrderId", new { OrderId = order.Id }, MapLineItem).Result;
                 order.RestoreLineItems(lineItems.ToList());
             }
         }    
@@ -98,7 +98,7 @@ public class OrderRepositoryDatabase : IOrderRepository
         await _connection.Query<Task>("insert into orders (id, status, customer_id, created_at, updated_at, billing_address_id, shipping_address_id, coupon_id) values (@Id, @Status, @CustomerId, @CreatedAt, @UpdatedAt, @BillingAddressId, @ShippingAddressId, @CouponId)", orderParams);
         foreach(var item in entity.Items) 
         {
-            await _connection.Query<Task>("insert into line_item (id, order_id, product_id, quantity, currency, amount) values (@Id, @OrderId, @ProductId, @Quantity, @Currency, @Amount)",item);
+            await _connection.Query<Task>("insert into line_items (id, order_id, product_id, quantity, currency, amount) values (@Id, @OrderId, @ProductId, @Quantity, @Currency, @Amount)",item);
         }
     }
 
@@ -130,7 +130,7 @@ public class OrderRepositoryDatabase : IOrderRepository
     foreach (var newItem in newItems)
     {
         await _connection.Query<Task>(
-            "INSERT INTO line_item (id, order_id, product_id, quantity, currency, amount) VALUES (@Id, @OrderId, @ProductId, @Quantity, @Currency, @Amount)", 
+            "INSERT INTO line_items (id, order_id, product_id, quantity, currency, amount) VALUES (@Id, @OrderId, @ProductId, @Quantity, @Currency, @Amount)", 
             new {
                 newItem.Id,
                 newItem.OrderId,
@@ -143,19 +143,19 @@ public class OrderRepositoryDatabase : IOrderRepository
 
     foreach (var removedItem in removedItems)
     {
-        await _connection.Query<Task>("DELETE FROM line_item WHERE id = @Id",new { removedItem.Id });
+        await _connection.Query<Task>("DELETE FROM line_items WHERE id = @Id",new { removedItem.Id });
     }
 
     foreach (var updatedItem in updatedItems)
     {
-        await _connection.Query<Task>("UPDATE line_item SET quantity = @Quantity  WHERE id = @Id", new { updatedItem.Quantity, updatedItem.Id,  });
+        await _connection.Query<Task>("UPDATE line_items SET quantity = @Quantity  WHERE id = @Id", new { updatedItem.Quantity, updatedItem.Id,  });
     }
 }
 
     public async Task Delete(Order entity)
     {
         //TODO - transaction
-        await _connection.Query<Task>("delete from line_item where order_id = @OrderId", new { OrderId = entity.Id });
+        await _connection.Query<Task>("delete from line_items where order_id = @OrderId", new { OrderId = entity.Id });
         await _connection.Query<Task>("delete from orders where id = @Id", new { entity.Id });
     }
 
