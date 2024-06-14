@@ -1,5 +1,4 @@
 ﻿using Application.Abstractions.Messaging;
-using Application.Data;
 using Domain.Shared;
 using Domain.Orders.Repository;
 using Domain.Addresses.Error;
@@ -22,7 +21,6 @@ public class CheckoutOrderCommandHandler : ICommandHandler<CheckoutOrderCommand,
     private readonly IAddressRepository _addressRepository;
     private readonly ICouponRepository _couponRepository;
     private readonly IQueue _queue;
-    private readonly IUnitOfWork _unitOfWork;
 
     public CheckoutOrderCommandHandler
     (
@@ -31,7 +29,6 @@ public class CheckoutOrderCommandHandler : ICommandHandler<CheckoutOrderCommand,
         IProductRepository productRepository,
         IAddressRepository addressRepository,
         ICouponRepository couponRepository,
-        IUnitOfWork unitOfWork,
         IQueue queue)
     {
         _orderRepository = orderRepository;
@@ -39,7 +36,6 @@ public class CheckoutOrderCommandHandler : ICommandHandler<CheckoutOrderCommand,
         _productRepository = productRepository;
         _addressRepository = addressRepository;
         _couponRepository = couponRepository;
-        _unitOfWork = unitOfWork;
         _queue = queue;
     }
 
@@ -83,9 +79,7 @@ public class CheckoutOrderCommandHandler : ICommandHandler<CheckoutOrderCommand,
 
         order.Checkout(shippingAddress.Id, billingAddress.Id, command.PaymentType, command.CardToken, command.Installments);
 
-        _orderRepository.Add(order);
-
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await _orderRepository.Add(order);
 
         return order.Id;
     }

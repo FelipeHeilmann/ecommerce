@@ -1,5 +1,4 @@
 ﻿using Application.Abstractions.Messaging;
-using Application.Data;
 using Domain.Categories.Error;
 using Domain.Categories.Repository;
 using Domain.Products.Entity;
@@ -13,12 +12,9 @@ public class UpdateProductCommandHandler : ICommandHandler<UpdateProductCommand>
 {
     private readonly IProductRepository _productRepository;
     private readonly ICategoryRepository _categoryRepository;
-    private readonly IUnitOfWork _unitOfWork;
-
-    public UpdateProductCommandHandler(IProductRepository repository, ICategoryRepository categoryRepository, IUnitOfWork unitOfWork)
+    public UpdateProductCommandHandler(IProductRepository repository, ICategoryRepository categoryRepository)
     {
         _productRepository = repository;
-        _unitOfWork = unitOfWork;
         _categoryRepository = categoryRepository;
     }
 
@@ -34,9 +30,7 @@ public class UpdateProductCommandHandler : ICommandHandler<UpdateProductCommand>
 
         product.Update(command.Name, command.Description, command.ImageUrl, command.Currency, command.Price, command.Sku, category);
 
-        _productRepository.Update(product);
-
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await _productRepository.Update(product);
 
         return Result.Success();
     }

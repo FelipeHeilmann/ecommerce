@@ -1,5 +1,4 @@
 ﻿using Application.Abstractions.Messaging;
-using Application.Data;
 using Domain.Categories.Entity;
 using Domain.Categories.Error;
 using Domain.Categories.Repository;
@@ -10,12 +9,10 @@ namespace Application.Categories.Update;
 public class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategoryCommand>
 {
     private readonly ICategoryRepository _categoryRepository;
-    private readonly IUnitOfWork _unitOfWork;
 
-    public UpdateCategoryCommandHandler(ICategoryRepository categoryRepository, IUnitOfWork unitOfWork)
+    public UpdateCategoryCommandHandler(ICategoryRepository categoryRepository)
     {
         _categoryRepository = categoryRepository;
-        _unitOfWork = unitOfWork;
     }
 
     public async Task<Result> Handle(UpdateCategoryCommand command, CancellationToken cancellationToken)
@@ -26,9 +23,7 @@ public class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategoryComman
 
         category.Update(command.Name, command.Description);
 
-        _categoryRepository.Update(category);
-
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await _categoryRepository.Update(category);
 
         return Result.Success();
     }

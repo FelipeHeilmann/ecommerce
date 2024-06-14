@@ -1,7 +1,6 @@
 using API.Middleware;
 using API.OptionSetup;
 using Infra;
-using Infra.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Serilog;
 
@@ -38,7 +37,6 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    app.ApplyMigrations();
 }
 
 app.UseAuthentication();

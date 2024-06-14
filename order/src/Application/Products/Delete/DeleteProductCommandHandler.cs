@@ -1,5 +1,4 @@
 ﻿using Application.Abstractions.Messaging;
-using Application.Data;
 using Domain.Products.Error;
 using Domain.Products.Repository;
 using Domain.Shared;
@@ -9,12 +8,10 @@ namespace Application.Products.Delete;
 public class DeleteProductCommandHandler : ICommandHandler<DeleteProductCommand>
 {
     private readonly IProductRepository _repository;
-    private readonly IUnitOfWork _unitOfWork;
 
-    public DeleteProductCommandHandler(IProductRepository repository, IUnitOfWork unitOfWork)
+    public DeleteProductCommandHandler(IProductRepository repository)
     {
         _repository = repository;
-        _unitOfWork = unitOfWork;
     }
 
     public async Task<Result> Handle(DeleteProductCommand command, CancellationToken cancellationToken)
@@ -23,9 +20,7 @@ public class DeleteProductCommandHandler : ICommandHandler<DeleteProductCommand>
 
         if (product == null) return Result.Failure(ProductErrors.ProductNotFound);
 
-        _repository.Delete(product);
-
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await _repository.Delete(product);
 
         return Result.Success(product);
     }

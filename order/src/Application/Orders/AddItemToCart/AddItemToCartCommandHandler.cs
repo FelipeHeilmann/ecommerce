@@ -1,5 +1,4 @@
 ﻿using Application.Abstractions.Messaging;
-using Application.Data;
 using Domain.Orders.Entity;
 using Domain.Orders.Error;
 using Domain.Orders.Repository;
@@ -13,13 +12,11 @@ public class AddItemToCartCommandHandler : ICommandHandler<AddItemToCartCommand>
 {
     private IOrderRepository _orderRepository;
     private IProductRepository _productRepository;
-    private IUnitOfWork _unitOfWork;
 
-    public AddItemToCartCommandHandler(IOrderRepository orderRepository, IProductRepository productRepository, IUnitOfWork unitOfWork)
+    public AddItemToCartCommandHandler(IOrderRepository orderRepository, IProductRepository productRepository)
     {
         _orderRepository = orderRepository;
         _productRepository = productRepository;
-        _unitOfWork = unitOfWork;
     }
 
     public async Task<Result> Handle(AddItemToCartCommand command, CancellationToken cancellationToken)
@@ -38,14 +35,12 @@ public class AddItemToCartCommandHandler : ICommandHandler<AddItemToCartCommand>
 
         if (existingCart == null)
         {
-            _orderRepository.Add(order);
+            await _orderRepository.Add(order);
         }
         else
         {
-            _orderRepository.Update(order);
+            await _orderRepository.Update(order);
         }
-
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }

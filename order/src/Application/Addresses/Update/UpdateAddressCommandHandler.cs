@@ -1,5 +1,4 @@
 ﻿using Application.Abstractions.Messaging;
-using Application.Data;
 using Domain.Addresses.Entity;
 using Domain.Addresses.Error;
 using Domain.Addresses.Repository;
@@ -10,12 +9,10 @@ namespace Application.Addresses.Update;
 public class UpdateAddressCommandHandler : ICommandHandler<UpdateAddressCommand>
 {
     private readonly IAddressRepository _addressRepository;
-    private readonly IUnitOfWork _unitOfWork;
 
-    public UpdateAddressCommandHandler(IAddressRepository addressRepository, IUnitOfWork unitOfWork)
+    public UpdateAddressCommandHandler(IAddressRepository addressRepository)
     {
         _addressRepository = addressRepository;
-        _unitOfWork = unitOfWork;
     }
 
     public async Task<Result> Handle(UpdateAddressCommand command, CancellationToken cancellationToken)
@@ -36,9 +33,7 @@ public class UpdateAddressCommandHandler : ICommandHandler<UpdateAddressCommand>
             command.Country
          );
 
-        _addressRepository.Update(address);
-
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+       await _addressRepository.Update(address);
 
         return Result.Success();
     }

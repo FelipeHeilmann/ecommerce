@@ -2,7 +2,6 @@
 using Application.Abstractions.Query;
 using Application.Abstractions.Queue;
 using Application.Abstractions.Services;
-using Application.Data;
 using Application.Orders.Consumer;
 using Application.Orders.OrderPaymentUrl;
 using Domain.Addresses.Repository;
@@ -13,12 +12,12 @@ using Domain.Orders.Repository;
 using Domain.Products.Repository;
 using Infra.Authenication;
 using Infra.Context;
-using Infra.Data;
+using Infra.Database;
 using Infra.Implementations;
 using Infra.Queue;
 using Infra.Repositories.Database;
+using Infra.Repositories.Memory;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -30,14 +29,6 @@ public static class DependecyInjection
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddDbContext<ApplicationContext>(opt =>
-        {
-            opt
-            .UseNpgsql(configuration.GetConnectionString("Database"))
-            .UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll)
-            .EnableSensitiveDataLogging(true);
-        }, ServiceLifetime.Scoped);
-
         services.AddSingleton<IQueue, RabbitMQAdapter>(provider =>
         {
             var rabbitMQAdapter = new RabbitMQAdapter(configuration);
@@ -45,18 +36,17 @@ public static class DependecyInjection
             return rabbitMQAdapter;
         });
 
-        services.AddScoped<ICustomerRepository, CustomerRepository>();
-        services.AddScoped<IOrderRepository, OrderRepository>();
-        services.AddScoped<IProductRepository, ProductRepository>();
-        services.AddScoped<ICategoryRepository, CategoryRepository>();
-        services.AddScoped<IAddressRepository, AddressRepository>();
-        services.AddScoped<ICouponRepository, CouponRepository>();
+        services.AddScoped<IDatabaseConnection, NpgsqlAdapter>();
+        services.AddScoped<ICustomerRepository, CustomerRepositoryDatabase>();
+        services.AddScoped<IOrderRepository, OrderRepositoryMemory>();
+        services.AddScoped<IProductRepository, ProductRepositoryMemory>();
+        services.AddScoped<ICategoryRepository, CategoryRepositoryMemory>();
+        services.AddScoped<IAddressRepository, AddressRepositoryInMemory>();
+        services.AddScoped<ICouponRepository, CouponRepositoryMemory>();
         services.AddScoped<IOrderQueryContext, MongoOrderContext>();
 
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IJwtProvider, JwtProvider>();
-
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         services.AddHostedService<OrderPaymentUrlConsumer>();
         services.AddHostedService<TransactionStatusConsumer>();

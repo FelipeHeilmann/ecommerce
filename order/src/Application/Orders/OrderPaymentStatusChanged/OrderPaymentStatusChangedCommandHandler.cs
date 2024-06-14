@@ -1,5 +1,4 @@
 ﻿using Application.Abstractions.Messaging;
-using Application.Data;
 using Domain.Orders.Error;
 using Domain.Orders.Repository;
 using Domain.Shared;
@@ -9,12 +8,10 @@ namespace Application.Orders.OrderPaymentStatusChanged;
 public class OrderPaymentStatusChangedCommandHandler : ICommandHandler<OrderPaymentStatusChangedCommand>
 {
     private readonly IOrderRepository _orderRepository;
-    private readonly IUnitOfWork _unitOfWork;
 
-    public OrderPaymentStatusChangedCommandHandler(IOrderRepository orderRepository, IUnitOfWork unitOfWork)
+    public OrderPaymentStatusChangedCommandHandler(IOrderRepository orderRepository)
     {
         _orderRepository = orderRepository;
-        _unitOfWork = unitOfWork;
     }
 
     public async Task<Result> Handle(OrderPaymentStatusChangedCommand command, CancellationToken cancellationToken)
@@ -31,9 +28,7 @@ public class OrderPaymentStatusChangedCommandHandler : ICommandHandler<OrderPaym
             order.RejectPayment();
         }
 
-        _orderRepository.Update(order);
-
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await _orderRepository.Update(order);
 
         return Result.Success();
     }

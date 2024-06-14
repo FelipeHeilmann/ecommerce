@@ -1,5 +1,4 @@
 ﻿using Application.Abstractions.Queue;
-using Application.Data;
 using Application.Orders.OrderPaymentStatusChanged;
 using Domain.Orders.Event;
 using Domain.Orders.Repository;
@@ -29,11 +28,10 @@ public class TransactionStatusConsumer : BackgroundService
             using (var scope = _serviceProvider.CreateAsyncScope()) 
             {
                 var orderRepository = scope.ServiceProvider.GetRequiredService<IOrderRepository>();
-                var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
 
                 var orderPaymentStatusChangedCommand = new OrderPaymentStatusChangedCommand(message.OrderId, message.Status);
 
-                var orderPaymentStatusChangedCommandHandler = new OrderPaymentStatusChangedCommandHandler(orderRepository, unitOfWork);
+                var orderPaymentStatusChangedCommandHandler = new OrderPaymentStatusChangedCommandHandler(orderRepository);
 
                 await orderPaymentStatusChangedCommandHandler.Handle(orderPaymentStatusChangedCommand, stoppingToken);
             }

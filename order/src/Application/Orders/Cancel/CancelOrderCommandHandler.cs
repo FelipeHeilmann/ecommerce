@@ -1,6 +1,5 @@
 ﻿using Application.Abstractions.Messaging;
 using Application.Abstractions.Queue;
-using Application.Data;
 using Domain.Orders.Entity;
 using Domain.Orders.Error;
 using Domain.Orders.Repository;
@@ -11,13 +10,11 @@ namespace Application.Orders.Cancel;
 public class CancelOrderCommandHandler : ICommandHandler<CancelOrderCommand, Order>
 {
     private readonly IOrderRepository _repository;
-    private readonly IUnitOfWork _unitOfWork;
     private readonly IQueue _queue;
 
-    public CancelOrderCommandHandler(IOrderRepository repository, IUnitOfWork unitOfWork, IQueue queue)
+    public CancelOrderCommandHandler(IOrderRepository repository, IQueue queue)
     {
         _repository = repository;
-        _unitOfWork = unitOfWork;
         _queue = queue;
     }
 
@@ -33,9 +30,7 @@ public class CancelOrderCommandHandler : ICommandHandler<CancelOrderCommand, Ord
 
         order.Cancel();
 
-        _repository.Update(order);
-
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await _repository.Update(order);
 
         return Result.Success(order);
     }
