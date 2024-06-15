@@ -11,8 +11,6 @@ using Domain.Addresses.Repository;
 using Domain.Customers.Repository;
 using Domain.Products.Repository;
 using Application.Customers.Create;
-using Infra.Implementations;
-using Application.Abstractions.Services;
 using Application.Products.Create;
 using Domain.Categories.Repository;
 using Application.Categories.Create;
@@ -37,7 +35,6 @@ public class OrderTest
     private readonly ICategoryRepository categoryRepository;
     private readonly ICouponRepository couponRepository;
     private readonly IOrderQueryContext orderQueryContext;
-    private readonly IPasswordHasher passwordHasher;
     private readonly IQueue queue;
 
     public OrderTest()
@@ -49,7 +46,6 @@ public class OrderTest
         categoryRepository = new CategoryRepositoryMemory();
         couponRepository = new CouponRepositoryMemory();
         orderQueryContext = new MemoryOrderContext();
-        passwordHasher = new PasswordHasher();
         queue = new MemoryMQAdapter();
     }
 
@@ -58,7 +54,7 @@ public class OrderTest
     {
         var inputCreateCustomer = new CreateCustomerCommand("John Doe", "john.doe@gmail.com", "abc123", new DateTime(2004, 11, 06), "659.232.850-96", "(11) 97414-6507");
 
-        var createCustomerCommandHandler = new CreateCustomerCommandHandler(customerRepository, passwordHasher, queue);
+        var createCustomerCommandHandler = new CreateCustomerCommandHandler(customerRepository, queue);
 
         var outputCreateCustomer = await createCustomerCommandHandler.Handle(inputCreateCustomer, CancellationToken.None);
 
@@ -90,7 +86,7 @@ public class OrderTest
     {
         var inputCreateCustomer = new CreateCustomerCommand("John Doe", "john.doe@gmail.com", "abc123", new DateTime(2004, 11, 06), "659.232.850-96", "(11) 97414-6507");
 
-        var createCustomerCommandHandler = new CreateCustomerCommandHandler(customerRepository, passwordHasher, queue);
+        var createCustomerCommandHandler = new CreateCustomerCommandHandler(customerRepository, queue);
 
         var outputCreateCustomer = await createCustomerCommandHandler.Handle(inputCreateCustomer, CancellationToken.None);
 
@@ -157,7 +153,7 @@ public class OrderTest
 
         var inputCreateCustomer = new CreateCustomerCommand("John Doe", "john.doe@gmail.com", "abc123", new DateTime(2004, 11, 06), "659.232.850-96", "(11) 97414-6507");
 
-        var createCustomerCommandHandler = new CreateCustomerCommandHandler(customerRepository, passwordHasher, queue);
+        var createCustomerCommandHandler = new CreateCustomerCommandHandler(customerRepository, queue);
 
         var outputCreateCustomer = await createCustomerCommandHandler.Handle(inputCreateCustomer, CancellationToken.None);
 
@@ -219,7 +215,7 @@ public class OrderTest
     { 
         var inputCreateCustomer = new CreateCustomerCommand("John Doe", "john.doe@gmail.com", "abc123", new DateTime(2004, 11, 06), "659.232.850-96", "(11) 97414-6507");
 
-        var createCustomerCommandHandler = new CreateCustomerCommandHandler(customerRepository, passwordHasher, queue);
+        var createCustomerCommandHandler = new CreateCustomerCommandHandler(customerRepository, queue);
 
         var outputCreateCustomer = await createCustomerCommandHandler.Handle(inputCreateCustomer, CancellationToken.None);
 
@@ -267,7 +263,7 @@ public class OrderTest
     {
         var inputCreateCustomer = new CreateCustomerCommand("John Doe", "john.doe@gmail.com", "abc123", new DateTime(2004, 11, 06), "659.232.850-96", "(11) 97414-6507");
 
-        var createCustomerCommandHandler = new CreateCustomerCommandHandler(customerRepository, passwordHasher, queue);
+        var createCustomerCommandHandler = new CreateCustomerCommandHandler(customerRepository, queue);
 
         var outputCreateCustomer = await createCustomerCommandHandler.Handle(inputCreateCustomer, CancellationToken.None);
 
@@ -328,7 +324,7 @@ public class OrderTest
     {
         var inputCreateCustomer = new CreateCustomerCommand("John Doe", "john.doe@gmail.com", "abc123", new DateTime(2004, 11, 06), "659.232.850-96", "(11) 97414-6507");
 
-        var createCustomerCommandHandler = new CreateCustomerCommandHandler(customerRepository, passwordHasher, queue);
+        var createCustomerCommandHandler = new CreateCustomerCommandHandler(customerRepository, queue);
 
         var outputCreateCustomer = await createCustomerCommandHandler.Handle(inputCreateCustomer, CancellationToken.None);
 
@@ -391,7 +387,7 @@ public class OrderTest
     {
         var inputCreateCustomer = new CreateCustomerCommand("John Doe", "john.doe@gmail.com", "abc123", new DateTime(2004, 11, 06), "659.232.850-96", "(11) 97414-6507");
 
-        var createCustomerCommandHandler = new CreateCustomerCommandHandler(customerRepository, passwordHasher, queue);
+        var createCustomerCommandHandler = new CreateCustomerCommandHandler(customerRepository, queue);
 
         var outputCreateCustomer = await createCustomerCommandHandler.Handle(inputCreateCustomer, CancellationToken.None);
 
