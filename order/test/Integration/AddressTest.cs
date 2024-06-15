@@ -5,10 +5,8 @@ using Application.Addresses.GetByCustomerId;
 using Application.Addresses.GetById;
 using Application.Addresses.Update;
 using Application.Customers.Create;
-using Application.Data;
 using Domain.Addresses.Repository;
 using Domain.Customers.Repository;
-using Infra.Data;
 using Infra.Implementations;
 using Infra.Queue;
 using Infra.Repositories.Memory;
@@ -18,24 +16,31 @@ namespace Integration;
 
 public class AddressTest
 {
-    private readonly IAddressRepository addressRepository = new AddressRepositoryInMemory();
-    private readonly ICustomerRepository customerRepository = new CustomerRepositoryMemory();
-    private readonly IPasswordHasher passwordHasher = new PasswordHasher();
-    private readonly IQueue queue = new MemoryMQAdapter();
-    private readonly IUnitOfWork unitOfWork = new UnitOfWorkMemory();
+    private readonly IAddressRepository addressRepository;
+    private readonly ICustomerRepository customerRepository;
+    private readonly IPasswordHasher passwordHasher;
+    private readonly IQueue queue;
+
+    public AddressTest() 
+    {
+        addressRepository = new AddressRepositoryMemory();
+        customerRepository = new CustomerRepositoryMemory();
+        passwordHasher = new PasswordHasher();
+        queue = new MemoryMQAdapter();
+    }
 
     [Fact]
     public async Task Sould_Create_Address()
     {
         var inputCreateCustomer = new CreateCustomerCommand("Felipe Heilmann", "felipeheilmannm@gmail.com", "senha", new DateTime(2004, 6, 2), "97067401046", "11 97414-6507");
 
-        var createAccountCommandHandler = new CreateCustomerCommandHandler(customerRepository, unitOfWork, passwordHasher, queue);
+        var createAccountCommandHandler = new CreateCustomerCommandHandler(customerRepository, passwordHasher, queue);
 
         var outputCreateCustomer = await createAccountCommandHandler.Handle(inputCreateCustomer, CancellationToken.None);
 
         var inputCreateAddress = new CreateAddressCommand(outputCreateCustomer.Value, "04182-123", "Rua C", "Jardim Sacoma", "112", "apt 43", "São Paulo", "São Paulo", "Brasil");
 
-        var createAddressCommandHandler = new CreateAddressCommandHandler(addressRepository, unitOfWork);
+        var createAddressCommandHandler = new CreateAddressCommandHandler(addressRepository);
 
         var outputCreateAddress = await createAddressCommandHandler.Handle(inputCreateAddress, CancellationToken.None);
 
@@ -53,7 +58,7 @@ public class AddressTest
     {
         var inputCreateCustomer = new CreateCustomerCommand("Felipe Heilmann", "felipeheilmannm@gmail.com", "senha", new DateTime(2004, 6, 2), "97067401046", "11 97414-6507");
 
-        var createAccountCommandHandler = new CreateCustomerCommandHandler(customerRepository, unitOfWork, passwordHasher, queue);
+        var createAccountCommandHandler = new CreateCustomerCommandHandler(customerRepository, passwordHasher, queue);
 
         var outputCreateCustomer = await createAccountCommandHandler.Handle(inputCreateCustomer, CancellationToken.None);
 
@@ -61,7 +66,7 @@ public class AddressTest
         var inputCreateAddress2 = new CreateAddressCommand(outputCreateCustomer.Value, "03246-435", "Rua A", "Jardim Sacoma", "115", null, "São Paulo", "São Paulo", "Brasil");
         var inputCreateAddress3= new CreateAddressCommand(outputCreateCustomer.Value, "04082-168", "Rua B", "Jardim Sacoma2", "116", "apt 49", "São Paulo", "São Paulo", "Brasil");
 
-        var createAddressCommandHandler = new CreateAddressCommandHandler(addressRepository, unitOfWork);
+        var createAddressCommandHandler = new CreateAddressCommandHandler(addressRepository);
 
         await createAddressCommandHandler.Handle(inputCreateAddress1, CancellationToken.None);
         await createAddressCommandHandler.Handle(inputCreateAddress2, CancellationToken.None);
@@ -79,7 +84,7 @@ public class AddressTest
 
 
         Assert.Equal("Rua A", outputGetAddresses.Value.ToList()[1].Street);
-        Assert.Equal(null, outputGetAddresses.Value.ToList()[1].Complement);
+        Assert.Null(outputGetAddresses.Value.ToList()[1].Complement);
         Assert.Equal("03246-435", outputGetAddresses.Value.ToList()[1].ZipCode);
 
 
@@ -94,19 +99,19 @@ public class AddressTest
     {
         var inputCreateCustomer = new CreateCustomerCommand("Felipe Heilmann", "felipeheilmannm@gmail.com", "senha", new DateTime(2004, 6, 2), "97067401046", "11 97414-6507");
 
-        var createAccountCommandHandler = new CreateCustomerCommandHandler(customerRepository, unitOfWork, passwordHasher, queue);
+        var createAccountCommandHandler = new CreateCustomerCommandHandler(customerRepository, passwordHasher, queue);
 
         var outputCreateCustomer = await createAccountCommandHandler.Handle(inputCreateCustomer, CancellationToken.None);
 
         var inputCreateAddress = new CreateAddressCommand(outputCreateCustomer.Value, "03246-435", "Rua A", "Jardim Sacoma", "115", null, "São Paulo", "São Paulo", "Brasil");
 
-        var createAddressCommandHandler = new CreateAddressCommandHandler(addressRepository, unitOfWork);
+        var createAddressCommandHandler = new CreateAddressCommandHandler(addressRepository);
 
         var outputCreateAddress = await createAddressCommandHandler.Handle(inputCreateAddress, CancellationToken.None);
 
         var inputUpdateAddress = new UpdateAddressCommand(outputCreateAddress.Value, outputCreateCustomer.Value, "04182-123", "Rua C", "Jardim Sacoma", "112", "apt 43", "São Paulo", "São Paulo", "Brasil");
 
-        var updateAddressCommandHandler = new UpdateAddressCommandHandler(addressRepository, unitOfWork);
+        var updateAddressCommandHandler = new UpdateAddressCommandHandler(addressRepository);
 
         await updateAddressCommandHandler.Handle(inputUpdateAddress, CancellationToken.None);
 

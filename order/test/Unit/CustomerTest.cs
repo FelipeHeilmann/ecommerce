@@ -36,10 +36,8 @@ public class CustomerTest
     [Fact]
     public void Should_Create_Valid_CPF()
     {
-        // var cpf = new CPF("460.200.040-15");
-        // Assert.Equal("46020004015", cpf.Value);
-        var cpf2 = new CPF("46020004015");
-        Assert.Equal("46020004015", cpf2.Value);
+        var cpf = new CPF("460.200.040-15");
+        Assert.Equal("46020004015", cpf.Value);
     }
 
     [Fact]

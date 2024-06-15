@@ -1,6 +1,5 @@
 ﻿using Domain.Addresses.Entity;
 using Domain.Addresses.Error;
-using NuGet.Frameworks;
 using Xunit;
 
 namespace Unit;

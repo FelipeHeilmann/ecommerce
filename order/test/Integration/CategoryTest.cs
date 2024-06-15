@@ -2,9 +2,7 @@
 using Application.Categories.GetAll;
 using Application.Categories.GetById;
 using Application.Categories.Update;
-using Application.Data;
 using Domain.Categories.Repository;
-using Infra.Data;
 using Infra.Repositories.Memory;
 using Xunit;
 
@@ -12,11 +10,11 @@ namespace Integration;
 
 public class CategoryTest
 {
-    private ICategoryRepository categoryRepository = new CategoryRepositoryMemory();
-    private IUnitOfWork unitOfWork = new UnitOfWorkMemory();
+    private ICategoryRepository categoryRepository;
 
     public CategoryTest() 
     {
+        categoryRepository =  new CategoryRepositoryMemory();
     }
 
     [Fact]
@@ -24,7 +22,7 @@ public class CategoryTest
     {
         var inputCreateCategory = new CreateCategoryCommand("minha categoria", "descricao da minha categoria");
 
-        var createCategoryCommandHandler = new CreateCatagoryCommandHandler(categoryRepository, unitOfWork);
+        var createCategoryCommandHandler = new CreateCatagoryCommandHandler(categoryRepository);
 
         var outputCreateCategory = await createCategoryCommandHandler.Handle(inputCreateCategory, CancellationToken.None);
 
@@ -41,7 +39,7 @@ public class CategoryTest
     {
         var inputCreateCategory = new CreateCategoryCommand("minha categoria", "descricao da minha categoria");
 
-        var commandHandler = new CreateCatagoryCommandHandler(categoryRepository, unitOfWork);
+        var commandHandler = new CreateCatagoryCommandHandler(categoryRepository);
 
         await commandHandler.Handle(inputCreateCategory, CancellationToken.None);
         await commandHandler.Handle(inputCreateCategory, CancellationToken.None);
@@ -64,13 +62,13 @@ public class CategoryTest
     {
         var inputCreateCategory = new CreateCategoryCommand("minha categoria", "descricao da minha categoria");
 
-        var commandHandler = new CreateCatagoryCommandHandler(categoryRepository, unitOfWork);
+        var commandHandler = new CreateCatagoryCommandHandler(categoryRepository);
 
         var outputCreateCategory = await commandHandler.Handle(inputCreateCategory, CancellationToken.None);
 
         var inputUpdateCategory = new UpdateCategoryCommand("nome editado", "descricao editada", outputCreateCategory.Value);
 
-        var updateCategoryCommandHandler = new UpdateCategoryCommandHandler(categoryRepository, unitOfWork);
+        var updateCategoryCommandHandler = new UpdateCategoryCommandHandler(categoryRepository);
 
         await updateCategoryCommandHandler.Handle(inputUpdateCategory, CancellationToken.None);
 

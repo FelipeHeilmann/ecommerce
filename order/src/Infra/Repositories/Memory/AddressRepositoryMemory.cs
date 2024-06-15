@@ -3,11 +3,11 @@ using Domain.Addresses.Repository;
 
 namespace Infra.Repositories.Memory;
 
-public class AddressRepositoryInMemory : IAddressRepository
+public class AddressRepositoryMemory : IAddressRepository
 {
     private readonly List<Address> _addresses;
 
-    public AddressRepositoryInMemory()
+    public AddressRepositoryMemory()
     {
         _addresses = [];
     }

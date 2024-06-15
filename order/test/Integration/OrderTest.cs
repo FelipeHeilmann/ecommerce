@@ -1,10 +1,8 @@
 ﻿using Application.Orders.Cancel;
 using Application.Orders.Model;
 using Application.Orders.GetCart;
-using Infra.Data;
 using Infra.Repositories.Memory;
 using Xunit;
-using Application.Data;
 using Application.Orders.Checkout;
 using Application.Abstractions.Queue;
 using Infra.Queue;
@@ -32,39 +30,51 @@ namespace Integration;
 
 public class OrderTest
 {
-    private readonly IOrderRepository orderRepository = new OrderRepositoryMemory();
-    private readonly ICustomerRepository customerRepository = new CustomerRepositoryMemory();
-    private readonly IProductRepository productRepository = new ProductRepositoryMemory();
-    private readonly IAddressRepository addressRepository = new AddressRepositoryInMemory();
-    private readonly ICategoryRepository categoryRepository = new CategoryRepositoryMemory();
-    private readonly ICouponRepository couponRepository = new CouponRepositoryMemory();
-    private readonly IOrderQueryContext orderQueryContext = new MemoryOrderContext();
-    private readonly IPasswordHasher passwordHasher = new PasswordHasher();
-    private readonly IQueue queue = new MemoryMQAdapter();
-    private readonly IUnitOfWork unitOfWork = new UnitOfWorkMemory();
+    private readonly IOrderRepository orderRepository;
+    private readonly ICustomerRepository customerRepository;
+    private readonly IProductRepository productRepository;
+    private readonly IAddressRepository addressRepository;
+    private readonly ICategoryRepository categoryRepository;
+    private readonly ICouponRepository couponRepository;
+    private readonly IOrderQueryContext orderQueryContext;
+    private readonly IPasswordHasher passwordHasher;
+    private readonly IQueue queue;
+
+    public OrderTest()
+    {
+        orderRepository = new OrderRepositoryMemory();
+        customerRepository = new CustomerRepositoryMemory();
+        productRepository = new ProductRepositoryMemory();
+        addressRepository = new AddressRepositoryMemory();
+        categoryRepository = new CategoryRepositoryMemory();
+        couponRepository = new CouponRepositoryMemory();
+        orderQueryContext = new MemoryOrderContext();
+        passwordHasher = new PasswordHasher();
+        queue = new MemoryMQAdapter();
+    }
 
     [Fact]
     public async Task Should_Create_Cart()
     {
         var inputCreateCustomer = new CreateCustomerCommand("John Doe", "john.doe@gmail.com", "abc123", new DateTime(2004, 11, 06), "659.232.850-96", "(11) 97414-6507");
 
-        var createCustomerCommandHandler = new CreateCustomerCommandHandler(customerRepository, unitOfWork, passwordHasher, queue);
+        var createCustomerCommandHandler = new CreateCustomerCommandHandler(customerRepository, passwordHasher, queue);
 
         var outputCreateCustomer = await createCustomerCommandHandler.Handle(inputCreateCustomer, CancellationToken.None);
 
         var inputCreateCategory = new CreateCategoryCommand("Category", "Category Description");
 
-        var createCategoryCommandHandler = new CreateCatagoryCommandHandler(categoryRepository, unitOfWork);
+        var createCategoryCommandHandler = new CreateCatagoryCommandHandler(categoryRepository);
 
         var outputCreateCategory = await createCategoryCommandHandler.Handle(inputCreateCategory, CancellationToken.None);
 
         var inputCreateProduct1 = new CreateProductCommand("Product 1", "Product 1", "BRL", 50, "Image", "0001", outputCreateCategory.Value);
 
-        var createProductCommandHandler = new CreateProductCommandHandler(productRepository, categoryRepository, unitOfWork);
+        var createProductCommandHandler = new CreateProductCommandHandler(productRepository, categoryRepository);
 
         var outputCreateProduct1 = await createProductCommandHandler.Handle(inputCreateProduct1, CancellationToken.None);
 
-        var addItemToCartCommandHandler = new AddItemToCartCommandHandler(orderRepository, productRepository, unitOfWork);
+        var addItemToCartCommandHandler = new AddItemToCartCommandHandler(orderRepository, productRepository);
 
         await addItemToCartCommandHandler.Handle(new AddItemToCartCommand(outputCreateCustomer.Value, outputCreateProduct1.Value, 4), CancellationToken.None);
 
@@ -80,13 +90,13 @@ public class OrderTest
     {
         var inputCreateCustomer = new CreateCustomerCommand("John Doe", "john.doe@gmail.com", "abc123", new DateTime(2004, 11, 06), "659.232.850-96", "(11) 97414-6507");
 
-        var createCustomerCommandHandler = new CreateCustomerCommandHandler(customerRepository, unitOfWork, passwordHasher, queue);
+        var createCustomerCommandHandler = new CreateCustomerCommandHandler(customerRepository, passwordHasher, queue);
 
         var outputCreateCustomer = await createCustomerCommandHandler.Handle(inputCreateCustomer, CancellationToken.None);
 
         var inputCreateCategory = new CreateCategoryCommand("Category", "Category Description");
 
-        var createCategoryCommandHandler = new CreateCatagoryCommandHandler(categoryRepository, unitOfWork);
+        var createCategoryCommandHandler = new CreateCatagoryCommandHandler(categoryRepository);
 
         var outputCreateCategory = await createCategoryCommandHandler.Handle(inputCreateCategory, CancellationToken.None);
 
@@ -94,7 +104,7 @@ public class OrderTest
         var inputCreateProduct2 = new CreateProductCommand("Product 2", "Product 2", "BRL", 60, "Image", "0002", outputCreateCategory.Value);
         var inputCreateProduct3 = new CreateProductCommand("Product 3", "Product 3", "BRL", 70, "Image", "0003", outputCreateCategory.Value);
 
-        var createProductCommandHandler = new CreateProductCommandHandler(productRepository, categoryRepository, unitOfWork);
+        var createProductCommandHandler = new CreateProductCommandHandler(productRepository, categoryRepository);
 
         var outputCreateProduct1 = await createProductCommandHandler.Handle(inputCreateProduct1, CancellationToken.None);
         var outputCreateProduct2 = await createProductCommandHandler.Handle(inputCreateProduct2, CancellationToken.None);
@@ -102,7 +112,7 @@ public class OrderTest
 
         var inputCreateAddress = new CreateAddressCommand(outputCreateCustomer.Value, "12909-062", "Rua a", "Bairro", "100", null, "São Paulo", "SP", "Brazil");
 
-        var createAddressCommandHandler = new CreateAddressCommandHandler(addressRepository, unitOfWork);
+        var createAddressCommandHandler = new CreateAddressCommandHandler(addressRepository);
 
         var outputCreateAddress = await createAddressCommandHandler.Handle(inputCreateAddress, CancellationToken.None);
 
@@ -126,7 +136,7 @@ public class OrderTest
 
         //WHEN
 
-        var checkoutOrderCommandHandler = new CheckoutOrderCommandHandler(orderRepository, customerRepository, productRepository, addressRepository, couponRepository, unitOfWork, queue);
+        var checkoutOrderCommandHandler = new CheckoutOrderCommandHandler(orderRepository, customerRepository, productRepository, addressRepository, couponRepository, queue);
 
         var outputCheckoutOrder = await checkoutOrderCommandHandler.Handle(inputCheckout, CancellationToken.None);
 
@@ -141,19 +151,19 @@ public class OrderTest
     { 
         var inputCreateCoupon = new CreateCouponCommand("CUPOM10", DateTime.Now.AddDays(10), 10.00);
 
-        var createCouponCommandHandler = new CreateCouponCommandHandler(couponRepository, unitOfWork);
+        var createCouponCommandHandler = new CreateCouponCommandHandler(couponRepository);
 
         await createCouponCommandHandler.Handle(inputCreateCoupon, CancellationToken.None);
 
         var inputCreateCustomer = new CreateCustomerCommand("John Doe", "john.doe@gmail.com", "abc123", new DateTime(2004, 11, 06), "659.232.850-96", "(11) 97414-6507");
 
-        var createCustomerCommandHandler = new CreateCustomerCommandHandler(customerRepository, unitOfWork, passwordHasher, queue);
+        var createCustomerCommandHandler = new CreateCustomerCommandHandler(customerRepository, passwordHasher, queue);
 
         var outputCreateCustomer = await createCustomerCommandHandler.Handle(inputCreateCustomer, CancellationToken.None);
 
         var inputCreateCategory = new CreateCategoryCommand("Category", "Category Description");
 
-        var createCategoryCommandHandler = new CreateCatagoryCommandHandler(categoryRepository, unitOfWork);
+        var createCategoryCommandHandler = new CreateCatagoryCommandHandler(categoryRepository);
 
         var outputCreateCategory = await createCategoryCommandHandler.Handle(inputCreateCategory, CancellationToken.None);
 
@@ -161,7 +171,7 @@ public class OrderTest
         var inputCreateProduct2 = new CreateProductCommand("Product 2", "Product 2", "BRL", 60, "Image", "0002", outputCreateCategory.Value);
         var inputCreateProduct3 = new CreateProductCommand("Product 3", "Product 3", "BRL", 70, "Image", "0003", outputCreateCategory.Value);
 
-        var createProductCommandHandler = new CreateProductCommandHandler(productRepository, categoryRepository, unitOfWork);
+        var createProductCommandHandler = new CreateProductCommandHandler(productRepository, categoryRepository);
 
         var outputCreateProduct1 = await createProductCommandHandler.Handle(inputCreateProduct1, CancellationToken.None);
         var outputCreateProduct2 = await createProductCommandHandler.Handle(inputCreateProduct2, CancellationToken.None);
@@ -169,7 +179,7 @@ public class OrderTest
 
         var inputCreateAddress = new CreateAddressCommand(outputCreateCustomer.Value, "12909-062", "Rua a", "Bairro", "100", null, "São Paulo", "SP", "Brazil");
 
-        var createAddressCommandHandler = new CreateAddressCommandHandler(addressRepository, unitOfWork);
+        var createAddressCommandHandler = new CreateAddressCommandHandler(addressRepository);
 
         var outputCreateAddress = await createAddressCommandHandler.Handle(inputCreateAddress, CancellationToken.None);
 
@@ -193,7 +203,7 @@ public class OrderTest
 
         //WHEN
 
-        var checkoutOrderCommandHandler = new CheckoutOrderCommandHandler(orderRepository, customerRepository, productRepository, addressRepository, couponRepository ,unitOfWork, queue);
+        var checkoutOrderCommandHandler = new CheckoutOrderCommandHandler(orderRepository, customerRepository, productRepository, addressRepository, couponRepository, queue);
 
         var outputCheckoutOrder = await checkoutOrderCommandHandler.Handle(inputCheckout, CancellationToken.None);
 
@@ -209,13 +219,13 @@ public class OrderTest
     { 
         var inputCreateCustomer = new CreateCustomerCommand("John Doe", "john.doe@gmail.com", "abc123", new DateTime(2004, 11, 06), "659.232.850-96", "(11) 97414-6507");
 
-        var createCustomerCommandHandler = new CreateCustomerCommandHandler(customerRepository, unitOfWork, passwordHasher, queue);
+        var createCustomerCommandHandler = new CreateCustomerCommandHandler(customerRepository, passwordHasher, queue);
 
         var outputCreateCustomer = await createCustomerCommandHandler.Handle(inputCreateCustomer, CancellationToken.None);
 
         var inputCreateCategory = new CreateCategoryCommand("Category", "Category Description");
 
-        var createCategoryCommandHandler = new CreateCatagoryCommandHandler(categoryRepository, unitOfWork);
+        var createCategoryCommandHandler = new CreateCatagoryCommandHandler(categoryRepository);
 
         var outputCreateCategory = await createCategoryCommandHandler.Handle(inputCreateCategory, CancellationToken.None);
 
@@ -223,13 +233,13 @@ public class OrderTest
         var inputCreateProduct2 = new CreateProductCommand("Product 2", "Product 2", "BRL", 60, "Image", "0002", outputCreateCategory.Value);
         var inputCreateProduct3 = new CreateProductCommand("Product 3", "Product 3", "BRL", 70, "Image", "0003", outputCreateCategory.Value);
 
-        var createProductCommandHandler = new CreateProductCommandHandler(productRepository, categoryRepository, unitOfWork);
+        var createProductCommandHandler = new CreateProductCommandHandler(productRepository, categoryRepository);
 
         var outputCreateProduct1 = await createProductCommandHandler.Handle(inputCreateProduct1, CancellationToken.None);
         var outputCreateProduct2 = await createProductCommandHandler.Handle(inputCreateProduct2, CancellationToken.None);
         var outputCreateProduct3 = await createProductCommandHandler.Handle(inputCreateProduct3, CancellationToken.None);
 
-        var addItemToCartCommandHandler = new AddItemToCartCommandHandler(orderRepository, productRepository, unitOfWork);
+        var addItemToCartCommandHandler = new AddItemToCartCommandHandler(orderRepository, productRepository);
 
         await addItemToCartCommandHandler.Handle(new AddItemToCartCommand(outputCreateCustomer.Value, outputCreateProduct1.Value, 4), CancellationToken.None);
         await addItemToCartCommandHandler.Handle(new AddItemToCartCommand(outputCreateCustomer.Value, outputCreateProduct2.Value, 4), CancellationToken.None);
@@ -241,7 +251,7 @@ public class OrderTest
 
         var lineItemToRemove = outputGetCartBeforeRemove.Value.Items?.FirstOrDefault(li => li.ProductId == outputCreateProduct3.Value);
 
-        var removeLineItemFromCartCommandHandler = new RemoveItemFromCartCommandHandler(orderRepository, unitOfWork);
+        var removeLineItemFromCartCommandHandler = new RemoveItemFromCartCommandHandler(orderRepository);
 
         await removeLineItemFromCartCommandHandler.Handle(new RemoveItemFromCartCommand(lineItemToRemove!.LineItemId), CancellationToken.None);
 
@@ -257,19 +267,19 @@ public class OrderTest
     {
         var inputCreateCustomer = new CreateCustomerCommand("John Doe", "john.doe@gmail.com", "abc123", new DateTime(2004, 11, 06), "659.232.850-96", "(11) 97414-6507");
 
-        var createCustomerCommandHandler = new CreateCustomerCommandHandler(customerRepository, unitOfWork, passwordHasher, queue);
+        var createCustomerCommandHandler = new CreateCustomerCommandHandler(customerRepository, passwordHasher, queue);
 
         var outputCreateCustomer = await createCustomerCommandHandler.Handle(inputCreateCustomer, CancellationToken.None);
 
         var inputCreateCategory = new CreateCategoryCommand("Category", "Category Description");
 
-        var createCategoryCommandHandler = new CreateCatagoryCommandHandler(categoryRepository, unitOfWork);
+        var createCategoryCommandHandler = new CreateCatagoryCommandHandler(categoryRepository);
 
         var outputCreateCategory = await createCategoryCommandHandler.Handle(inputCreateCategory, CancellationToken.None);
 
         var inputCreateAddress = new CreateAddressCommand(outputCreateCustomer.Value, "12909-062", "Rua a", "Bairro", "100", null, "São Paulo", "SP", "Brazil");
 
-        var createAddressCommandHandler = new CreateAddressCommandHandler(addressRepository, unitOfWork);
+        var createAddressCommandHandler = new CreateAddressCommandHandler(addressRepository);
 
         var outputCreateAddress = await createAddressCommandHandler.Handle(inputCreateAddress, CancellationToken.None);
 
@@ -277,7 +287,7 @@ public class OrderTest
         var inputCreateProduct2 = new CreateProductCommand("Product 2", "Product 2", "BRL", 60, "Image", "0002", outputCreateCategory.Value);
         var inputCreateProduct3 = new CreateProductCommand("Product 3", "Product 3", "BRL", 70, "Image", "0003", outputCreateCategory.Value);
 
-        var createProductCommandHandler = new CreateProductCommandHandler(productRepository, categoryRepository, unitOfWork);
+        var createProductCommandHandler = new CreateProductCommandHandler(productRepository, categoryRepository);
 
         var outputCreateProduct1 = await createProductCommandHandler.Handle(inputCreateProduct1, CancellationToken.None);
         var outputCreateProduct2 = await createProductCommandHandler.Handle(inputCreateProduct2, CancellationToken.None);
@@ -301,7 +311,7 @@ public class OrderTest
             cardToken,
             installments);
 
-        var checkoutOrderCommandHandler = new CheckoutOrderCommandHandler(orderRepository, customerRepository, productRepository, addressRepository, couponRepository, unitOfWork, queue);
+        var checkoutOrderCommandHandler = new CheckoutOrderCommandHandler(orderRepository, customerRepository, productRepository, addressRepository, couponRepository, queue);
 
         //WHEN
         await checkoutOrderCommandHandler.Handle(inputCreateOrder, CancellationToken.None);
@@ -318,19 +328,19 @@ public class OrderTest
     {
         var inputCreateCustomer = new CreateCustomerCommand("John Doe", "john.doe@gmail.com", "abc123", new DateTime(2004, 11, 06), "659.232.850-96", "(11) 97414-6507");
 
-        var createCustomerCommandHandler = new CreateCustomerCommandHandler(customerRepository, unitOfWork, passwordHasher, queue);
+        var createCustomerCommandHandler = new CreateCustomerCommandHandler(customerRepository, passwordHasher, queue);
 
         var outputCreateCustomer = await createCustomerCommandHandler.Handle(inputCreateCustomer, CancellationToken.None);
 
         var inputCreateCategory = new CreateCategoryCommand("Category", "Category Description");
 
-        var createCategoryCommandHandler = new CreateCatagoryCommandHandler(categoryRepository, unitOfWork);
+        var createCategoryCommandHandler = new CreateCatagoryCommandHandler(categoryRepository);
 
         var outputCreateCategory = await createCategoryCommandHandler.Handle(inputCreateCategory, CancellationToken.None);
 
         var inputCreateAddress = new CreateAddressCommand(outputCreateCustomer.Value, "12909-062", "Rua a", "Bairro", "100", null, "São Paulo", "SP", "Brazil");
 
-        var createAddressCommandHandler = new CreateAddressCommandHandler(addressRepository, unitOfWork);
+        var createAddressCommandHandler = new CreateAddressCommandHandler(addressRepository);
 
         var outputCreateAddress = await createAddressCommandHandler.Handle(inputCreateAddress, CancellationToken.None);
 
@@ -338,7 +348,7 @@ public class OrderTest
         var inputCreateProduct2 = new CreateProductCommand("Product 2", "Product 2", "BRL", 60, "Image", "0002", outputCreateCategory.Value);
         var inputCreateProduct3 = new CreateProductCommand("Product 3", "Product 3", "BRL", 70, "Image", "0003", outputCreateCategory.Value);
 
-        var createProductCommandHandler = new CreateProductCommandHandler(productRepository, categoryRepository, unitOfWork);
+        var createProductCommandHandler = new CreateProductCommandHandler(productRepository, categoryRepository);
 
         var outputCreateProduct1 = await createProductCommandHandler.Handle(inputCreateProduct1, CancellationToken.None);
         var outputCreateProduct2 = await createProductCommandHandler.Handle(inputCreateProduct2, CancellationToken.None);
@@ -362,12 +372,12 @@ public class OrderTest
             cardToken,
             installments);
 
-        var checkoutOrderCommandHandler = new CheckoutOrderCommandHandler(orderRepository, customerRepository, productRepository, addressRepository, couponRepository, unitOfWork, queue);
+        var checkoutOrderCommandHandler = new CheckoutOrderCommandHandler(orderRepository, customerRepository, productRepository, addressRepository, couponRepository, queue);
 
         //WHEN
         var outputCheckoutOrder = await checkoutOrderCommandHandler.Handle(inputCreateOrder, CancellationToken.None);
 
-        var cancelOrderCommandHandler = new CancelOrderCommandHandler(orderRepository, unitOfWork, queue);
+        var cancelOrderCommandHandler = new CancelOrderCommandHandler(orderRepository, queue);
 
         await cancelOrderCommandHandler.Handle(new CancelOrderCommand(outputCheckoutOrder.Value), CancellationToken.None);
 
@@ -381,13 +391,13 @@ public class OrderTest
     {
         var inputCreateCustomer = new CreateCustomerCommand("John Doe", "john.doe@gmail.com", "abc123", new DateTime(2004, 11, 06), "659.232.850-96", "(11) 97414-6507");
 
-        var createCustomerCommandHandler = new CreateCustomerCommandHandler(customerRepository, unitOfWork, passwordHasher, queue);
+        var createCustomerCommandHandler = new CreateCustomerCommandHandler(customerRepository, passwordHasher, queue);
 
         var outputCreateCustomer = await createCustomerCommandHandler.Handle(inputCreateCustomer, CancellationToken.None);
 
         var inputCreateCategory = new CreateCategoryCommand("Category", "Category Description");
 
-        var createCategoryCommandHandler = new CreateCatagoryCommandHandler(categoryRepository, unitOfWork);
+        var createCategoryCommandHandler = new CreateCatagoryCommandHandler(categoryRepository);
 
         var outputCreateCategory = await createCategoryCommandHandler.Handle(inputCreateCategory, CancellationToken.None);
 
@@ -395,7 +405,7 @@ public class OrderTest
         var inputCreateProduct2 = new CreateProductCommand("Product 2", "Product 2", "BRL", 60, "Image", "0002", outputCreateCategory.Value);
         var inputCreateProduct3 = new CreateProductCommand("Product 3", "Product 3", "BRL", 70, "Image", "0003", outputCreateCategory.Value);
 
-        var createProductCommandHandler = new CreateProductCommandHandler(productRepository, categoryRepository, unitOfWork);
+        var createProductCommandHandler = new CreateProductCommandHandler(productRepository, categoryRepository);
 
         var outputCreateProduct1 = await createProductCommandHandler.Handle(inputCreateProduct1, CancellationToken.None);
         var outputCreateProduct2 = await createProductCommandHandler.Handle(inputCreateProduct2, CancellationToken.None);
@@ -403,7 +413,7 @@ public class OrderTest
 
         var inputCreateAddress = new CreateAddressCommand(outputCreateCustomer.Value, "12909-062", "Rua a", "Bairro", "100", null, "São Paulo", "SP", "Brazil");
 
-        var createAddressCommandHandler = new CreateAddressCommandHandler(addressRepository, unitOfWork);
+        var createAddressCommandHandler = new CreateAddressCommandHandler(addressRepository);
 
         var outputCreateAddress = await createAddressCommandHandler.Handle(inputCreateAddress, CancellationToken.None);
 
@@ -427,19 +437,19 @@ public class OrderTest
 
         //WHEN
 
-        var checkoutOrderCommandHandler = new CheckoutOrderCommandHandler(orderRepository, customerRepository, productRepository, addressRepository, couponRepository, unitOfWork, queue);
+        var checkoutOrderCommandHandler = new CheckoutOrderCommandHandler(orderRepository, customerRepository, productRepository, addressRepository, couponRepository, queue);
 
         var outputCheckoutOrder = await checkoutOrderCommandHandler.Handle(inputCheckout, CancellationToken.None);
 
         var inputOrderPaymentStatusChanged = new OrderPaymentStatusChangedCommand(outputCheckoutOrder.Value, "approved");
 
-        var orderPaymentStatusChangedCommandHandler = new OrderPaymentStatusChangedCommandHandler(orderRepository, unitOfWork);
+        var orderPaymentStatusChangedCommandHandler = new OrderPaymentStatusChangedCommandHandler(orderRepository);
 
         await orderPaymentStatusChangedCommandHandler.Handle(inputOrderPaymentStatusChanged, CancellationToken.None); 
 
         var inputPrepareOrderForShipping = new PrepareOrderForShippingCommand(outputCheckoutOrder.Value);
 
-        var prepareOrderForShippingCommandHandler = new PrepareOrderForShippingCommandHandler(orderRepository, unitOfWork);
+        var prepareOrderForShippingCommandHandler = new PrepareOrderForShippingCommandHandler(orderRepository);
 
        await prepareOrderForShippingCommandHandler.Handle(inputPrepareOrderForShipping, CancellationToken.None); 
 
