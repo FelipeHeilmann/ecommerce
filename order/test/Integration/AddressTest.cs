@@ -1,5 +1,4 @@
 ﻿using Application.Abstractions.Queue;
-using Application.Abstractions.Services;
 using Application.Addresses.Create;
 using Application.Addresses.GetByCustomerId;
 using Application.Addresses.GetById;
@@ -7,7 +6,6 @@ using Application.Addresses.Update;
 using Application.Customers.Create;
 using Domain.Addresses.Repository;
 using Domain.Customers.Repository;
-using Infra.Implementations;
 using Infra.Queue;
 using Infra.Repositories.Memory;
 using Xunit;
@@ -18,14 +16,12 @@ public class AddressTest
 {
     private readonly IAddressRepository addressRepository;
     private readonly ICustomerRepository customerRepository;
-    private readonly IPasswordHasher passwordHasher;
     private readonly IQueue queue;
 
     public AddressTest() 
     {
         addressRepository = new AddressRepositoryMemory();
         customerRepository = new CustomerRepositoryMemory();
-        passwordHasher = new PasswordHasher();
         queue = new MemoryMQAdapter();
     }
 
@@ -34,7 +30,7 @@ public class AddressTest
     {
         var inputCreateCustomer = new CreateCustomerCommand("Felipe Heilmann", "felipeheilmannm@gmail.com", "senha", new DateTime(2004, 6, 2), "97067401046", "11 97414-6507");
 
-        var createAccountCommandHandler = new CreateCustomerCommandHandler(customerRepository, passwordHasher, queue);
+        var createAccountCommandHandler = new CreateCustomerCommandHandler(customerRepository, queue);
 
         var outputCreateCustomer = await createAccountCommandHandler.Handle(inputCreateCustomer, CancellationToken.None);
 
@@ -58,7 +54,7 @@ public class AddressTest
     {
         var inputCreateCustomer = new CreateCustomerCommand("Felipe Heilmann", "felipeheilmannm@gmail.com", "senha", new DateTime(2004, 6, 2), "97067401046", "11 97414-6507");
 
-        var createAccountCommandHandler = new CreateCustomerCommandHandler(customerRepository, passwordHasher, queue);
+        var createAccountCommandHandler = new CreateCustomerCommandHandler(customerRepository, queue);
 
         var outputCreateCustomer = await createAccountCommandHandler.Handle(inputCreateCustomer, CancellationToken.None);
 
@@ -99,7 +95,7 @@ public class AddressTest
     {
         var inputCreateCustomer = new CreateCustomerCommand("Felipe Heilmann", "felipeheilmannm@gmail.com", "senha", new DateTime(2004, 6, 2), "97067401046", "11 97414-6507");
 
-        var createAccountCommandHandler = new CreateCustomerCommandHandler(customerRepository, passwordHasher, queue);
+        var createAccountCommandHandler = new CreateCustomerCommandHandler(customerRepository, queue);
 
         var outputCreateCustomer = await createAccountCommandHandler.Handle(inputCreateCustomer, CancellationToken.None);
 

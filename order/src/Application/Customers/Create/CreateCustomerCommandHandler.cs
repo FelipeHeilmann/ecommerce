@@ -11,13 +11,11 @@ namespace Application.Customers.Create;
 public class CreateCustomerCommandHandler : ICommandHandler<CreateCustomerCommand, Guid>
 {
     private readonly ICustomerRepository _repository;
-    private readonly IPasswordHasher _passwordHasher;
     private readonly IQueue _queue;
 
-    public CreateCustomerCommandHandler(ICustomerRepository repository, IPasswordHasher passwordHasher, IQueue queue)
+    public CreateCustomerCommandHandler(ICustomerRepository repository, IQueue queue)
     {
         _repository = repository;
-        _passwordHasher = passwordHasher;
         _queue = queue;
     }
 
@@ -27,9 +25,7 @@ public class CreateCustomerCommandHandler : ICommandHandler<CreateCustomerComman
 
         if(emailAreadyUsed) return Result.Failure<Guid>(CustomerErrors.EmailAlredyInUse);
 
-        var hashedPassword = _passwordHasher.Generate(command.password);
-
-        var customer = Customer.Create(command.Name, command.Email, hashedPassword, command.birthDate, command.CPF, command.Phone);
+        var customer = Customer.Create(command.Name, command.Email, command.password, command.birthDate, command.CPF, command.Phone);
  
         await _repository.Add(customer);
 

@@ -9,14 +9,12 @@ namespace Application.Customers.Login;
 public class LoginCommandHandler : ICommandHandler<LoginCommand, string>
 {
     private readonly ICustomerRepository _customerRepository;
-    private readonly IPasswordHasher _passwordHasher;
     private readonly IJwtProvider _jwtProvider;
 
-    public LoginCommandHandler(ICustomerRepository customerRepository, IJwtProvider jwtProvider, IPasswordHasher passwordHasher)
+    public LoginCommandHandler(ICustomerRepository customerRepository, IJwtProvider jwtProvider)
     {
         _customerRepository = customerRepository;
         _jwtProvider = jwtProvider;
-        _passwordHasher = passwordHasher;
     }
 
     public async Task<Result<string>> Handle(LoginCommand command, CancellationToken cancellationToken)
@@ -25,9 +23,7 @@ public class LoginCommandHandler : ICommandHandler<LoginCommand, string>
 
         if (customer == null) return Result.Failure<string>(CustomerErrors.CustomerInvalidCredencials);
 
-        var verifiedPassword = _passwordHasher.Verify(command.Password, customer!.Password);
-
-        if(!verifiedPassword) return Result.Failure<string>(CustomerErrors.CustomerInvalidCredencials);
+        if(!customer.PasswordMatches(command.Password)) return Result.Failure<string>(CustomerErrors.CustomerInvalidCredencials);
 
         var token = _jwtProvider.Generate(customer);
 

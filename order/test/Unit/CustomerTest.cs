@@ -34,6 +34,33 @@ public class CustomerTest
     }
 
     [Fact]
+    public void Should_Create_Valid_BCryptPassword()
+    {
+        var password = BcryptPassword.Create("123456");
+        Assert.NotNull(password.Value);
+    }
+
+    [Fact]
+    public void Should_Not_Create_Valid_BCryptPassword_With_Invalid_Length()
+    {
+        Assert.Throws<InvalidPasswordLenght>(() => BcryptPassword.Create("1234"));
+    }
+
+    [Fact]
+    public void Should_Matchs_Password()
+    {   
+        var password = BcryptPassword.Create("123456");
+        Assert.True(password.PasswordMatches("123456"));
+    }
+
+    [Fact]
+    public void Should_Not_Matchs_Password()
+    {   
+        var password = BcryptPassword.Create("123456");
+        Assert.False(password.PasswordMatches("1234"));
+    }
+
+    [Fact]
     public void Should_Create_Valid_CPF()
     {
         var cpf = new CPF("460.200.040-15");

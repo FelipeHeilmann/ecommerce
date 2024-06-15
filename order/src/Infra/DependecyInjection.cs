@@ -13,7 +13,6 @@ using Domain.Products.Repository;
 using Infra.Authenication;
 using Infra.Context;
 using Infra.Database;
-using Infra.Implementations;
 using Infra.Queue;
 using Infra.Repositories.Database;
 using Infra.Repositories.Memory;
@@ -45,7 +44,6 @@ public static class DependecyInjection
         services.AddScoped<ICouponRepository, CouponRepositoryDatabase>();
         services.AddScoped<IOrderQueryContext, MongoOrderContext>();
 
-        services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IJwtProvider, JwtProvider>();
 
         services.AddHostedService<OrderPaymentUrlConsumer>();

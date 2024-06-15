@@ -12,6 +12,11 @@ public class InvalidEmail : BaseException
     public InvalidEmail() : base("Invalid.Email", "The email value is invalid", 400) { }
 }
 
+public class InvalidPasswordLenght : BaseException
+{
+    public InvalidPasswordLenght() : base("Invalid.Password.Lenght", "Password length must be greater than 5", 400){ }
+}
+
 public class InvalidPhone : BaseException
 {
     public InvalidPhone() : base("Invalid.Phone", "The phone value is invalid", 400) { }
