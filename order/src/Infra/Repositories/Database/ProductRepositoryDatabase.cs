@@ -29,7 +29,7 @@ public class ProductRepositoryDatabase : IProductRepository
 
     public async Task<ICollection<Product>> GetByIdsAsync(List<Guid> ids, CancellationToken cancellationToken)
     {
-        var products = await _connection.Query("select * from products where id in  (" + string.Join(", ", ids) + ")", null, MapProduct);
+        var products = await _connection.Query("select * from products where id in (" + string.Join(", ", ids) + ")", null, MapProduct);
         return products.ToList();
     }
 
