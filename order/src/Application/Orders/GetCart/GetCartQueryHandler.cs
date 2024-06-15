@@ -21,7 +21,7 @@ public class GetCartQueryHandler : IQueryHandler<GetCartQuery, Output?>
             cart?.Id ,
             cart?.CustomerId,
             cart?.Status,
-            cart?.Items?.Select(line => new ItemsOutput(line.Id ,line.ProductId, line.Price.Amount, line.Quantity)),
+            cart?.Items?.Select(line => new ItemsOutput(line.Id ,line.ProductId, line.Amount, line.Quantity)),
             cart?.CalculateTotal(),
             cart?.BillingAddressId,
             cart?.ShippingAddressId
