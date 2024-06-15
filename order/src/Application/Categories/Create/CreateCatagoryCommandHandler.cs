@@ -18,11 +18,8 @@ public class CreateCatagoryCommandHandler : ICommandHandler<CreateCategoryComman
     {
         var category = Category.Create(command.Name, command.Description);
 
-        if (category.IsFailure) return Result.Failure<Guid>(category.Error);
+        await _categoryRepository.Add(category);
 
-        await _categoryRepository.Add(category.Value);
-
-        return category.Value.Id;
-
+        return category.Id;
     }
 }

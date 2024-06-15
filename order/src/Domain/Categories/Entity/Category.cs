@@ -16,10 +16,10 @@ public class Category
         Description = description;
     }
 
-    public static Result<Category> Create(string name, string description)
+    public static Category Create(string name, string description)
     {
-        if (string.IsNullOrEmpty(name)) return Result.Failure<Category>(CategoryErrors.CategoryNameEmpty);
-        if (string.IsNullOrEmpty(description)) return Result.Failure<Category>(CategoryErrors.CategoryDescriptionEmpty);
+        if (string.IsNullOrEmpty(name)) throw new InvalidCategoryName();
+        if (string.IsNullOrEmpty(description)) throw new InvalidCategoryDescription();
         return new Category(Guid.NewGuid(), name, description);
     }
 
