@@ -22,32 +22,35 @@ public class TransactionRepositoryMemory : IRepositoryBase<Transaction>, ITransa
         return Task.FromResult(_transactions.FirstOrDefault(t => t.Id == id));
     }
 
-    public Task<Transaction> GetByGatewayServiceId(Guid id, CancellationToken cancellationToken)
+    public Task<Transaction?> GetByGatewayServiceId(Guid id, CancellationToken cancellationToken)
     {
-        return Task.FromResult(_transactions.First(t => t.PaymentServiceId == id));
+        return Task.FromResult(_transactions.FirstOrDefault(t => t.PaymentServiceId == id));
     }
     public IQueryable<Transaction> GetQueryable(CancellationToken cancellation)
     {
         return _transactions.AsQueryable();
     }
-    public void Add(Transaction entity)
+    public Task Add(Transaction entity)
     {
         _transactions.Add(entity);
+        return Task.CompletedTask;
     }
-    public void Update(Transaction entity)
+    public Task Update(Transaction entity)
     {
         var index = _transactions.ToList().FindIndex(a => a.Id == entity.Id);
 
         if (index == -1)
         {
-            return;
+            return Task.CompletedTask;
         }
 
         _transactions.ToList()[index] = entity;
+        return Task.CompletedTask;
     }
-    public void Delete(Transaction entity)
+    public Task Delete(Transaction entity)
     {
         _transactions.Remove(entity);
+        return Task.CompletedTask;
     }
 
    

@@ -5,5 +5,5 @@ namespace Domain.Transactions.Repository;
 
 public interface ITransactionRepository : IRepositoryBase<Transaction> 
 {
-    public Task<Transaction> GetByGatewayServiceId(Guid id, CancellationToken cancellation);
+    public Task<Transaction?> GetByGatewayServiceId(Guid id, CancellationToken cancellation);
 }
