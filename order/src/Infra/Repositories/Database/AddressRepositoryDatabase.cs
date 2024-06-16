@@ -63,7 +63,7 @@ public class AddressRepositoryDatabase : IAddressRepository
             reader.GetString(reader.GetOrdinal("street")),
             reader.GetString(reader.GetOrdinal("neighborhood")),
             reader.GetString(reader.GetOrdinal("number")),
-            reader.GetString(reader.GetOrdinal("complement")),
+            reader.IsDBNull(reader.GetOrdinal("complement")) ? null : reader.GetString(reader.GetOrdinal("complement")),
             reader.GetString(reader.GetOrdinal("city")),
             reader.GetString(reader.GetOrdinal("state")),
             reader.GetString(reader.GetOrdinal("country"))
