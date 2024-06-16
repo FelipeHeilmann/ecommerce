@@ -18,7 +18,7 @@ public class OrderGatewayHttp : IOrderGeteway
         {
             client.DefaultRequestHeaders.Add(APIKEYNAME, _apiKey);
 
-            var response = await client.GetAsync($"https://localhost:7078/api/addresses/service/{id}");
+            var response = await client.GetAsync($"http://localhost:5256/api/addresses/service/{id}");
 
             if (!response.IsSuccessStatusCode) throw new Exception(response.Content.ToString());
 
@@ -35,7 +35,7 @@ public class OrderGatewayHttp : IOrderGeteway
     {
         using (HttpClient client = new HttpClient())
         {
-            var response = await client.GetAsync($"https://localhost:7078/api/products/{id}");
+            var response = await client.GetAsync($"http://localhost:5256/api/products/{id}");
 
             string productResponseJson = await response.Content.ReadAsStringAsync();
 
