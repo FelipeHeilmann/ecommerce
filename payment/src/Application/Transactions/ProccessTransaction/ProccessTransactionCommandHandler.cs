@@ -1,6 +1,5 @@
 ﻿using Application.Abstractions.Messaging;
 using Application.Abstractions.Queue;
-using Application.Data;
 using Domain.Shared;
 using Domain.Transactions.Repository;
 
@@ -9,19 +8,19 @@ namespace Application.Transactions.ProccessTransaction;
 public class ProccessTransactionCommandHandler : ICommandHandler<ProccessTransactionCommand>
 {
     private readonly ITransactionRepository _transactionRepository;
-    private readonly IUnitOfWork _unitOfWork;
     private readonly IQueue _queue;
 
-    public ProccessTransactionCommandHandler(ITransactionRepository transactionRepository, IUnitOfWork unitOfWork, IQueue queue)
+    public ProccessTransactionCommandHandler(ITransactionRepository transactionRepository, IQueue queue)
     {
         _transactionRepository = transactionRepository;
         _queue = queue;
-        _unitOfWork = unitOfWork;
     }
 
     public async Task<Result> Handle(ProccessTransactionCommand command, CancellationToken cancellationToken)
     {
         var transaction = await _transactionRepository.GetByGatewayServiceId(command.TransactionGatewayId, cancellationToken);
+
+        if(transaction is null) throw new Exception();
 
         transaction.Register("TransactionStatusChanged", async domainEvent => {
 
@@ -37,9 +36,7 @@ public class ProccessTransactionCommandHandler : ICommandHandler<ProccessTransac
             transaction.Reject();
         }
 
-        _transactionRepository.Update(transaction);
-
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await _transactionRepository.Update(transaction);
 
         return Result.Success();
     }

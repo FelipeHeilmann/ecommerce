@@ -1,12 +1,9 @@
 ﻿using Application.Abstractions.Gateway;
 using Application.Abstractions.Queue;
-using Application.Data;
 using Application.Transactions.MakePaymentRequest;
 using Application.Transactions.ProccessTransaction;
 using Domain.Events;
 using Domain.Transactions.Repository;
-using Domain.Transactions.VO;
-using Infra.Data;
 using Infra.Gateway.Payment;
 using Infra.Queue;
 using Infra.Repositories.Memory;
@@ -20,7 +17,6 @@ public class TransactionTest
     private readonly ITransactionRepository transactionRepository =  new TransactionRepositoryMemory();
     private readonly IPaymentGateway paymentGateway = new PaymentGatewayFake();
     private readonly IQueue queue = new MemoryQueueAdapter();
-    private readonly IUnitOfWork unitOfWork = new UnitOfWorkMemory();
 
     [Fact]
     public async void Should_Create_Transaction()
@@ -65,7 +61,7 @@ public class TransactionTest
 
         var inputCreateTransaction = new CreatePaymentCommand(new OrderCheckedout(orderId, items.Sum(i => i.Quantity * i.Price), items, customerId, "credit", "my-token", 5, addressId));
 
-        var commandHandler = new CreatePaymentCommandHandler(paymentGateway, transactionRepository, unitOfWork, queue, orderGateway.Object);
+        var commandHandler = new CreatePaymentCommandHandler(paymentGateway, transactionRepository, queue, orderGateway.Object);
 
         var output = await commandHandler.Handle(inputCreateTransaction, CancellationToken.None);
 
@@ -117,19 +113,19 @@ public class TransactionTest
 
         var inputCreateTransaction = new CreatePaymentCommand(new OrderCheckedout(orderId, items.Sum(i => i.Quantity * i.Price), items, customerId, "credit", "my-token", 5, addressId));
 
-        var commandHandler = new CreatePaymentCommandHandler(paymentGateway, transactionRepository, unitOfWork, queue, orderGateway.Object);
+        var commandHandler = new CreatePaymentCommandHandler(paymentGateway, transactionRepository, queue, orderGateway.Object);
 
         var outputCreateTransaction = await commandHandler.Handle(inputCreateTransaction, CancellationToken.None);
 
         var inputProccessTransaction = new ProccessTransactionCommand(outputCreateTransaction.Value, "approved");
 
-        var proccessTransactionCommandHandler = new ProccessTransactionCommandHandler(transactionRepository, unitOfWork, queue);
+        var proccessTransactionCommandHandler = new ProccessTransactionCommandHandler(transactionRepository, queue);
 
         await proccessTransactionCommandHandler.Handle(inputProccessTransaction, CancellationToken.None);
 
         var outputGetTransaction = await transactionRepository.GetByIdAsync(outputCreateTransaction.Value, CancellationToken.None);
 
-        Assert.Equal("approved", outputGetTransaction.Status);
+        Assert.Equal("approved", outputGetTransaction?.Status);
     }
 
     [Fact]
@@ -175,18 +171,18 @@ public class TransactionTest
 
         var inputCreateTransaction = new CreatePaymentCommand(new OrderCheckedout(orderId, items.Sum(i => i.Quantity * i.Price), items, customerId, "credit", "my-token", 5, addressId));
 
-        var commandHandler = new CreatePaymentCommandHandler(paymentGateway, transactionRepository, unitOfWork, queue, orderGateway.Object);
+        var commandHandler = new CreatePaymentCommandHandler(paymentGateway, transactionRepository, queue, orderGateway.Object);
 
         var outputCreateTransaction = await commandHandler.Handle(inputCreateTransaction, CancellationToken.None);
 
         var inputProccessTransaction = new ProccessTransactionCommand(outputCreateTransaction.Value, "rejected");
 
-        var proccessTransactionCommandHandler = new ProccessTransactionCommandHandler(transactionRepository, unitOfWork, queue);
+        var proccessTransactionCommandHandler = new ProccessTransactionCommandHandler(transactionRepository, queue);
 
         await proccessTransactionCommandHandler.Handle(inputProccessTransaction, CancellationToken.None);
 
         var outputGetTransaction = await transactionRepository.GetByIdAsync(outputCreateTransaction.Value, CancellationToken.None);
 
-        Assert.Equal("rejected", outputGetTransaction.Status);
+        Assert.Equal("rejected", outputGetTransaction?.Status);
     }
 }

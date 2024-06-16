@@ -3,7 +3,6 @@ using Application.Abstractions.Queue;
 using Domain.Events;
 using Application.Transactions.MakePaymentRequest;
 using Application.Abstractions.Gateway;
-using Application.Data;
 using Microsoft.Extensions.DependencyInjection;
 using Domain.Transactions.Repository;
 
@@ -27,14 +26,13 @@ public class OrderCheckedoutEventConsumer : BackgroundService
             await _queue.SubscribeAsync<OrderCheckedout>("orderCheckedout.proccessPayment", "order.checkedout", async message => {
                 using (var scope = _serviceProvider.CreateAsyncScope())
                 {
-                    var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
                     var paymentGateway = scope.ServiceProvider.GetRequiredService<IPaymentGateway>();
                     var transactionRepository = scope.ServiceProvider.GetRequiredService<ITransactionRepository>();
                     var queue = scope.ServiceProvider.GetRequiredService<IQueue>();
                     var orderGateway = scope.ServiceProvider.GetRequiredService<IOrderGateway>();
 
                     var command = new CreatePaymentCommand(message);
-                    var commandHandler = new CreatePaymentCommandHandler(paymentGateway, transactionRepository, unitOfWork, queue, orderGateway);
+                    var commandHandler = new CreatePaymentCommandHandler(paymentGateway, transactionRepository, queue, orderGateway);
 
                     await commandHandler.Handle(command, stoppingToken);
                 }
