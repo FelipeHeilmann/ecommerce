@@ -15,7 +15,7 @@ public record CustomerGatewayResponse(
     string Email,
     string CPF,
     string Phone,
-    DateOnly BirthDate,
+    DateTime BirthDate,
     DateTime CreatedAt
 );
 
