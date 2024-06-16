@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using System.Data;
-using Domain.Customers.Entity;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
 

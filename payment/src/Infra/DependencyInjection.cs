@@ -1,16 +1,14 @@
 ﻿using Application.Abstractions.Gateway;
 using Application.Abstractions.Queue;
-using Application.Data;
 using Application.Transactions.Consumers;
 using Domain.Refunds;
 using Domain.Transactions.Repository;
-using Infra.Context;
-using Infra.Data;
+using Infra.Database;
 using Infra.Gateway.Order;
 using Infra.Gateway.Payment;
 using Infra.Queue;
 using Infra.Repositories.Database;
-using Microsoft.EntityFrameworkCore;
+using Infra.Repositories.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -23,14 +21,6 @@ public static class DependecyInjection
         IConfiguration configuration)
     {
 
-        services.AddDbContext<ApplicationContext>(opt =>
-        {
-            opt
-            .UseNpgsql(configuration.GetConnectionString("Database"))
-            .UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll)
-            .EnableSensitiveDataLogging(true);
-        }, ServiceLifetime.Scoped);
-
         services.AddSingleton<IQueue, RabbitMQAdapter>(provider =>
         {
             var rabbitMQAdapter = new RabbitMQAdapter(configuration);
@@ -39,10 +29,10 @@ public static class DependecyInjection
         });
 
         services.AddSingleton<IPaymentGateway, PaymentGatewayFake>();
-        services.AddTransient<ITransactionRepository, TransactionRepository>();
+        services.AddTransient<ITransactionRepository, TransactionRepositoryDatabase>();
         services.AddTransient<IOrderGateway, OrderGatewayHttp>();
-        services.AddTransient<IRefundRepository, RefundRepository>();
-        services.AddTransient<IUnitOfWork, UnitOfWork>();
+        services.AddTransient<IDatabaseConnection, NpgsqlAdapter>();
+        services.AddTransient<IRefundRepository, RefundRepositoryMemory>();
 
        services.AddHostedService<OrderCheckedoutEventConsumer>();
     }
