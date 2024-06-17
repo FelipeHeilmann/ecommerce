@@ -2,8 +2,7 @@
 using Application.Abstractions.Query;
 using Application.Abstractions.Queue;
 using Application.Abstractions.Services;
-using Application.Orders.Consumer;
-using Application.Orders.OrderPaymentUrl;
+using Application.Orders.OrderPaymentStatusChanged;
 using Domain.Addresses.Repository;
 using Domain.Categories.Repository;
 using Domain.Coupons.Repository;
@@ -33,14 +32,15 @@ public static class DependecyInjection
             return rabbitMQAdapter;
         });
 
-        services.AddScoped<IDatabaseConnection, NpgsqlAdapter>();
-        services.AddScoped<ICustomerRepository, CustomerRepositoryDatabase>();
-        services.AddScoped<IOrderRepository, OrderRepositoryDatabase>();
-        services.AddScoped<IProductRepository, ProductRepositoryDatabase>();
-        services.AddScoped<ICategoryRepository, CategoryRepositoryDatabase>();
-        services.AddScoped<IAddressRepository, AddressRepositoryDatabase>();
-        services.AddScoped<ICouponRepository, CouponRepositoryDatabase>();
-        services.AddScoped<IOrderQueryContext, MongoOrderContext>();
+        services.AddTransient<IDatabaseConnection, NpgsqlAdapter>();
+        services.AddTransient<ICustomerRepository, CustomerRepositoryDatabase>();
+        services.AddTransient<IOrderRepository, OrderRepositoryDatabase>();
+        services.AddTransient<IProductRepository, ProductRepositoryDatabase>();
+        services.AddTransient<ICategoryRepository, CategoryRepositoryDatabase>();
+        services.AddTransient<IAddressRepository, AddressRepositoryDatabase>();
+        services.AddTransient<ICouponRepository, CouponRepositoryDatabase>();
+        services.AddTransient<IOrderQueryContext, MongoOrderContext>();
+        services.AddTransient<OrderPaymentStatusChangedCommandHandler>();
 
         services.AddScoped<IJwtProvider, JwtProvider>();
 

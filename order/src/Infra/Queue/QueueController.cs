@@ -11,13 +11,13 @@ namespace Infra.Queue;
 public class QueueController : BackgroundService
 {
     private readonly IQueue _queue;
-    private readonly IServiceProvider _serviceProvider;
+    private readonly OrderPaymentStatusChangedCommandHandler _orderPaymentStatusChangedCommandHandler;
     private readonly ILogger<OrderPaymentUrlEvent> _logger;
 
-    public QueueController(IQueue queue, IServiceProvider serviceProvider, ILogger<OrderPaymentUrlEvent> logger)
+    public QueueController(IQueue queue, OrderPaymentStatusChangedCommandHandler orderPaymentStatusChangedCommandHandler, ILogger<OrderPaymentUrlEvent> logger)
     {
         _queue = queue;
-        _serviceProvider = serviceProvider;
+        _orderPaymentStatusChangedCommandHandler = orderPaymentStatusChangedCommandHandler;
         _logger = logger;
     }
 
@@ -27,16 +27,9 @@ public class QueueController : BackgroundService
         {
             await _queue.SubscribeAsync<TransactionStatusChanged>("transactionApproved.updateOrder", "transaction.status.changed", async @event =>
             {
-                using (var scope = _serviceProvider.CreateAsyncScope()) 
-                {
-                    var orderRepository = scope.ServiceProvider.GetRequiredService<IOrderRepository>();
+                var orderPaymentStatusChangedCommand = new OrderPaymentStatusChangedCommand(@event.OrderId, @event.Status);
 
-                    var orderPaymentStatusChangedCommand = new OrderPaymentStatusChangedCommand(@event.OrderId, @event.Status);
-
-                    var orderPaymentStatusChangedCommandHandler = new OrderPaymentStatusChangedCommandHandler(orderRepository);
-
-                    await orderPaymentStatusChangedCommandHandler.Handle(orderPaymentStatusChangedCommand, stoppingToken);
-                }
+                await _orderPaymentStatusChangedCommandHandler.Handle(orderPaymentStatusChangedCommand, stoppingToken);
             });
 
             await _queue.SubscribeAsync<OrderPaymentUrlEvent>("orderPurchased.url", "payment.url", async @event =>
