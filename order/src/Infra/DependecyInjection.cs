@@ -15,8 +15,6 @@ using Infra.Context;
 using Infra.Database;
 using Infra.Queue;
 using Infra.Repositories.Database;
-using Infra.Repositories.Memory;
-using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -46,7 +44,6 @@ public static class DependecyInjection
 
         services.AddScoped<IJwtProvider, JwtProvider>();
 
-        services.AddHostedService<OrderPaymentUrlConsumer>();
-        services.AddHostedService<TransactionStatusConsumer>();
+        services.AddHostedService<QueueController>();
     }
 }
