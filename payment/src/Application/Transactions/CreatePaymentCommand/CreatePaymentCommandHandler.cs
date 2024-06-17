@@ -5,7 +5,7 @@ using Application.Abstractions.Queue;
 using Domain.Transactions.Repository;
 using Domain.Transactions.Entity;
 
-namespace Application.Transactions.MakePaymentRequest;
+namespace Application.Transactions.CreatePaymentCommand;
 
 public class CreatePaymentCommandHandler : ICommandHandler<CreatePaymentCommand, Guid>
 {

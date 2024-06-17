@@ -1,29 +1,29 @@
-﻿using Microsoft.Extensions.Hosting;
-using Application.Abstractions.Queue;
-using Domain.Events;
-using Application.Transactions.MakePaymentRequest;
 using Application.Abstractions.Gateway;
-using Microsoft.Extensions.DependencyInjection;
+using Application.Abstractions.Queue;
+using Application.Transactions.CreatePaymentCommand;
+using Domain.Events;
 using Domain.Transactions.Repository;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
-namespace Application.Transactions.Consumers;
+namespace Infra.Queue;
 
-public class OrderCheckedoutEventConsumer : BackgroundService
+public class QueueController : BackgroundService
 {
-    private readonly IServiceProvider _serviceProvider;
     private readonly IQueue _queue;
+    private readonly IServiceProvider _serviceProvider;
 
-    public OrderCheckedoutEventConsumer(IQueue queue, IServiceProvider serviceProvider)
+    public QueueController(IQueue queue, IServiceProvider serviceProvider)
     {
         _queue = queue;
         _serviceProvider = serviceProvider;
     }
 
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    protected async override Task ExecuteAsync(CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            await _queue.SubscribeAsync<OrderCheckedout>("orderCheckedout.proccessPayment", "order.checkedout", async message => {
+            await _queue.SubscribeAsync<OrderCheckedout>("orderCheckedout.proccessPayment", "order.checkedout", async @event => {
                 using (var scope = _serviceProvider.CreateAsyncScope())
                 {
                     var paymentGateway = scope.ServiceProvider.GetRequiredService<IPaymentGateway>();
@@ -31,7 +31,7 @@ public class OrderCheckedoutEventConsumer : BackgroundService
                     var queue = scope.ServiceProvider.GetRequiredService<IQueue>();
                     var orderGateway = scope.ServiceProvider.GetRequiredService<IOrderGateway>();
 
-                    var command = new CreatePaymentCommand(message);
+                    var command = new CreatePaymentCommand(@event);
                     var commandHandler = new CreatePaymentCommandHandler(paymentGateway, transactionRepository, queue, orderGateway);
 
                     await commandHandler.Handle(command, stoppingToken);
@@ -42,5 +42,3 @@ public class OrderCheckedoutEventConsumer : BackgroundService
         }
     }
 }
-
-

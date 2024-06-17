@@ -1,6 +1,6 @@
 ﻿using Application.Abstractions.Gateway;
 using Application.Abstractions.Queue;
-using Application.Transactions.MakePaymentRequest;
+using Application.Transactions.CreatePaymentCommand;
 using Application.Transactions.ProccessTransaction;
 using Domain.Events;
 using Domain.Transactions.Repository;
@@ -29,7 +29,7 @@ public class TransactionTest
              Email: "john.doe@example.com",
              CPF: "123.456.789-00",
              Phone: "+1234567890",
-             BirthDate: new DateOnly(1990, 5, 15),
+             BirthDate: new DateTime(1990, 5, 15),
              CreatedAt: DateTime.UtcNow
          ));
 
@@ -81,7 +81,7 @@ public class TransactionTest
              Email: "john.doe@example.com",
              CPF: "123.456.789-00",
              Phone: "+1234567890",
-             BirthDate: new DateOnly(1990, 5, 15),
+             BirthDate: new DateTime(1990, 5, 15),
              CreatedAt: DateTime.UtcNow
          ));
 
@@ -139,7 +139,7 @@ public class TransactionTest
              Email: "john.doe@example.com",
              CPF: "123.456.789-00",
              Phone: "+1234567890",
-             BirthDate: new DateOnly(1990, 5, 15),
+             BirthDate: new DateTime(1990, 5, 15),
              CreatedAt: DateTime.UtcNow
          ));
 
