@@ -1,5 +1,4 @@
 using NotifyWorker;
-using NotifyWorker.Consumers;
 using NotifyWorker.Gateway;
 using NotifyWorker.Queue;
 
@@ -14,10 +13,8 @@ builder.Services.AddSingleton<IQueue, RabbitMQAdapter>(provider =>
     rabbitMQAdapter.Connect();
     return rabbitMQAdapter;
 });
-builder.Services.AddHostedService<CustomerCreatedConsumer>();
-builder.Services.AddHostedService<OrderCheckedoutConsumer>();
-builder.Services.AddHostedService<OrderCanceledConsumer>();
-builder.Services.AddHostedService<OrderPaymentStatusChangedConsumer>();
+builder.Services.AddHostedService<QueueController>();
+
 
 
 
