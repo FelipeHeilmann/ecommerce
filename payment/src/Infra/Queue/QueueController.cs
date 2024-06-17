@@ -11,12 +11,12 @@ namespace Infra.Queue;
 public class QueueController : BackgroundService
 {
     private readonly IQueue _queue;
-    private readonly IServiceProvider _serviceProvider;
+    private readonly CreatePaymentCommandHandler _createPaymentCommandHandler;
 
-    public QueueController(IQueue queue, IServiceProvider serviceProvider)
+    public QueueController(IQueue queue, IServiceProvider serviceProvider, CreatePaymentCommandHandler createPaymentCommandHandler)
     {
         _queue = queue;
-        _serviceProvider = serviceProvider;
+        _createPaymentCommandHandler = createPaymentCommandHandler;        
     }
 
     protected async override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -24,18 +24,10 @@ public class QueueController : BackgroundService
         while (!stoppingToken.IsCancellationRequested)
         {
             await _queue.SubscribeAsync<OrderCheckedout>("orderCheckedout.proccessPayment", "order.checkedout", async @event => {
-                using (var scope = _serviceProvider.CreateAsyncScope())
-                {
-                    var paymentGateway = scope.ServiceProvider.GetRequiredService<IPaymentGateway>();
-                    var transactionRepository = scope.ServiceProvider.GetRequiredService<ITransactionRepository>();
-                    var queue = scope.ServiceProvider.GetRequiredService<IQueue>();
-                    var orderGateway = scope.ServiceProvider.GetRequiredService<IOrderGateway>();
 
-                    var command = new CreatePaymentCommand(@event);
-                    var commandHandler = new CreatePaymentCommandHandler(paymentGateway, transactionRepository, queue, orderGateway);
+                var command = new CreatePaymentCommand(@event);
 
-                    await commandHandler.Handle(command, stoppingToken);
-                }
+                await _createPaymentCommandHandler.Handle(command, stoppingToken);          
             });
 
             await Task.Delay(1000, stoppingToken);

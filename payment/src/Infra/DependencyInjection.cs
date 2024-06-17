@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions.Gateway;
 using Application.Abstractions.Queue;
+using Application.Transactions.CreatePaymentCommand;
 using Domain.Refunds;
 using Domain.Transactions.Repository;
 using Infra.Database;
@@ -32,7 +33,7 @@ public static class DependecyInjection
         services.AddTransient<IOrderGateway, OrderGatewayHttp>();
         services.AddTransient<IDatabaseConnection, NpgsqlAdapter>();
         services.AddTransient<IRefundRepository, RefundRepositoryMemory>();
-
-       services.AddHostedService<QueueController>();
+        services.AddTransient<CreatePaymentCommandHandler>();
+        services.AddHostedService<QueueController>();
     }
 }
