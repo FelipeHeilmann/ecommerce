@@ -30,10 +30,13 @@ public class OrderContext
 
     public async Task Update(OrderModel model)
     {
-
         var update = Builders<OrderModel>.Update
-            .Set(o => o.Status, model.Status)
-            .Set(o => o.Payment.PayedAt, model.Payment.PayedAt);
+        .Set(o => o.Status, model.Status);
+
+        if (model.Payment is not null)
+        {
+            update = update.Set(o => o.Payment!.PayedAt, model.Payment.PayedAt);
+        }
 
         await _orderCollection.UpdateOneAsync(
                 o => o.OrderId == model.OrderId.ToString(), update);
