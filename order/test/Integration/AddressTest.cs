@@ -22,7 +22,7 @@ public class AddressTest
     {
         addressRepository = new AddressRepositoryMemory();
         customerRepository = new CustomerRepositoryMemory();
-        queue = new MemoryMQAdapter();
+        queue = new MemoryQueueAdapter();
     }
 
     [Fact]

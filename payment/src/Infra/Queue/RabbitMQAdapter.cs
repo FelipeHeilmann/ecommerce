@@ -43,7 +43,7 @@ public class RabbitMQAdapter : IQueue
                 var body = eventArgs.Body.ToArray();
                 var message = JsonSerializer.Deserialize<T>(Encoding.UTF8.GetString(body));
 
-                await callback(message ?? throw new Exception());
+                await callback(message ?? throw new ArgumentException());
 
                 channel.BasicAck(eventArgs.DeliveryTag, false);
             };

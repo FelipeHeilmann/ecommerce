@@ -4,11 +4,6 @@ namespace Infra.Queue;
 
 public class MemoryQueueAdapter : IQueue
 {
-    public void Connect()
-    {
-        return;
-    }
-
     public Task PublishAsync<T>(T message, string queueName)
     {
         return Task.CompletedTask;

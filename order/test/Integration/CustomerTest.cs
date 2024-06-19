@@ -17,7 +17,7 @@ public class CustomerTest
     public CustomerTest()
     {
         customerRepository = new CustomerRepositoryMemory();
-        queue = new MemoryMQAdapter();
+        queue = new MemoryQueueAdapter();
     }
 
     [Fact]

@@ -46,7 +46,7 @@ public class OrderTest
         categoryRepository = new CategoryRepositoryMemory();
         couponRepository = new CouponRepositoryMemory();
         orderQueryContext = new MemoryOrderContext();
-        queue = new MemoryMQAdapter();
+        queue = new MemoryQueueAdapter();
     }
 
     [Fact]
