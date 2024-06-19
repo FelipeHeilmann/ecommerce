@@ -21,12 +21,7 @@ public static class DependecyInjection
         IConfiguration configuration)
     {
 
-        services.AddSingleton<IQueue, RabbitMQAdapter>(provider =>
-        {
-            var rabbitMQAdapter = new RabbitMQAdapter(configuration);
-            rabbitMQAdapter.Connect();
-            return rabbitMQAdapter;
-        });
+        services.AddSingleton<IQueue, RabbitMQAdapter>();
 
         services.AddSingleton<IPaymentGateway, PaymentGatewayFake>();
         services.AddTransient<ITransactionRepository, TransactionRepositoryDatabase>();

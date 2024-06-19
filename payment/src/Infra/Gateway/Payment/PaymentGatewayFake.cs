@@ -1,18 +1,14 @@
 ﻿using Application.Abstractions.Gateway;
 using Application.Transactions.Model;
-using Domain.Events;
-using System.Text;
 using System.Text.Json;
 
 namespace Infra.Gateway.Payment;
 
 public class PaymentGatewayFake : IPaymentGateway
 {
-    public async Task<PaymentGatewayResponse> ProccessPayment(ProccessPaymentRequest request)
+    public Task<PaymentGatewayResponse> ProccessPayment(ProccessPaymentRequest request)
     {
         HttpClient client = new HttpClient();
-
- 
 
         var body = JsonSerializer.Serialize(new CreateOrderModel()
         {
@@ -52,11 +48,10 @@ public class PaymentGatewayFake : IPaymentGateway
             WriteIndented = true
         });
 
-
         var paymentId = Guid.NewGuid();
         var paymentUrl = "https://www.instagram.com/p/C38mWMeMSn7/?utm_source=ig_embed&ig_rid=e61afe49-0878-41c0-9b1e-b17f00f5cf76";
 
-        return new PaymentGatewayResponse((paymentId.ToString()), paymentUrl);
+        return Task.FromResult(new PaymentGatewayResponse(paymentId.ToString(), paymentUrl));
     }
 
 

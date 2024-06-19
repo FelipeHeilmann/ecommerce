@@ -11,20 +11,10 @@ public abstract class APIBaseController : ControllerBase
     protected readonly ISender _sender;
     protected readonly IHttpContextAccessor _contextAccessor;
 
-    protected APIBaseController(ISender sender)
+    protected APIBaseController(ISender sender,IHttpContextAccessor contextAccessor)
     {
         _sender = sender;
-    }
-
-    protected Guid? GetCustomerId()
-    {
-        var user = HttpContext.User;
-
-        if (!user.Identity.IsAuthenticated) return null;
-
-        var id = user?.Claims?.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-
-        return Guid.Parse(id);
+        _contextAccessor = contextAccessor;
     }
 
 }
