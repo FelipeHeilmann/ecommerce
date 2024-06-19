@@ -4,12 +4,7 @@ using ProjectionWorker.Queue;
 
 var builder = Host.CreateApplicationBuilder(args);
 
-builder.Services.AddSingleton<IQueue, RabbitMQAdapter>(provider =>
-{
-    var rabbitMQAdapter = new RabbitMQAdapter(builder.Configuration);
-    rabbitMQAdapter.Connect();
-    return rabbitMQAdapter;
-});
+builder.Services.AddSingleton<IQueue, RabbitMQAdapter>();
 
 builder.Services.AddHostedService<QueueController>();
 builder.Services.AddSingleton<OrderContext>();
