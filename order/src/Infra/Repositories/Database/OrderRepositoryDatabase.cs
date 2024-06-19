@@ -105,7 +105,7 @@ public class OrderRepositoryDatabase : IOrderRepository
     public async Task Update(Order entity)
 {
     var currentOrder = await GetByIdAsync(entity.Id, CancellationToken.None);
-    if (currentOrder is null)
+    if (currentOrder == null)
     {
         throw new InvalidOperationException("Order not found");
     }

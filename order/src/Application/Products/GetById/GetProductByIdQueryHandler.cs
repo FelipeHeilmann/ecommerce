@@ -29,7 +29,7 @@ public class GetProductByIdQueryHandler : IQueryHandler<GetProductByIdQuery, Out
         if(product.CategoryId is not null) 
         {
             var databaseCategory = await _categoryRepository.GetByIdAsync(product.CategoryId.Value, cancellationToken);
-            if(databaseCategory is null) return Result.Failure<Output>(CategoryErrors.CategoryNotFound);
+            if(databaseCategory == null) return Result.Failure<Output>(CategoryErrors.CategoryNotFound);
             category = new CategoryOutput(databaseCategory.Id, databaseCategory.Name, databaseCategory.Description);
         }
 

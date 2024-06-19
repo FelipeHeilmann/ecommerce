@@ -3,7 +3,6 @@ using Domain.Orders.Entity;
 using Domain.Orders.Error;
 using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
-using static MongoDB.Driver.WriteConcern;
 
 namespace Infra.Context;
 
@@ -29,15 +28,15 @@ public class MongoOrderContext : IOrderQueryContext
             CustomerId = Guid.Parse(o.CustomerId),
             Payment = new PaymentQueryModel()
             {
-                PayedAt = o.Payment.PayedAt,
-                Installments = o.Payment.Installments,
+                PayedAt = o.Payment?.PayedAt,
+                Installments = o.Payment!.Installments,
                 PaymentType = o.Payment.PaymentType,
             },
             Status = o.Status,
             Total = o.Items.Sum(i => i.Price * i.Quantity),
             Items = o.Items.Select(li => new LineItemQueryModel()
             {
-                Id = Guid.Parse(li.Id),
+                Id = Guid.Parse(li.Id!),
                 Description = li.Description,
                 ImageUrl = li.ImageUrl,
                 Name = li.Name,
@@ -55,7 +54,7 @@ public class MongoOrderContext : IOrderQueryContext
         {
             Id = Guid.Parse(o.OrderId),
             CustomerId = Guid.Parse(o.CustomerId),
-            Payment = new PaymentQueryModel()
+            Payment = o.Payment == null ? null : new PaymentQueryModel()
             {
                 PayedAt = o.Payment.PayedAt,
                 Installments = o.Payment.Installments,
@@ -63,7 +62,7 @@ public class MongoOrderContext : IOrderQueryContext
             },
             Status = o.Status,
             Total = o.Items.Sum(i => i.Price * i.Quantity),
-            Address = new AddressQueryModel()
+            Address = o.Address == null ? null : new AddressQueryModel()
             {
                 Id = Guid.Parse(o.Address.Id),
                 City = o.Address.City,
@@ -77,7 +76,7 @@ public class MongoOrderContext : IOrderQueryContext
             },
             Items = o.Items.Select(li => new LineItemQueryModel()
             {
-                Id = Guid.Parse(li.Id),
+                Id = Guid.Parse(li.Id!),
                 Description = li.Description,
                 ImageUrl = li.ImageUrl,
                 Name = li.Name,
@@ -96,7 +95,7 @@ public class MongoOrderContext : IOrderQueryContext
         {
             Id = Guid.Parse(order.OrderId),
             CustomerId = Guid.Parse(order.CustomerId),
-            Payment = new PaymentQueryModel()
+            Payment = order.Payment == null ? null : new PaymentQueryModel()
             {
                 PayedAt = order.Payment.PayedAt,
                 Installments = order.Payment.Installments,
@@ -104,7 +103,7 @@ public class MongoOrderContext : IOrderQueryContext
             },
             Status = order.Status,
             Total = order.Items.Sum(i => i.Price * i.Quantity),
-            Address = new AddressQueryModel()
+            Address = order.Address == null ? null : new AddressQueryModel()
             {
                 Id = Guid.Parse(order.Address.Id),
                 City = order.Address.City,
@@ -118,7 +117,7 @@ public class MongoOrderContext : IOrderQueryContext
             },
             Items = order.Items.Select(li => new LineItemQueryModel()
             {
-                Id = Guid.Parse(li.Id),
+                Id = Guid.Parse(li.Id!),
                 Description = li.Description,
                 ImageUrl = li.ImageUrl,
                 Name = li.Name,

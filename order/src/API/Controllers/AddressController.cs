@@ -15,7 +15,7 @@ namespace API.Controllers;
 [ApiController]
 public class AddressController : APIBaseController
 {
-    public AddressController(ISender sender) : base(sender) { }
+    public AddressController(ISender sender, IHttpContextAccessor contextAccessor) : base(sender, contextAccessor) { }
 
     [Authorize]
     [HttpGet]

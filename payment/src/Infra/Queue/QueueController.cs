@@ -24,13 +24,10 @@ public class QueueController : BackgroundService
         while (!stoppingToken.IsCancellationRequested)
         {
             await _queue.SubscribeAsync<OrderCheckedout>("orderCheckedout.proccessPayment", "order.checkedout", async @event => {
-
                 var command = new CreatePaymentCommand(@event);
 
                 await _createPaymentCommandHandler.Handle(command, stoppingToken);          
             });
-
-            await Task.Delay(1000, stoppingToken);
         }
     }
 }

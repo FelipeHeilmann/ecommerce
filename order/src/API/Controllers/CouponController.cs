@@ -10,7 +10,7 @@ namespace API.Controllers;
 [ApiController]
 public class CouponController : APIBaseController
 {
-    public CouponController(ISender sender): base(sender) { }
+    public CouponController(ISender sender, IHttpContextAccessor contextAccessor) : base(sender, contextAccessor) { }
 
     [HttpPost]
     public async Task<IResult> Create([FromBody] CreateCouponRequest request, CancellationToken cancellationToken)

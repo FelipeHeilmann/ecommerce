@@ -18,7 +18,7 @@ namespace API.Controllers;
 [ApiController]
 public class OrderController : APIBaseController
 {
-    public OrderController(ISender _sender) : base(_sender) { }
+    public OrderController(ISender sender, IHttpContextAccessor contextAccessor) : base(sender, contextAccessor) { }
 
     [Authorize]
     [HttpGet]
@@ -64,7 +64,7 @@ public class OrderController : APIBaseController
     {
         var result = await _sender.Send(new GetCartQuery(), cancellationToken);
 
-        return result.IsFailure ? result.ToProblemDetail() : result.Value.Id is null ? Results.Ok(new { }) : Results.Ok(result.Value);
+        return result.IsFailure ? result.ToProblemDetail() : result.Value.Id  == null ? Results.Ok(new { }) : Results.Ok(result.Value);
     }
 
     [Authorize]

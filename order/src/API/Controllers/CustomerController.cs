@@ -13,8 +13,7 @@ namespace API.Controllers;
 [ApiController]
 public class CustomerController : APIBaseController
 {
-    public CustomerController(ISender sender)
-    : base(sender) { }
+    public CustomerController(ISender sender, IHttpContextAccessor contextAccessor) : base(sender, contextAccessor) { }
 
     [HttpPost]
     public async Task<IResult> CreateAccount([FromBody] CreateCustomerRequest request, CancellationToken cancellationToken)

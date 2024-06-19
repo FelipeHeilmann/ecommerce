@@ -9,18 +9,12 @@ namespace Infra.Queue;
 
 public class RabbitMQAdapter : IQueue
 {
-    private readonly IConfiguration _configuration;
-    private IConnection _connection;
+    private IConnection _connection;    
     private const string EXCHANGE = "order.events";
 
     public RabbitMQAdapter(IConfiguration configuration)
     {
-        _configuration = configuration;
-    }
-
-    public void Connect()
-    {
-        var rabbitSettings = _configuration.GetSection("MessageBroker");
+        var rabbitSettings = configuration.GetSection("MessageBroker");
         var factory = new ConnectionFactory
         {
             HostName = rabbitSettings["Host"],
@@ -29,7 +23,7 @@ public class RabbitMQAdapter : IQueue
         };
         _connection = factory.CreateConnection();
     }
-
+    
     public async Task SubscribeAsync<T>(string queueName, string routingKey, Func<T, Task> callback)
     {
         using (var channel = _connection.CreateModel())
@@ -50,7 +44,7 @@ public class RabbitMQAdapter : IQueue
                 var body = eventArgs.Body.ToArray();
                 var message = JsonSerializer.Deserialize<T>(Encoding.UTF8.GetString(body));
 
-                await callback(message);
+                await callback(message ?? throw new ArgumentException());
 
                 channel.BasicAck(eventArgs.DeliveryTag, false);
             };
@@ -63,7 +57,7 @@ public class RabbitMQAdapter : IQueue
         }
     }
 
-    public async Task PublishAsync<T>(T message, string routingKey)
+    public Task PublishAsync<T>(T message, string routingKey)
     {
         using (var channel = _connection.CreateModel())
         {
@@ -75,6 +69,7 @@ public class RabbitMQAdapter : IQueue
                                  routingKey: routingKey,
                                  basicProperties: null,
                                  body: body);
+            return Task.CompletedTask;
         }
     }
 }

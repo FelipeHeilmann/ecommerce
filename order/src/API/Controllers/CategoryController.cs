@@ -13,7 +13,7 @@ namespace API.Controllers;
 [ApiController]
 public class CategoryController : APIBaseController
 {
-    public CategoryController(ISender _sender) : base(_sender) { }
+    public CategoryController(ISender sender, IHttpContextAccessor contextAccessor) : base(sender, contextAccessor) { }
 
     [HttpGet]
     public async Task<IResult> GetAll(CancellationToken cancellationToken)

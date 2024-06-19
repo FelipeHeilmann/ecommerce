@@ -14,7 +14,7 @@ namespace API.Controllers;
 [ApiController]
 public class ProductController : APIBaseController
 {
-    public ProductController(ISender _sender) : base(_sender) { }
+    public ProductController(ISender sender, IHttpContextAccessor contextAccessor) : base(sender, contextAccessor) { }
 
     [HttpGet]
     public async Task<IResult> GetAll(CancellationToken cancellationToken)

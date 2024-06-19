@@ -25,12 +25,7 @@ public static class DependecyInjection
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddSingleton<IQueue, RabbitMQAdapter>(provider =>
-        {
-            var rabbitMQAdapter = new RabbitMQAdapter(configuration);
-            rabbitMQAdapter.Connect();
-            return rabbitMQAdapter;
-        });
+        services.AddSingleton<IQueue, RabbitMQAdapter>();
 
         services.AddTransient<IDatabaseConnection, NpgsqlAdapter>();
         services.AddTransient<ICustomerRepository, CustomerRepositoryDatabase>();

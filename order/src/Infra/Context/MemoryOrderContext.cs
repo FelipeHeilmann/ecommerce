@@ -1,19 +1,20 @@
 ﻿using Application.Abstractions.Query;
+using Domain.Orders.Error;
 
 namespace Infra.Context;
 
 public class MemoryOrderContext : IOrderQueryContext
 {
-    private readonly ICollection<OrderQueryModel> orders;
+    private List<OrderQueryModel> orders;
     
     public MemoryOrderContext()
     {
-        orders = new List<OrderQueryModel>();   
+        orders = [];   
     }
 
     public Task<ICollection<OrderQueryModel>> GetAll()
     {
-       return Task.FromResult(orders);
+       return Task.FromResult<ICollection<OrderQueryModel>>(orders);
     }
 
     public Task<ICollection<OrderQueryModel>> GetByCustomerId(Guid id)
@@ -21,8 +22,10 @@ public class MemoryOrderContext : IOrderQueryContext
         return Task.FromResult<ICollection<OrderQueryModel>>(orders.Where(o => o.CustomerId == id).ToList());
     }
 
-    public Task<OrderQueryModel?> GetById(Guid id)
+    public Task<OrderQueryModel> GetById(Guid id)
     {
-        return Task.FromResult(orders.FirstOrDefault(o => o.Id == id));
+        var order  = orders.FirstOrDefault(o => o.Id == id);
+        if(order == null) throw new OrderNotFound();
+        return Task.FromResult(order);
     }
 }
