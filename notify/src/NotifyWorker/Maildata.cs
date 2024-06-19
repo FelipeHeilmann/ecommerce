@@ -2,9 +2,9 @@
 {
     public class Maildata
     {
-        public string EmailToEmail { get; set; }
-        public string EmailToName { get; set; }
-        public string EmailSubject { get; set; }
-        public string EmailBody { get; set; }
+        public string EmailToEmail { get; set; } = string.Empty;
+        public string EmailToName { get; set; }= string.Empty;
+        public string EmailSubject { get; set; }= string.Empty;
+        public string EmailBody { get; set; }= string.Empty;
     }
 }

@@ -29,8 +29,8 @@ public record ProductGatewayResponse(
 public class OrderGatewayResponse
 {
     public Guid Id { get; set; }
-    public string Status { get; set; }
-    public ICollection<LineItemGatewayResponse> Items { get; set; }
+    public string Status { get; set; } = string.Empty;
+    public ICollection<LineItemGatewayResponse> Items { get; set; } = new List<LineItemGatewayResponse>();
     public AddressGatewayResponse? Address { get; set; }
     public Guid CustomerId { get; set; }
     public double Total { get; set; }
@@ -41,22 +41,22 @@ public class LineItemGatewayResponse
 {
     public Guid Id { get; set; }
     public Guid ProductId { get; set; }
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
     public double Price { get; set; }
-    public string Description { get; set; }
-    public string ImageUrl { get; set; }
+    public string Description { get; set; } = string.Empty;
+    public string ImageUrl { get; set; } = string.Empty;
     public int Quantity { get; set; }
 }
 
 public class AddressGatewayResponse
 {
     public Guid Id { get; set; }
-    public string ZipCode { get; set; }
-    public string Street { get; set; }
-    public string Neighborhood { get; set; }
-    public string Number { get; set; }
+    public string ZipCode { get; set; } = string.Empty;
+    public string Street { get; set; } = string.Empty;
+    public string Neighborhood { get; set; } = string.Empty;
+    public string Number { get; set; } = string.Empty;
     public string? Complement { get; set; }
-    public string State { get; set; }
-    public string City { get; set; }
-    public string Country { get; set; }
+    public string State { get; set; } = string.Empty;
+    public string City { get; set; } = string.Empty;
+    public string Country { get; set; } = string.Empty;
 }
