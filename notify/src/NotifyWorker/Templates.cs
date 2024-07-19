@@ -307,4 +307,56 @@ public class Templates
         template = template.Replace("[OrderNumber]", orderId.ToString());
         return template;
     }
+
+    public static string OrderShipped(string userName, Guid orderId)
+    {
+        string template = @"
+            <html>
+            <head>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        line-height: 1.6;
+                    }
+                    .container {
+                        max-width: 600px;
+                        margin: 0 auto;
+                        padding: 20px;
+                        border: 1px solid #ccc;
+                        border-radius: 10px;
+                    }
+                    .footer {
+                        margin-top: 20px;
+                        font-size: 12px;
+                        color: #666;
+                    }
+                    .button {
+                        display: inline-block;
+                        padding: 10px 20px;
+                        background-color: #007bff;
+                        color: #fff;
+                        text-decoration: none;
+                        border-radius: 5px;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class='container'>
+                    <h1>Order Shipped!</h1>
+                    <p>Dear [User],</p>
+                    <p>We are pleased to inform you that your order has been shipped.</p>
+                    <p><strong>Order ID:</strong> [OrderId]</p>
+                    <p>You can track your order using the tracking code provided in the next email.</p>
+                    <div class='footer'>
+                        <p>Best regards,<br/>Felipe Heilmann<br/>CTO<br/>e-commercce</p>
+                    </div>
+                </div>
+            </body>
+            </html>
+        ";
+
+        template = template.Replace("[User]", userName);
+        template = template.Replace("[OrderId]", orderId.ToString());
+        return template;
+    }
 }

@@ -98,6 +98,22 @@ public class QueueController : BackgroundService
 
                 await _mailerGateway.Send(mailData);
             });
+
+            await _queue.SubscribeAsync<OrderShipped>("orderShipped.notification", "order.shipped", async @event => {
+                var order = await _orderGateway.GetOrderById(@event.OrderId);
+
+                var customer = await _orderGateway.GetCustomerById(order.CustomerId);
+
+                var mailData = new Maildata() 
+                {
+                    EmailToName = customer.Name,
+                    EmailToEmail = customer.Email,
+                    EmailBody = Templates.OrderShipped(customer.Name, order.Id),
+                    EmailSubject = "Order Shipped!"
+                };
+
+                await _mailerGateway.Send(mailData);
+            });
         }
     }
 }
