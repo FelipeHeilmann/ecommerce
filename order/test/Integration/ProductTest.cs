@@ -1,5 +1,4 @@
 ﻿using Application.Categories.Create;
-using Application.Categories.Model;
 using Application.Products.Create;
 using Application.Products.Delete;
 using Application.Products.GetAll;

@@ -2,7 +2,7 @@
 using Application.Categories.Create;
 using Application.Categories.GetAll;
 using Application.Categories.GetById;
-using Application.Categories.Model;
+using API.Requests;
 using Application.Categories.Update;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

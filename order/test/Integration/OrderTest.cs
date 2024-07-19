@@ -1,5 +1,4 @@
 ﻿using Application.Orders.Cancel;
-using Application.Orders.Model;
 using Application.Orders.GetCart;
 using Infra.Repositories.Memory;
 using Xunit;
@@ -116,11 +115,11 @@ public class OrderTest
         var cardToken = "my-token-card";
         var installments = 5;
 
-        var inputCheckout = new CheckoutOrderCommand(new List<OrderItemRequest>()
+        var inputCheckout = new CheckoutOrderCommand(new List<CheckoutItem>()
             {
-                new OrderItemRequest(outputCreateProduct1.Value, 2),
-                new OrderItemRequest(outputCreateProduct2.Value, 3),
-                new OrderItemRequest(outputCreateProduct3.Value, 4)
+                new CheckoutItem(outputCreateProduct1.Value, 2),
+                new CheckoutItem(outputCreateProduct2.Value, 3),
+                new CheckoutItem(outputCreateProduct3.Value, 4)
             },
             outputCreateCustomer.Value,
             outputCreateAddress.Value,
@@ -183,11 +182,11 @@ public class OrderTest
         var cardToken = "my-token-card";
         var installments = 5;
 
-        var inputCheckout = new CheckoutOrderCommand(new List<OrderItemRequest>()
+        var inputCheckout = new CheckoutOrderCommand(new List<CheckoutItem>()
         {
-            new OrderItemRequest(outputCreateProduct1.Value, 2),
-            new OrderItemRequest(outputCreateProduct2.Value, 3),
-            new OrderItemRequest(outputCreateProduct3.Value, 4)
+            new CheckoutItem(outputCreateProduct1.Value, 2),
+            new CheckoutItem(outputCreateProduct2.Value, 3),
+            new CheckoutItem(outputCreateProduct3.Value, 4)
         },
         outputCreateCustomer.Value,
         outputCreateAddress.Value,
@@ -293,11 +292,11 @@ public class OrderTest
         var cardToken = "my-token-card";
         var installments = 5;
 
-        var inputCreateOrder = new CheckoutOrderCommand(new List<OrderItemRequest>()
+        var inputCreateOrder = new CheckoutOrderCommand(new List<CheckoutItem>()
             {
-                new OrderItemRequest(outputCreateProduct1.Value, 2),
-                new OrderItemRequest(outputCreateProduct2.Value, 3),
-                new OrderItemRequest(outputCreateProduct3.Value, 4)
+                new CheckoutItem(outputCreateProduct1.Value, 2),
+                new CheckoutItem(outputCreateProduct2.Value, 3),
+                new CheckoutItem(outputCreateProduct3.Value, 4)
             },
             outputCreateCustomer.Value,
             outputCreateAddress.Value,
@@ -354,11 +353,11 @@ public class OrderTest
         var cardToken = "my-token-card";
         var installments = 5;
 
-        var inputCreateOrder = new CheckoutOrderCommand(new List<OrderItemRequest>()
+        var inputCreateOrder = new CheckoutOrderCommand(new List<CheckoutItem>()
             {
-                new OrderItemRequest(outputCreateProduct1.Value, 2),
-                new OrderItemRequest(outputCreateProduct2.Value, 3),
-                new OrderItemRequest(outputCreateProduct3.Value, 4)
+                new CheckoutItem(outputCreateProduct1.Value, 2),
+                new CheckoutItem(outputCreateProduct2.Value, 3),
+                new CheckoutItem(outputCreateProduct3.Value, 4)
             },
             outputCreateCustomer.Value,
             outputCreateAddress.Value,
@@ -417,11 +416,11 @@ public class OrderTest
         var cardToken = "my-token-card";
         var installments = 5;
 
-        var inputCheckout = new CheckoutOrderCommand(new List<OrderItemRequest>()
+        var inputCheckout = new CheckoutOrderCommand(new List<CheckoutItem>()
             {
-                new OrderItemRequest(outputCreateProduct1.Value, 2),
-                new OrderItemRequest(outputCreateProduct2.Value, 3),
-                new OrderItemRequest(outputCreateProduct3.Value, 4)
+                new CheckoutItem(outputCreateProduct1.Value, 2),
+                new CheckoutItem(outputCreateProduct2.Value, 3),
+                new CheckoutItem(outputCreateProduct3.Value, 4)
             },
             outputCreateCustomer.Value,
             outputCreateAddress.Value,

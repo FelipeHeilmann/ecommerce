@@ -3,7 +3,7 @@ using Application.Products.Create;
 using Application.Products.Delete;
 using Application.Products.GetAll;
 using Application.Products.GetById;
-using Application.Products.Model;
+using API.Requests;
 using Application.Products.Update;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

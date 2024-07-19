@@ -3,7 +3,7 @@ using Application.Customers.Create;
 using Application.Customers.GetById;
 using Application.Customers.GetByOrderId;
 using Application.Customers.Login;
-using Application.Customers.Model;
+using API.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

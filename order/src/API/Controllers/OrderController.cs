@@ -6,7 +6,7 @@ using Application.Orders.Checkout;
 using Application.Orders.GetByCustomerId;
 using Application.Orders.GetById;
 using Application.Orders.GetCart;
-using Application.Orders.Model;
+using API.Requests;
 using Application.Orders.RemoveItemRemoveItemFromCart;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -73,7 +73,7 @@ public class OrderController : APIBaseController
     {
         var customerId = GetCustomerId();
 
-        var command = new CheckoutOrderCommand(request.Items, customerId!.Value,request.ShippingAddressId, request.BillingAddressId, request.CouponName, request.PaymentType, request.CardToken, request.Installments);
+        var command = new CheckoutOrderCommand(request.Items.Select(item => new CheckoutItem(item.ProductId, item.Quantity)).ToList(), customerId!.Value,request.ShippingAddressId, request.BillingAddressId, request.CouponName, request.PaymentType, request.CardToken, request.Installments);
 
         var result = await _sender.Send(command, cancellationToken);
 
