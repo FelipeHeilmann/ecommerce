@@ -18,7 +18,7 @@ public class PrepareOrderForShippingCommandHandler: ICommandHandler<PrepareOrder
     {
         var order = await _orderRepository.GetByIdAsync(command.OrderId, cancellationToken);
         if (order == null) return Result.Failure(OrderErrors.OrderNotFound);
-        order.Prepare();
+        order.PrepareForShipping();
         await _orderRepository.Update(order);
         return Result.Success();
     }

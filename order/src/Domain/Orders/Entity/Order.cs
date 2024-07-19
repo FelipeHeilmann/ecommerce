@@ -142,9 +142,9 @@ public class Order : Observable
         UpdatedAt = DateTime.UtcNow;
     }
 
-    public void Prepare()
+    public void PrepareForShipping()
     {
-        _status.Prepare();
+        _status.PrepareForShipping();
         UpdatedAt = DateTime.UtcNow;
     }
 

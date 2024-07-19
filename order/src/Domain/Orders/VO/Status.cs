@@ -11,7 +11,7 @@ public abstract class OrderStatus
     public abstract void Approve();
     public abstract void Reject();
 
-    public abstract void Prepare();
+    public abstract void PrepareForShipping();
     public abstract void Ship();
     public abstract void Delivery();
     public abstract void Cancel();

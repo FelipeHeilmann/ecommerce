@@ -41,7 +41,7 @@ public class CartStatus : OrderStatus
         throw new Exception("Invalid Status");
     }
 
-    public override void Prepare()
+    public override void PrepareForShipping()
     {
         throw new Exception("Invalid Status");
     }

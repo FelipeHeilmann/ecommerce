@@ -26,7 +26,7 @@ public class ApprovedStatus : OrderStatus
         throw new Exception("Invalid Status");
     }
 
-    public override void Prepare()
+    public override void PrepareForShipping()
     {
         Order._status = new InPreparationStatus(Order);
     }
