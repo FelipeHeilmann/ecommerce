@@ -307,7 +307,6 @@ public class Templates
         template = template.Replace("[OrderNumber]", orderId.ToString());
         return template;
     }
-
     public static string OrderShipped(string userName, Guid orderId)
     {
         string template = @"
