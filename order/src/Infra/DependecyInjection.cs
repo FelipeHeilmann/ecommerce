@@ -3,6 +3,7 @@ using Application.Abstractions.Query;
 using Application.Abstractions.Queue;
 using Application.Abstractions.Services;
 using Application.Orders.OrderPaymentStatusChanged;
+using Application.Orders.ShipOrder;
 using Domain.Addresses.Repository;
 using Domain.Categories.Repository;
 using Domain.Coupons.Repository;
@@ -36,6 +37,7 @@ public static class DependecyInjection
         services.AddTransient<ICouponRepository, CouponRepositoryDatabase>();
         services.AddTransient<IOrderQueryContext, MongoOrderContext>();
         services.AddTransient<OrderPaymentStatusChangedCommandHandler>();
+        services.AddTransient<ShipOrderCommandHandler>();
 
         services.AddScoped<IJwtProvider, JwtProvider>();
 
