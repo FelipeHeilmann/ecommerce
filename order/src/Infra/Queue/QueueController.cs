@@ -1,4 +1,5 @@
 using Application.Abstractions.Queue;
+using Application.Orders.Delivery;
 using Application.Orders.OrderPaymentStatusChanged;
 using Application.Orders.ShipOrder;
 using Domain.Orders.Event;
@@ -12,13 +13,15 @@ public class QueueController : BackgroundService
     private readonly IQueue _queue;
     private readonly ILogger<OrderPaymentUrlEvent> _logger;
     private readonly OrderPaymentStatusChangedCommandHandler _orderPaymentStatusChangedCommandHandler;
-    private readonly ShipOrderCommandHandler _shipOrderCommandHandler; 
+    private readonly ShipOrderCommandHandler _shipOrderCommandHandler;
+    private readonly DeliveryOrderCommandHandler _deliveryOrderCommandHandler;
 
-    public QueueController(IQueue queue, OrderPaymentStatusChangedCommandHandler orderPaymentStatusChangedCommandHandler, ShipOrderCommandHandler shipOrderCommandHandler,ILogger<OrderPaymentUrlEvent> logger)
+    public QueueController(IQueue queue, OrderPaymentStatusChangedCommandHandler orderPaymentStatusChangedCommandHandler, ShipOrderCommandHandler shipOrderCommandHandler, DeliveryOrderCommandHandler deliveryOrderCommandHandler ,ILogger<OrderPaymentUrlEvent> logger)
     {
         _queue = queue;
         _orderPaymentStatusChangedCommandHandler = orderPaymentStatusChangedCommandHandler;
         _shipOrderCommandHandler = shipOrderCommandHandler;
+        _deliveryOrderCommandHandler = deliveryOrderCommandHandler;
         _logger = logger;
     }
 
@@ -40,6 +43,11 @@ public class QueueController : BackgroundService
         await _queue.SubscribeAsync<OrderShipped>("orderShipped.updateOrder", "order.shipped", async @event => {
             var shipOrderCommand = new ShipOrderCommand(@event.OrderId);
             await _shipOrderCommandHandler.Handle(shipOrderCommand, stoppingToken);
+        });
+
+        await _queue.SubscribeAsync<OrderDelivered>("orderDelivered.updateOrder", "order.delivered", async @event => {
+            var deliveryOrderCommand = new DeliveryOrderCommand(@event.OrderId);
+            await _deliveryOrderCommandHandler.Handle(deliveryOrderCommand, stoppingToken);
         });
     }
 }

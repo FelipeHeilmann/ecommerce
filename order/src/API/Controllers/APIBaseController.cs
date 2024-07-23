@@ -16,7 +16,7 @@ public abstract class APIBaseController : ControllerBase
         _contextAccessor = contextAccessor;
     }
 
-     protected Guid? GetCustomerId()
+    protected Guid? GetCustomerId()
     {
         var user = HttpContext.User;
 

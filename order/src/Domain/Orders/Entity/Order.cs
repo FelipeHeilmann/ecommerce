@@ -154,6 +154,12 @@ public class Order : Observable
         UpdatedAt = DateTime.UtcNow;
     }
 
+    public void Delivery() 
+    {
+        _status.Delivery();
+         UpdatedAt = DateTime.UtcNow;
+    }
+
     public int CountItens()
     {
         var total = 0;
